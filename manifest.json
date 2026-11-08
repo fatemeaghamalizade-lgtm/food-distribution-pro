@@ -1,0 +1,26 @@
+{
+  "id": "./",
+  "name": "FOOD DISTRIBUTION PRO",
+  "short_name": "FOOD PRO",
+  "description": "سیستم هوشمند مدیریت فروش و پخش مواد غذایی",
+  "lang": "fa",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f1f3fa",
+  "theme_color": "#26345d",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
