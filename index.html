@@ -1,25 +1,27 @@
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
- <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#26345d">
 <title>FOOD DISTRIBUTION PRO</title>
-<style>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./icon-192.png">
 
+<style>
 *{box-sizing:border-box}
 :root{
- --main:#26345d;--main2:#394b83;--accent:#6578d6;
- --accent2:#8292ed;--red:#c43d52;--bg:#f1f3fa;
- --text:#283047;--muted:#737d99;--line:#e3e7f1;
- --green:#168b70;--gold:#b47b23;
+--main:#26345d;--main2:#394b83;--accent:#6578d6;
+--accent2:#8292ed;--red:#c43d52;--bg:#f1f3fa;
+--text:#283047;--muted:#737d99;--line:#e3e7f1;
+--green:#168b70;--gold:#b47b23
 }
 body{margin:0;background:linear-gradient(135deg,#f3f5fb,#e9edf8);font-family:Tahoma;color:var(--text)}
-header{background:linear-gradient(120deg,#202b50,#35477d,#6578d6);color:white;padding:28px 15px;text-align:center;box-shadow:0 7px 25px #202b5030}
-header h1{margin:0 0 10px;font-size:25px;letter-spacing:.5px}
+header{background:linear-gradient(120deg,#202b50,#35477d,#6578d6);color:white;padding:25px 15px;text-align:center;box-shadow:0 7px 25px #202b5030}
+header h1{margin:0 0 10px;font-size:24px}
 header p{margin:0;color:#e1e7ff}
-main{max-width:1350px;margin:25px auto;padding:12px}
+main{max-width:1400px;margin:22px auto;padding:12px}
 .card{background:white;padding:20px;border-radius:17px;margin:15px 0;border:1px solid var(--line);box-shadow:0 8px 25px #202b500c}
 h2,h3{margin-top:0;color:var(--main)}
 input,select,textarea,button{width:100%;padding:12px;margin:6px 0;border:1px solid #dce1ef;border-radius:10px;font:inherit;outline:none}
@@ -27,7 +29,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 
 button{background:linear-gradient(120deg,var(--main2),var(--accent));color:white;border:0;cursor:pointer;font-weight:bold;transition:.2s}
 button:hover{filter:brightness(1.08);transform:translateY(-1px)}
 button:disabled{opacity:.5;cursor:not-allowed;transform:none}
-button.secondary{background:#edf0fb;color:var(--main)}
+button.secondary{background:#e9edf8;color:var(--main)}
 button.danger{background:linear-gradient(120deg,#a92d42,#d44b60);color:white}
 button.success-btn{background:linear-gradient(120deg,#087c62,#1ba889)}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
@@ -48,16 +50,16 @@ th{background:#eef1fa;color:var(--main)}
 .modalhead{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .modalhead h2{margin:0}
 .close{width:auto;background:#edf0f7;color:#333;padding:9px 15px}
-.stat{background:linear-gradient(135deg,#eef1ff,#e2e8ff);padding:17px;border-radius:14px;text-align:center}
+.stat{background:linear-gradient(135deg,#dce7ff,#f2f4ff);padding:17px;border-radius:14px;text-align:center}
 .stat strong{display:block;font-size:22px;color:var(--main2);margin-top:8px}
 .section-title{border-bottom:1px solid var(--line);padding-bottom:12px}
 .section-title:before{content:"";display:inline-block;width:5px;height:22px;background:var(--accent);border-radius:5px;margin-left:9px;vertical-align:middle}
-.warning{background:#fff2df;color:#925313;padding:12px;border-radius:10px}
+.warning{background:#fff2d8;color:#925313;padding:12px;border-radius:10px}
 .bar-row{display:grid;grid-template-columns:100px 1fr 65px;gap:8px;align-items:center;margin:10px 0;font-size:12px}
 .bar-bg{background:#edf0f8;border-radius:20px;height:13px;overflow:hidden}
 .bar-fill{height:100%;background:linear-gradient(90deg,var(--accent2),var(--main2));border-radius:20px}
 .inline-actions{display:flex;gap:6px;flex-wrap:wrap}
-.inline-actions button{width:auto;min-width:100px}
+.inline-actions button{width:auto;min-width:90px}
 .status-active{color:#168b70;font-weight:bold}
 .status-fired{color:#c43d52;font-weight:bold}
 .location-card{border:1px solid var(--line);border-radius:14px;padding:15px;margin:10px 0;background:#fafbff}
@@ -67,27 +69,22 @@ th{background:#eef1fa;color:var(--main)}
 .consent input{width:auto;margin:5px 0}
 .page-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .page-head button{width:auto}
-@media(max-width:600px){
- header h1{font-size:20px}.card{padding:15px}.modalbox{padding:15px}
- .bar-row{grid-template-columns:75px 1fr 55px}
-}
-@media print{body{background:white}.no-print{display:none!important}}
-
+@media(max-width:600px){header h1{font-size:19px}.card{padding:15px}.modalbox{padding:15px}.bar-row{grid-template-columns:75px 1fr 55px}}
+@media print{.no-print{display:none!important}}
 </style>
-<link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#26345d">
-<link rel="apple-touch-icon" href="./icon-192.png">
 </head>
+
 <body>
 <header>
-<h1>FOOD DISTRIBUTION PRO</h1>
-<p>سیستم هوشمند مدیریت فروش و پخش مواد غذایی</p>
+<h1>FOOD DISTRIBUTION PRO ADRIAN NOVIN</h1>
+<p>سیستم هوشمند مدیریت فروش و پخش مواد غذایی آدرین نوین</p>
 </header>
 
 <main>
+
 <section id="setup" class="card hidden">
 <h2>اتصال به Supabase</h2>
-<p>تنظیم اتصال در کد برنامه انجام شده است.</p>
+<p>تنظیم اتصال برنامه انجام شده است.</p>
 <button onclick="startConnection()">تلاش دوباره برای اتصال</button>
 </section>
 
@@ -97,6 +94,7 @@ th{background:#eef1fa;color:var(--main)}
 <input id="password" type="password" placeholder="رمز عبور">
 <button onclick="login()">ورود به سیستم</button>
 <button class="secondary" onclick="toggleRegister()">ثبت‌نام ویزیتور</button>
+
 <div id="registerBox" class="hidden">
 <h3>ثبت‌نام ویزیتور</h3>
 <input id="fullName" placeholder="نام و نام خانوادگی">
@@ -119,17 +117,22 @@ th{background:#eef1fa;color:var(--main)}
 
 <div class="grid">
 <div class="stat">تعداد محصولات<strong id="productCount">۰</strong></div>
-<div class="stat">تعداد ردیف‌های فروش<strong id="salesCount">۰</strong></div>
+<div class="stat">ردیف‌های فروش<strong id="salesCount">۰</strong></div>
 <div class="stat">فروش خالص<strong id="salesTotal">۰</strong></div>
 <div class="stat">کالاهای کم‌موجود<strong id="lowStockCount">۰</strong></div>
-<div class="stat manager-only">ارزش موجودی به قیمت خرید<strong id="stockValue">۰</strong></div>
-<div class="stat manager-only">سود ناخالص برآوردی<strong id="profitTotal">۰</strong></div>
+<div class="stat manager-only">ارزش موجودی خرید<strong id="stockValue">۰</strong></div>
+<div class="stat manager-only">سود ناخالص قابل محاسبه<strong id="profitTotal">۰</strong></div>
+<div class="stat manager-only">فروش با سود نامشخص<strong id="unknownProfitCount">۰</strong></div>
 </div>
 
 <section id="managerPanel" class="hidden">
+  <div class="card">
+    <h3 class="section-title">ثبت فاکتور فروش</h3>
+    <button onclick="openInvoiceModal()">ثبت فاکتور جدید</button>
+    </div>
 <div class="card">
 <h3 class="section-title">داشبورد گزارشات</h3>
-<p class="small">گزارش فروش بر اساس حداکثر ۱۰۰۰ ردیف فروش اخیر محاسبه می‌شود.</p>
+<p class="small">گزارش فروش بر اساس حداکثر ۱۰۰۰ ردیف فروش اخیر است.</p>
 <div id="salesChart"></div>
 <h3>عملکرد ویزیتورها</h3>
 <div id="visitorPerformance" class="tablewrap"></div>
@@ -137,12 +140,12 @@ th{background:#eef1fa;color:var(--main)}
 
 <div class="card">
 <h3 class="section-title">موقعیت ویزیتورها</h3>
-<p class="small">مدیر می‌تواند در هر زمان آخرین موقعیت ثبت‌شده را مشاهده کند. موقعیت زنده فقط هنگام فعال بودن ردیابی توسط ویزیتور به‌روزرسانی می‌شود.</p>
+<p class="small">مشاهده موقعیت فقط برای مدیر فعال است. ویزیتور باید ردیابی را با رضایت خودش روشن کند.</p>
 <button onclick="openLocationPage()">باز کردن صفحه موقعیت ویزیتورها</button>
 </div>
 
 <div class="card">
-<h3 class="section-title">آرشیو گزارش‌های دوره‌ای ویزیتورها</h3>
+<h3 class="section-title">آرشیو گزارش‌های دوره‌ای</h3>
 <button class="secondary" onclick="loadArchivedReports()">بارگذاری آرشیو</button>
 <div id="archivedReports" class="tablewrap"></div>
 </div>
@@ -154,30 +157,29 @@ th{background:#eef1fa;color:var(--main)}
 
 <div class="card">
 <h3 class="section-title">مدیریت ویزیتورها</h3>
-<p class="small">اخراج فقط توسط مدیر انجام می‌شود. سوابق ویزیتور اخراج‌شده حذف نمی‌شود.</p>
-<button class="secondary" onclick="loadVisitors()">به‌روزرسانی ویزیتورها</button>
+<button class="secondary" onclick="loadVisitors()">به‌روزرسانی</button>
 <h3>ویزیتورهای فعال</h3>
 <div id="activeVisitorsList"></div>
-<h3>ویزیتورهای اخراج‌شده</h3>
+<h3>ویزیتورهای غیرفعال</h3>
 <div id="dismissedVisitorsList"></div>
 </div>
 
 <div class="card">
 <h3 class="section-title">مدیریت دسته‌بندی‌ها</h3>
-<button onclick="openCategoryModal()">افزودن دسته‌بندی جدید</button>
+<button onclick="openCategoryModal()">افزودن دسته‌بندی</button>
 <div id="categoryList" class="small"></div>
 </div>
 
 <div class="card">
 <h3 class="section-title">مدیریت محصولات</h3>
-<button onclick="openProductModal()">افزودن محصول جدید</button>
-<input id="productSearch" placeholder="جست‌وجو با نام، دسته‌بندی یا بارکد..." oninput="renderProducts()">
+<button onclick="openProductModal()">افزودن محصول</button>
+<input id="productSearch" placeholder="جست‌وجوی محصول..." oninput="renderProducts()">
 <div id="products" class="grid"></div>
 </div>
 
 <div class="card">
 <h3 class="section-title">مدیریت مشتریان</h3>
-<button onclick="openCustomerModal()">ثبت مشتری جدید</button>
+<button onclick="openCustomerModal()">ثبت مشتری</button>
 <button class="secondary" onclick="loadCustomers()">به‌روزرسانی مشتریان</button>
 <div id="customerList" class="tablewrap"></div>
 </div>
@@ -189,39 +191,39 @@ th{background:#eef1fa;color:var(--main)}
 </div>
 
 <div class="card">
-<h3 class="section-title">گزارش فروش</h3>
-<button class="secondary" onclick="loadSales()">به‌روزرسانی گزارش فروش</button>
+<h3 class="section-title">گزارش فروش و سود</h3>
+<button class="secondary" onclick="loadSales()">به‌روزرسانی گزارش</button>
 <div id="managerSales" class="tablewrap"></div>
-<button class="secondary" onclick="copySalesForHoloo()">کپی خروجی متنی برای انتقال به هلو</button>
+<button class="secondary" onclick="copySalesForHoloo()">کپی خروجی متنی برای هلو</button>
 </div>
 
 <div class="card">
 <h3 class="section-title">خرید و ورود کالا</h3>
-<button onclick="openPurchaseModal()">ثبت فاکتور خرید جدید</button>
+<button onclick="openPurchaseModal()">ثبت فاکتور خرید</button>
 <button class="secondary" onclick="loadPurchases()">به‌روزرسانی گزارش خرید</button>
 <div id="purchaseReport" class="tablewrap"></div>
 </div>
+
 </section>
 
-<!-- صفحه مستقل موقعیت -->
 <section id="locationPage" class="hidden">
 <div class="card">
 <div class="page-head">
 <h2>مرکز موقعیت ویزیتورها</h2>
-<button class="secondary" onclick="closeLocationPage()">بازگشت به داشبورد</button>
+<button class="secondary" onclick="closeLocationPage()">بازگشت</button>
 </div>
-<p class="small">موقعیت‌های ذخیره‌شده نمایش داده می‌شوند. وضعیت زنده به معنی فعال بودن ردیابی توسط ویزیتور است.</p>
-<button onclick="loadVisitorLocations()">به‌روزرسانی موقعیت‌ها</button>
+<p class="small">موقعیت ذخیره‌شده و وضعیت ردیابی نمایش داده می‌شود.</p>
+<button onclick="loadVisitorLocations()">به‌روزرسانی</button>
 <div id="locationUpdated" class="small"></div>
 <div id="managerLocations"></div>
 </div>
 </section>
 
-<!-- بخش ویزیتور -->
-<section id="visitorPanel">
+<section id="visitorPanel" class="hidden">
+
 <div class="card">
 <h3 class="section-title">موقعیت‌یابی من</h3>
-<p class="small">برای ارسال موقعیت زنده، ابتدا اجازه مکان‌یابی مرورگر را تأیید کن. ردیابی تا زمانی که فعال باشد و صفحه باز و اینترنت وصل باشد ادامه پیدا می‌کند.</p>
+<p class="small">ارسال موقعیت فقط با اجازه مرورگر و فعال‌سازی توسط خود ویزیتور انجام می‌شود.</p>
 <div id="trackingStatus" class="message">ردیابی هنوز فعال نشده است.</div>
 <button id="startTrackingButton" class="success-btn" onclick="startTracking()">شروع ردیابی زنده</button>
 <button id="stopTrackingButton" class="danger" onclick="stopTracking()" disabled>توقف ردیابی</button>
@@ -229,26 +231,25 @@ th{background:#eef1fa;color:var(--main)}
 
 <div class="card">
 <h3 class="section-title">فهرست محصولات</h3>
-<input id="visitorProductSearch" placeholder="نام یا بارکد محصول را وارد کن..." oninput="renderProducts()">
+<input id="visitorProductSearch" placeholder="جست‌وجوی محصول..." oninput="renderProducts()">
 <div id="visitorProducts" class="grid"></div>
 </div>
 
 <div class="card">
 <h3 class="section-title">فاکتور فروش</h3>
-<button onclick="openInvoiceModal()">ثبت فاکتور فروش جدید</button>
+<button onclick="openInvoiceModal()">ثبت فاکتور جدید</button>
 </div>
 
 <div class="card">
 <h3 class="section-title">گزارش عملکرد من</h3>
 <div class="grid">
 <div class="stat">فروش امروز<strong id="visitorDailySales">۰</strong></div>
-<div class="stat">تعداد فاکتور امروز<strong id="visitorDailyCount">۰</strong></div>
-<div class="stat">فروش این ماه<strong id="visitorMonthlySales">۰</strong></div>
-<div class="stat">تعداد فاکتور ماه<strong id="visitorMonthlyCount">۰</strong></div>
-<div class="stat">فروش امسال<strong id="visitorYearlySales">۰</strong></div>
-<div class="stat">تعداد فاکتور سال<strong id="visitorYearlyCount">۰</strong></div>
+<div class="stat">فاکتور امروز<strong id="visitorDailyCount">۰</strong></div>
+<div class="stat">فروش ماه<strong id="visitorMonthlySales">۰</strong></div>
+<div class="stat">فاکتور ماه<strong id="visitorMonthlyCount">۰</strong></div>
+<div class="stat">فروش سال<strong id="visitorYearlySales">۰</strong></div>
+<div class="stat">فاکتور سال<strong id="visitorYearlyCount">۰</strong></div>
 </div>
-<p class="small">مبالغ فروش این بخش بر اساس فاکتورهای ثبت‌شده و مرجوعی‌های ثبت‌شده در همان بازه محاسبه می‌شود.</p>
 </div>
 
 <div class="card">
@@ -261,57 +262,48 @@ th{background:#eef1fa;color:var(--main)}
 <button class="secondary" onclick="loadInvoices()">نمایش فاکتورها</button>
 <div id="myInvoices" class="tablewrap"></div>
 </div>
+
 </section>
 </section>
 </main>
 
-<!-- پنجره دسته‌بندی -->
+<!-- دسته‌بندی -->
 <div id="categoryModal" class="modal hidden">
 <div class="modalbox" style="max-width:460px">
 <div class="modalhead"><h2>افزودن دسته‌بندی</h2><button class="close" onclick="closeCategoryModal()">بستن</button></div>
-<input id="newCategory" placeholder="نام دسته‌بندی جدید">
+<input id="newCategory" placeholder="نام دسته‌بندی">
 <button onclick="addCategory()">ثبت دسته‌بندی</button>
 </div>
 </div>
 
-<!-- پنجره محصول -->
+<!-- محصول -->
 <div id="productModal" class="modal hidden">
 <div class="modalbox">
 <div class="modalhead"><h2>افزودن محصول</h2><button class="close" onclick="closeProductModal()">بستن</button></div>
 <div class="grid">
 <input id="productName" placeholder="نام محصول">
 <select id="categorySelect"><option value="">بدون دسته‌بندی</option></select>
-<input id="unit" placeholder="واحد (عدد، کیلو، کارتن)">
+<input id="unit" placeholder="واحد">
 <input id="buyPrice" type="number" min="0" placeholder="قیمت خرید">
 <input id="sellPrice" type="number" min="0" placeholder="قیمت فروش">
+<input id="consumerPrice" type="number" min="0" placeholder="قیمت مصرف‌کننده">
 <input id="stock" type="number" min="0" placeholder="موجودی اولیه">
-<input id="barcode" placeholder="بارکد محصول">
+<input id="barcode" placeholder="بارکد">
 <input id="minStock" type="number" min="0" placeholder="حداقل موجودی">
 </div>
-<textarea id="description" placeholder="توضیحات محصول"></textarea>
+<textarea id="description" placeholder="توضیحات"></textarea>
 <label>عکس محصول</label>
 <input id="productImage" type="file" accept="image/jpeg,image/png,image/webp">
 <button id="addProductButton" onclick="addProduct()">ثبت محصول</button>
 </div>
 </div>
 
-<div id="deleteProductModal" class="modal hidden">
-<div class="modalbox" style="max-width:440px;text-align:center">
-<h2>خارج کردن محصول از فهرست</h2>
-<div class="warning">محصول از فهرست خارج می‌شود، اما سوابق فروش قبلی آن حفظ خواهد شد.</div>
-<p id="deleteProductInfo"></p>
-<button id="confirmDeleteProductButton" class="danger" onclick="confirmDeleteProduct()">تأیید و آرشیو محصول</button>
-<button class="secondary" onclick="closeDeleteProductModal()">انصراف</button>
-<p id="deleteProductMessage" class="small"></p>
-</div>
-</div>
-
 <div id="customerModal" class="modal hidden">
 <div class="modalbox">
 <div class="modalhead"><h2>ثبت مشتری</h2><button class="close" onclick="closeCustomerModal()">بستن</button></div>
-<input id="customerName" placeholder="نام مشتری یا فروشگاه">
+<input id="customerName" placeholder="نام مشتری">
 <input id="customerPhone" placeholder="شماره تماس">
-<textarea id="customerAddress" placeholder="آدرس مشتری"></textarea>
+<textarea id="customerAddress" placeholder="آدرس"></textarea>
 <label>ویزیتور مسئول</label>
 <select id="customerVisitor"></select>
 <button id="saveCustomerButton" onclick="saveCustomer()">ثبت مشتری</button>
@@ -324,7 +316,7 @@ th{background:#eef1fa;color:var(--main)}
 <div class="modalhead"><h2>ثبت دریافت وجه</h2><button class="close" onclick="closePaymentModal()">بستن</button></div>
 <p id="paymentCustomerName"></p>
 <input id="paymentAmount" type="number" min="1" placeholder="مبلغ دریافتی">
-<textarea id="paymentNote" placeholder="توضیحات پرداخت"></textarea>
+<textarea id="paymentNote" placeholder="توضیحات"></textarea>
 <button id="savePaymentButton" onclick="savePayment()">ثبت پرداخت</button>
 <p id="paymentMessage" class="small"></p>
 </div>
@@ -332,22 +324,22 @@ th{background:#eef1fa;color:var(--main)}
 
 <div id="purchaseModal" class="modal hidden">
 <div class="modalbox">
-<div class="modalhead"><h2>ثبت فاکتور خرید</h2><button class="close" onclick="closePurchaseModal()">بستن</button></div>
+<div class="modalhead"><h2>ثبت خرید</h2><button class="close" onclick="closePurchaseModal()">بستن</button></div>
 <select id="purchaseProduct"></select>
 <div class="grid">
-<input id="purchaseQuantity" type="number" min="1" placeholder="تعداد خرید">
+<input id="purchaseQuantity" type="number" min="1" placeholder="تعداد">
 <input id="purchaseUnitPrice" type="number" min="0" placeholder="قیمت خرید هر واحد">
 </div>
 <p id="purchaseTotal" class="price"></p>
-<button id="recordPurchaseButton" onclick="recordPurchase()">ثبت فاکتور خرید</button>
+<button id="recordPurchaseButton" onclick="recordPurchase()">ثبت خرید</button>
 <div id="purchaseMessage" class="message hidden"></div>
 </div>
 </div>
 
 <div id="invoiceModal" class="modal hidden">
 <div class="modalbox">
-<div class="modalhead"><h2>ثبت فاکتور فروش</h2><button class="close" onclick="closeInvoiceModal()">بستن</button></div>
-<input id="saleProductSearch" placeholder="جست‌وجو با نام یا بارکد..." oninput="renderSaleProductOptions()">
+<div class="modalhead"><h2 id="invoiceModalTitle">ثبت فاکتور فروش</h2><button class="close" onclick="closeInvoiceModal()">بستن</button></div>
+<input id="saleProductSearch" placeholder="جست‌وجوی محصول..." oninput="renderSaleProductOptions()">
 <select id="saleProduct"></select>
 <div class="grid">
 <input id="quantity" type="number" min="1" placeholder="تعداد">
@@ -357,12 +349,8 @@ th{background:#eef1fa;color:var(--main)}
 <p id="invoiceTotal" class="price"></p>
 <label>مشتری</label>
 <select id="saleCustomer"></select>
-<input id="salePaid" type="number" min="0" placeholder="مبلغ دریافتی (در صورت نسیه، صفر)">
-<textarea id="saleNote" placeholder="توضیحات فاکتور"></textarea>
-<div class="consent">
-<input type="checkbox" id="invoiceLocationConsent">
-<label for="invoiceLocationConsent">موافقم موقعیت مکانی دستگاه و زمان ثبت آن همراه این فاکتور ذخیره شود. این اطلاعات برای مدیر قابل مشاهده است.</label>
-</div>
+<input id="salePaid" type="number" min="0" placeholder="مبلغ دریافتی">
+<textarea id="saleNote" placeholder="توضیحات"></textarea>
 <button id="recordSaleButton" onclick="recordSale()">ثبت فاکتور</button>
 <p id="saleMessage" class="small"></p>
 </div>
@@ -373,7 +361,7 @@ th{background:#eef1fa;color:var(--main)}
 <div class="modalhead"><h2>مرجوعی جزئی فاکتور</h2><button class="close" onclick="closeReturnModal()">بستن</button></div>
 <p id="returnInvoiceInfo"></p>
 <div id="returnLines" class="tablewrap"></div>
-<textarea id="returnReason" placeholder="علت مرجوعی (اختیاری)"></textarea>
+<textarea id="returnReason" placeholder="علت مرجوعی"></textarea>
 <button id="processReturnButton" onclick="processReturn()">ثبت مرجوعی و بستانکاری</button>
 <p id="returnMessage" class="small"></p>
 </div>
@@ -386,230 +374,158 @@ const SUPABASE_PUBLIC_KEY="sb_publishable_CXpWL4cenr9GnHsZqTK9Rw_zExkK1y8";
 let db=null,currentUser=null,profile=null;
 let productList=[],invoiceItems=[],customers=[],visitors=[],recentSales=[],invoiceRows=[],returnLines=[];
 let selectedReturnInvoice=null,selectedProductId=null,selectedPaymentCustomer=null;
-let productRenderToken=0,locationWatchId=null,locationRefreshTimer=null;
-let lastPosition=null,trackingBusy=false;
+let editingInvoiceId=null,productRenderToken=0,locationWatchId=null,locationRefreshTimer=null,trackingBusy=false;
 
 const $=id=>document.getElementById(id);
 const money=n=>Number(n||0).toLocaleString("fa-IR");
 const fmtDate=d=>d?new Date(d).toLocaleString("fa-IR"):"-";
+const safeNumber=v=>Number.isFinite(Number(v))?Number(v):0;
+const escapeHtml=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const usernameEmail=u=>u.trim().toLowerCase()+"@login.food-distribution.invalid";
 
 function message(id,text,type=""){
  const el=$(id);if(!el)return;
  el.textContent=text;el.className="message "+type;el.classList.remove("hidden");
 }
 function notice(text,type="success"){message("notice",text,type)}
-function escapeHtml(v){
- return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))
-}
-function safeNumber(v){return Number.isFinite(Number(v))?Number(v):0}
-function usernameEmail(u){return u.trim().toLowerCase()+"@login.food-distribution.invalid"}
+function setBusy(id,value){if($(id))$(id).disabled=value}
 
 function startConnection(){
  try{
+  if(!window.supabase?.createClient)throw Error("کتابخانه Supabase بارگذاری نشده است.");
   db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLIC_KEY);
   $("setup").classList.add("hidden");
   $("loginBox").classList.remove("hidden");
   restoreSession();
  }catch(e){
   $("setup").classList.remove("hidden");
-  alert("اتصال برقرار نشد: "+e.message);
+  alert("خطای اتصال: "+e.message);
  }
 }
 function toggleRegister(){$("registerBox").classList.toggle("hidden")}
 
 async function login(){
- if(!db)return;
  const u=$("username").value.trim(),p=$("password").value;
  if(!u||!p)return message("authMessage","نام کاربری و رمز را وارد کن.","error");
- const {data,error}=await db.auth.signInWithPassword({
-  email:u.includes("@")?u:usernameEmail(u),password:p
- });
+ const {data,error}=await db.auth.signInWithPassword({email:u.includes("@")?u:usernameEmail(u),password:p});
  if(error)return message("authMessage","ورود ناموفق: "+error.message,"error");
  await loadApp(data.user);
 }
 
 async function registerVisitor(){
- const b=$("registerButton");
- const fullName=$("fullName").value.trim();
- const phone=$("phone").value.trim();
- const nick=$("nickname").value.trim();
- const pass=$("newPassword").value;
- const repeat=$("repeatPassword").value;
-
- if(!fullName||!phone||!nick||!pass||!repeat)
-  return message("authMessage","همه قسمت‌ها را کامل کن.","error");
- if(!/^[a-zA-Z0-9_.-]{3,30}$/.test(nick))
-  return message("authMessage","نام کاربری باید ۳ تا ۳۰ نویسه مجاز باشد.","error");
- if(pass.length<8||pass!==repeat)
-  return message("authMessage","رمز باید حداقل ۸ نویسه باشد و تکرار آن یکسان باشد.","error");
-
- b.disabled=true;
+ const fullName=$("fullName").value.trim(),phone=$("phone").value.trim();
+ const nick=$("nickname").value.trim(),pass=$("newPassword").value,repeat=$("repeatPassword").value;
+ if(!fullName||!phone||!nick||!pass||!repeat)return message("authMessage","همه قسمت‌ها را کامل کن.","error");
+ if(!/^[a-zA-Z0-9_.-]{3,30}$/.test(nick))return message("authMessage","نام کاربری باید ۳ تا ۳۰ نویسه مجاز داشته باشد.","error");
+ if(pass.length<8||pass!==repeat)return message("authMessage","رمز حداقل ۸ نویسه و تکرار آن باید یکسان باشد.","error");
+ setBusy("registerButton",true);
  try{
   const {data,error}=await db.auth.signUp({
    email:usernameEmail(nick),password:pass,
    options:{data:{full_name:fullName,phone,nickname:nick}}
   });
   if(error)throw error;
-  if(!data.session){
-   message("authMessage","حساب ساخته شد؛ ورود خودکار انجام نشد. تنظیمات تأیید ایمیل Supabase را بررسی کن.","error");
-   return;
-  }
+  if(!data.session)return message("authMessage","حساب ساخته شد؛ تأیید ایمیل یا تنظیمات ثبت‌نام Supabase را بررسی کن.");
   await loadApp(data.user);
- }catch(e){
-  message("authMessage","ثبت‌نام ناموفق: "+e.message,"error");
- }finally{b.disabled=false}
+ }catch(e){message("authMessage","ثبت‌نام ناموفق: "+e.message,"error")}
+ finally{setBusy("registerButton",false)}
 }
 
 async function loadApp(user){
  currentUser=user;
- const {data,error}=await db.from("profiles")
-  .select("role,active,full_name,nickname,phone")
-  .eq("id",user.id).single();
-
+ const {data,error}=await db.from("profiles").select("role,active,full_name,nickname,phone").eq("id",user.id).single();
  if(error||!data){
   await db.auth.signOut();currentUser=null;
   return message("authMessage","پروفایل دریافت نشد: "+(error?.message||""),"error");
  }
-
  profile=data;
  if(data.active!==true||!["manager","visitor"].includes(data.role)){
   await db.auth.signOut();currentUser=null;profile=null;
-  return message("authMessage","حساب فعال نیست. برای پیگیری با مدیر تماس بگیر.","error");
+  return message("authMessage","حساب فعال نیست. با مدیر تماس بگیر.","error");
  }
-
  $("loginBox").classList.add("hidden");
  $("dashboard").classList.remove("hidden");
  $("welcome").textContent="سلام "+(data.full_name||data.nickname||"");
  $("roleText").textContent=data.role==="manager"?"مدیر سیستم":"ویزیتور";
-
  $("managerPanel").classList.toggle("hidden",data.role!=="manager");
  $("visitorPanel").classList.toggle("hidden",data.role!=="visitor");
  document.querySelectorAll(".manager-only").forEach(x=>x.classList.toggle("hidden",data.role!=="manager"));
-
- await loadCategories();
- await loadVisitors();
- await loadCustomers();
- await loadProducts();
- await loadSales();
- await loadInvoices();
-
- if(profile.role==="manager"){
-  await loadPurchases();
-  await loadArchivedReports();
-  await loadVisitorLocations();
- }else{
-  setTrackingUI(false);
- }
+ await Promise.all([loadCategories(),loadVisitors(),loadCustomers(),loadProducts(),loadSales(),loadInvoices()]);
+ if(data.role==="manager")await Promise.all([loadPurchases(),loadArchivedReports(),loadVisitorLocations()]);
+ else setTrackingUI(false);
 }
 
+async function restoreSession(){
+ const {data,error}=await db.auth.getSession();
+ if(!error&&data.session)await loadApp(data.session.user);
+}
+
+/* ویزیتورها */
 function renderVisitorSelect(){
  const s=$("customerVisitor");if(!s)return;
  s.innerHTML='<option value="">بدون ویزیتور</option>';
  visitors.filter(v=>v.active).forEach(v=>{
-  const o=document.createElement("option");
-  o.value=v.id;o.textContent=v.full_name||v.nickname;
-  s.appendChild(o);
+  const o=document.createElement("option");o.value=v.id;o.textContent=v.full_name||v.nickname;s.appendChild(o);
  });
 }
 
-/* مدیریت و اخراج ویزیتورها */
 async function loadVisitors(){
- const {data,error}=await db.from("profiles")
-  .select("id,full_name,nickname,active")
-  .eq("role","visitor").order("full_name");
-
- if(error){
-  if(profile?.role==="manager")$("activeVisitorsList").textContent=error.message;
-  return;
- }
-
+ const {data,error}=await db.from("profiles").select("id,full_name,nickname,active").eq("role","visitor").order("full_name");
+ if(error){if(profile?.role==="manager")$("activeVisitorsList").textContent=error.message;return}
  visitors=data||[];
  if(profile?.role!=="manager")return;
-
- const activeBox=$("activeVisitorsList");
- const dismissedBox=$("dismissedVisitorsList");
- activeBox.innerHTML="";
- dismissedBox.innerHTML="";
-
- const active=visitors.filter(v=>v.active===true);
- const dismissed=visitors.filter(v=>v.active===false);
-
- if(!active.length)activeBox.textContent="ویزیتور فعالی وجود ندارد.";
- if(!dismissed.length)dismissedBox.textContent="هنوز ویزیتوری اخراج نشده است.";
-
+ $("activeVisitorsList").innerHTML="";$("dismissedVisitorsList").innerHTML="";
+ const active=visitors.filter(v=>v.active),inactive=visitors.filter(v=>!v.active);
+ if(!active.length)$("activeVisitorsList").textContent="ویزیتور فعالی وجود ندارد.";
+ if(!inactive.length)$("dismissedVisitorsList").textContent="موردی وجود ندارد.";
  active.forEach(v=>{
   const d=document.createElement("div");d.className="product";
-  const p=document.createElement("p");
-  p.textContent=(v.full_name||v.nickname)+" | وضعیت: فعال";
-  const b=document.createElement("button");
-  b.className="danger";b.textContent="اخراج ویزیتور";
-  b.onclick=()=>dismissVisitor(v.id,v.full_name||v.nickname);
-  d.append(p,b);activeBox.appendChild(d);
+  const p=document.createElement("p");p.textContent=(v.full_name||v.nickname)+" | فعال";
+  const b=document.createElement("button");b.className="danger";b.textContent="غیرفعال‌سازی";
+  b.onclick=()=>dismissVisitor(v.id,v.full_name||v.nickname);d.append(p,b);$("activeVisitorsList").append(d);
  });
-
- dismissed.forEach(v=>{
+ inactive.forEach(v=>{
   const d=document.createElement("div");d.className="product";
-  const p=document.createElement("p");
-  p.innerHTML=escapeHtml(v.full_name||v.nickname)+" | <span class='status-fired'>اخراج‌شده</span>";
-  const info=document.createElement("p");
-  info.className="small";
-  info.textContent="حساب غیرفعال است؛ سوابق قبلی حفظ شده‌اند.";
-  d.append(p,info);dismissedBox.appendChild(d);
+  d.textContent=(v.full_name||v.nickname)+" | غیرفعال؛ سوابق حفظ شده‌اند.";
+  $("dismissedVisitorsList").append(d);
  });
-
  renderVisitorSelect();
 }
 
 async function dismissVisitor(id,name){
- if(profile?.role!=="manager")return;
- if(!confirm("آیا مطمئنی می‌خواهی "+name+" را اخراج کنی؟\nحساب او غیرفعال می‌شود و سوابقش حذف نخواهند شد."))return;
-
+ if(profile?.role!=="manager"||!confirm("حساب "+name+" غیرفعال شود؟ سوابق حذف نمی‌شود."))return;
  try{
   const {data,error}=await db.rpc("dismiss_visitor",{p_visitor_id:id});
   if(error)throw error;
-  notice(data||"ویزیتور غیرفعال شد و سوابق او حفظ شدند.");
-  await loadVisitors();
-  await loadVisitorLocations();
-  await loadSales();
- }catch(e){
-  notice("اخراج ویزیتور ناموفق: "+e.message,"error");
- }
+  notice(data||"ویزیتور غیرفعال شد.");
+  await Promise.all([loadVisitors(),loadVisitorLocations(),loadSales()]);
+ }catch(e){notice(e.message,"error")}
 }
 
 /* دسته‌بندی */
-function openCategoryModal(){
- if(profile?.role==="manager")$("categoryModal").classList.remove("hidden");
-}
+function openCategoryModal(){if(profile?.role==="manager")$("categoryModal").classList.remove("hidden")}
 function closeCategoryModal(){$("categoryModal").classList.add("hidden")}
-
 async function loadCategories(){
  const {data,error}=await db.from("categories").select("id,name").order("name");
  if(error){$("categoryList").textContent=error.message;return}
  $("categorySelect").innerHTML='<option value="">بدون دسته‌بندی</option>';
  $("categoryList").innerHTML="";
  (data||[]).forEach(c=>{
-  const o=document.createElement("option");
-  o.value=c.name;o.textContent=c.name;
-  $("categorySelect").appendChild(o);
-  const span=document.createElement("span");
-  span.textContent=c.name+" | ";
-  $("categoryList").appendChild(span);
+  const o=document.createElement("option");o.value=c.name;o.textContent=c.name;$("categorySelect").append(o);
+  const span=document.createElement("span");span.textContent=c.name+" | ";$("categoryList").append(span);
  });
 }
-
 async function addCategory(){
- if(profile?.role!=="manager")return;
- const name=$("newCategory").value.trim();
- if(!name)return;
+ const name=$("newCategory").value.trim();if(profile?.role!=="manager"||!name)return;
  const {error}=await db.from("categories").insert({name});
  if(error)return notice(error.message,"error");
- $("newCategory").value="";
- closeCategoryModal();
- await loadCategories();
- notice("دسته‌بندی ثبت شد.");
+ $("newCategory").value="";closeCategoryModal();await loadCategories();notice("دسته‌بندی ثبت شد.");
 }
 
 /* محصولات */
+function openProductModal(){if(profile?.role==="manager")$("productModal").classList.remove("hidden")}
+function closeProductModal(){$("productModal").classList.add("hidden")}
+
 async function uploadProductImage(file){
  if(!file)return null;
  if(!["image/jpeg","image/png","image/webp"].includes(file.type))throw Error("فرمت عکس نامعتبر است.");
@@ -617,54 +533,73 @@ async function uploadProductImage(file){
  const ext=file.type==="image/png"?"png":file.type==="image/webp"?"webp":"jpg";
  const path=currentUser.id+"/"+Date.now()+"-"+Math.random().toString(36).slice(2)+"."+ext;
  const {error}=await db.storage.from("product-images").upload(path,file,{contentType:file.type});
- if(error)throw error;
- return path;
+ if(error)throw error;return path;
 }
 async function getProductImage(path){
  if(!path)return null;
  const {data,error}=await db.storage.from("product-images").createSignedUrl(path,3600);
  return error?null:data?.signedUrl||null;
 }
-function openProductModal(){
- if(profile?.role==="manager")$("productModal").classList.remove("hidden");
-}
-function closeProductModal(){$("productModal").classList.add("hidden")}
+
 
 async function addProduct(){
  if(profile?.role!=="manager")return;
- const b=$("addProductButton");if(b.disabled)return;
+
  const name=$("productName").value.trim();
- const buy=Number($("buyPrice").value),sell=Number($("sellPrice").value);
- const stock=Number($("stock").value),min=Number($("minStock").value||0);
+ const buy=Number($("buyPrice").value);
+ const sell=Number($("sellPrice").value);
+ const consumer=Number($("consumerPrice").value);
+ const stock=Number($("stock").value);
+ const min=Number($("minStock").value||0);
 
- if(!name||$("buyPrice").value===""||$("sellPrice").value===""||$("stock").value==="")
+ if(!name||$("buyPrice").value===""||$("sellPrice").value===""||$("consumerPrice").value===""||$("stock").value==="")
   return notice("اطلاعات محصول را کامل کن.","error");
- if(![buy,sell,stock,min].every(Number.isFinite)||buy<0||sell<0||stock<0||min<0)
-  return notice("مقادیر واردشده معتبر نیستند.","error");
 
- b.disabled=true;let uploadedPath=null;
+ if(![buy,sell,consumer,stock,min].every(Number.isFinite)||[buy,sell,consumer,stock,min].some(x=>x<0))
+  return notice("مقادیر معتبر نیستند.","error");
+
+ setBusy("addProductButton",true);
+ let path=null;
+
  try{
-  uploadedPath=await uploadProductImage($("productImage").files[0]);
-  const row={
-   name,code:null,category:$("categorySelect").value||null,
-   unit:$("unit").value.trim()||"عدد",buy_price:buy,sell_price:sell,
-   stock,min_stock:min,barcode:$("barcode").value.trim()||null,
-   description:$("description").value.trim(),image_url:uploadedPath,is_archived:false
-  };
-  const {error}=await db.from("products").insert(row);
+  path=await uploadProductImage($("productImage").files[0]);
+
+  const {error}=await db.from("products").insert({
+   name,
+   code:null,
+   category:$("categorySelect").value||null,
+   unit:$("unit").value.trim()||"عدد",
+   buy_price:buy,
+   sell_price:sell,
+   consumer_price:consumer,
+   stock,
+   min_stock:min,
+   barcode:$("barcode").value.trim()||null,
+   description:$("description").value.trim(),
+   image_url:path,
+   is_archived:false
+  });
+
   if(error)throw error;
-  ["productName","unit","buyPrice","sellPrice","stock","minStock","barcode","description"].forEach(id=>$(id).value="");
+
+  closeProductModal();
+  await loadProducts();
+  notice("محصول ثبت شد.");
+
+  ["productName","unit","buyPrice","sellPrice","consumerPrice","stock","minStock","barcode","description"].forEach(id=>$(id).value="");
   $("productImage").value="";
-  closeProductModal();await loadProducts();notice("محصول ثبت شد.");
+
  }catch(e){
-  if(uploadedPath)await db.storage.from("product-images").remove([uploadedPath]);
+  if(path)await db.storage.from("product-images").remove([path]);
   notice("ثبت محصول ناموفق: "+e.message,"error");
- }finally{b.disabled=false}
+ }finally{
+  setBusy("addProductButton",false);
+ }
 }
 
 async function loadProducts(){
  const {data,error}=await db.from("products").select("*").eq("is_archived",false).order("name");
- if(error)return notice("دریافت محصولات ناموفق: "+error.message,"error");
+ if(error)return notice("دریافت محصولات: "+error.message,"error");
  productList=data||[];
  $("productCount").textContent=money(productList.length);
  $("stockValue").textContent=money(productList.reduce((s,p)=>s+safeNumber(p.stock)*safeNumber(p.buy_price),0));
@@ -672,56 +607,92 @@ async function loadProducts(){
  renderProducts();renderSaleProductOptions();renderPurchaseProductOptions();renderLowStock();
 }
 
+
 async function renderProducts(){
- const token=++productRenderToken,manager=profile?.role==="manager";
- const target=manager?$("products"):$("visitorProducts");if(!target)return;
+ const token=++productRenderToken;
+ const manager=profile?.role==="manager";
+ const target=manager?$("products"):$("visitorProducts");
+ if(!target)return;
+
  const search=(manager?$("productSearch").value:$("visitorProductSearch").value).trim().toLocaleLowerCase("fa");
  target.innerHTML="";
- const filtered=productList.filter(p=>(p.name+" "+(p.category||"")+" "+(p.barcode||"")).toLocaleLowerCase("fa").includes(search));
 
- for(const p of filtered){
-  const d=document.createElement("div");d.className="product";
+ const list=productList.filter(p=>
+  (p.name+" "+(p.category||"")+" "+(p.barcode||""))
+  .toLocaleLowerCase("fa").includes(search)
+ );
+
+ for(const p of list){
+  const d=document.createElement("div");
+  d.className="product";
+
   if(p.image_url){
    const url=await getProductImage(p.image_url);
    if(token!==productRenderToken)return;
-   if(url){const img=document.createElement("img");img.src=url;img.alt=p.name;d.appendChild(img)}
+   if(url){
+    const img=document.createElement("img");
+    img.src=url;
+    img.alt=p.name;
+    d.append(img);
+   }
   }
-  const h=document.createElement("h3");h.textContent=p.name;
-  const cat=document.createElement("p");cat.textContent="دسته: "+(p.category||"بدون دسته");
-  const barcode=document.createElement("p");barcode.textContent="بارکد: "+(p.barcode||"ثبت نشده");
-  const price=document.createElement("p");price.className="price";price.textContent="قیمت فروش: "+money(p.sell_price);
-  const stock=document.createElement("p");stock.textContent="موجودی: "+money(p.stock)+" "+(p.unit||"");
-  d.append(h,cat,barcode,price,stock);
-  if(safeNumber(p.stock)<=safeNumber(p.min_stock)){
-   const w=document.createElement("p");w.className="warning";w.textContent="موجودی کم است";d.appendChild(w);
-  }
+
+  const h=document.createElement("h3");
+  h.textContent=p.name;
+
+  const cat=document.createElement("p");
+  cat.textContent="دسته: "+(p.category||"بدون دسته");
+
+  const code=document.createElement("p");
+  code.textContent="بارکد: "+(p.barcode||"-");
+
+  const sell=document.createElement("p");
+  sell.className="price";
+  sell.textContent="قیمت فروش: "+money(p.sell_price);
+
+  const consumer=document.createElement("p");
+  consumer.className="price";
+  consumer.textContent="قیمت مصرف‌کننده: "+money(p.consumer_price);
+
+  d.append(h,cat,code,sell,consumer);
+
   if(manager){
-   const b=document.createElement("button");b.className="danger";b.textContent="آرشیو محصول";
-   b.onclick=()=>openDeleteProductModal(p.id,p.name);d.appendChild(b);
+   const buy=document.createElement("p");
+   buy.className="price";
+   buy.textContent="قیمت خرید: "+money(p.buy_price);
+   d.append(buy);
   }
-  target.appendChild(d);
+
+  const stock=document.createElement("p");
+  stock.textContent="موجودی: "+money(p.stock)+" "+(p.unit||"");
+  d.append(stock);
+
+  if(safeNumber(p.stock)<=safeNumber(p.min_stock)){
+   const w=document.createElement("p");
+   w.className="warning";
+   w.textContent="موجودی کم است";
+   d.append(w);
+  }
+
+  if(manager){
+   const b=document.createElement("button");
+   b.className="danger";
+   b.textContent="آرشیو محصول";
+
+   b.onclick=async()=>{
+    if(!confirm("محصول آرشیو شود؟ سوابق قبلی حفظ می‌شود."))return;
+    const {error}=await db.from("products").update({is_archived:true}).eq("id",p.id);
+    if(error)notice(error.message,"error");
+    else{
+     await loadProducts();
+     notice("محصول آرشیو شد.");
+    }
+   };
+   d.append(b);
+  }
+
+  target.append(d);
  }
-}
-
-function openDeleteProductModal(id,name){
- if(profile?.role!=="manager")return;
- selectedProductId=id;$("deleteProductInfo").textContent="محصول: "+name;
- $("deleteProductMessage").textContent="";$("deleteProductModal").classList.remove("hidden");
-}
-function closeDeleteProductModal(){$("deleteProductModal").classList.add("hidden");selectedProductId=null}
-
-async function confirmDeleteProduct(){
- if(profile?.role!=="manager"||selectedProductId===null)return;
- const b=$("confirmDeleteProductButton");if(b.disabled)return;
- b.disabled=true;b.textContent="در حال آرشیو...";
- try{
-  const {error}=await db.from("products").update({is_archived:true}).eq("id",selectedProductId);
-  if(error)throw error;
-  closeDeleteProductModal();await loadProducts();
-  notice("محصول از فهرست خارج شد؛ سوابق فروش حفظ شد.");
- }catch(e){
-  $("deleteProductMessage").textContent="عملیات ناموفق: "+e.message;
- }finally{b.disabled=false;b.textContent="تأیید و آرشیو محصول"}
 }
 
 function renderLowStock(){
@@ -732,7 +703,7 @@ function renderLowStock(){
  low.forEach(p=>{
   const d=document.createElement("div");d.className="warning";
   d.textContent=p.name+" | موجودی: "+money(p.stock)+" | حداقل: "+money(p.min_stock);
-  $("lowStockList").appendChild(d);
+  $("lowStockList").append(d);
  });
 }
 
@@ -740,20 +711,26 @@ function renderSaleProductOptions(){
  const s=$("saleProduct");if(!s)return;
  const q=$("saleProductSearch").value.trim().toLocaleLowerCase("fa");
  s.innerHTML='<option value="">انتخاب محصول</option>';
- productList.filter(p=>(p.name+" "+(p.barcode||"")+" "+(p.category||"")).toLocaleLowerCase("fa").includes(q)).forEach(p=>{
-  const o=document.createElement("option");o.value=p.id;
-  o.textContent=p.name+" | "+money(p.stock)+" "+(p.unit||"");s.appendChild(o);
- });
+ productList.filter(p=>(p.name+" "+(p.barcode||"")+" "+(p.category||"")).toLocaleLowerCase("fa").includes(q))
+ .forEach(p=>{const o=document.createElement("option");o.value=p.id;o.textContent=p.name+" | "+money(p.stock)+" "+(p.unit||"");s.append(o)});
 }
 
-/* فاکتور و GPS */
+/* فاکتور جدید و ویرایش */
 function openInvoiceModal(){
- invoiceItems=[];renderInvoiceItems();renderSaleProductOptions();renderCustomerOptions();
- $("salePaid").value="";$("saleNote").value="";$("saleMessage").textContent="";
- $("invoiceLocationConsent").checked=false;
+ editingInvoiceId=null;
+ invoiceItems=[];
+ renderInvoiceItems();
+ renderSaleProductOptions();
+ renderCustomerOptions();
+
+ $("invoiceModalTitle").textContent="ثبت فاکتور فروش";
+ $("salePaid").value="";
+ $("saleNote").value="";
+ $("saleMessage").textContent="";
+ $("recordSaleButton").textContent="ثبت فاکتور";
  $("invoiceModal").classList.remove("hidden");
 }
-function closeInvoiceModal(){$("invoiceModal").classList.add("hidden")}
+function closeInvoiceModal(){$("invoiceModal").classList.add("hidden");editingInvoiceId=null}
 
 function addInvoiceItem(){
  const id=$("saleProduct").value,qty=Number($("quantity").value);
@@ -761,7 +738,7 @@ function addInvoiceItem(){
  if(!p||!Number.isInteger(qty)||qty<1)return notice("محصول و تعداد معتبر انتخاب کن.","error");
  const old=invoiceItems.find(x=>String(x.product.id)===String(p.id));
  const total=qty+(old?.quantity||0);
- if(total>safeNumber(p.stock))return notice("موجودی کافی نیست.","error");
+ if(!editingInvoiceId&&total>safeNumber(p.stock))return notice("موجودی کافی نیست.","error");
  if(old)old.quantity=total;else invoiceItems.push({product:p,quantity:qty});
  $("quantity").value="";renderInvoiceItems();
 }
@@ -781,210 +758,193 @@ function removeInvoiceItem(i){invoiceItems.splice(i,1);renderInvoiceItems()}
 function renderCustomerOptions(){
  const s=$("saleCustomer");if(!s)return;
  s.innerHTML='<option value="">بدون انتخاب مشتری</option>';
- customers.forEach(c=>{
-  const o=document.createElement("option");o.value=c.id;
-  o.textContent=c.name+" | "+(c.phone||"");s.appendChild(o);
- });
+ customers.forEach(c=>{const o=document.createElement("option");o.value=c.id;o.textContent=c.name+" | "+(c.phone||"");s.append(o)});
 }
 
 function getCurrentPosition(){
  return new Promise((resolve,reject)=>{
-  if(!navigator.geolocation)return reject(Error("مرورگر از مکان‌یابی پشتیبانی نمی‌کند."));
-  navigator.geolocation.getCurrentPosition(resolve,reject,{
-   enableHighAccuracy:true,timeout:20000,maximumAge:0
-  });
+  if(!navigator.geolocation)return reject(Error("مرورگر مکان‌یابی را پشتیبانی نمی‌کند."));
+  navigator.geolocation.getCurrentPosition(resolve,reject,{enableHighAccuracy:true,timeout:20000,maximumAge:0});
  });
 }
 
 async function recordSale(){
- if(!invoiceItems.length)return message("saleMessage","ابتدا محصول اضافه کن.","error");
- if(!$("invoiceLocationConsent").checked)
-  return message("saleMessage","برای ثبت این فاکتور باید رضایت ذخیره موقعیت را تأیید کنی.","error");
+ if(editingInvoiceId)return saveInvoiceEdit();
 
- const b=$("recordSaleButton");if(b.disabled)return;b.disabled=true;
+ if(!invoiceItems.length)
+  return message("saleMessage","ابتدا محصول اضافه کن.","error");
+
+ setBusy("recordSaleButton",true);
+
  try{
-  const total=invoiceItems.reduce((s,x)=>s+x.quantity*safeNumber(x.product.sell_price),0);
+  const total=invoiceItems.reduce(
+   (s,x)=>s+x.quantity*safeNumber(x.product.sell_price),0
+  );
+
   const paid=Number($("salePaid").value||0);
-  if(!Number.isFinite(paid)||paid<0||paid>total)throw Error("مبلغ دریافتی باید بین صفر و جمع فاکتور باشد.");
 
-  message("saleMessage","در حال دریافت موقعیت دستگاه...");
+  if(!Number.isFinite(paid)||paid<0||paid>total)
+   throw Error("مبلغ دریافتی باید بین صفر و جمع فاکتور باشد.");
 
-  const position=await getCurrentPosition();
-  const items=invoiceItems.map(x=>({product_id:Number(x.product.id),quantity:x.quantity}));
-  const customerId=$("saleCustomer").value||null;
+  const items=invoiceItems.map(x=>({
+   product_id:Number(x.product.id),
+   quantity:x.quantity
+  }));
 
   const {data,error}=await db.rpc("record_invoice",{
    p_items:items,
-   p_latitude:position.coords.latitude,
-   p_longitude:position.coords.longitude,
-   p_customer_id:customerId?Number(customerId):null,
+   p_latitude:null,
+   p_longitude:null,
+   p_customer_id:$("saleCustomer").value
+    ?Number($("saleCustomer").value):null,
    p_paid:paid,
    p_note:$("saleNote").value.trim(),
-   p_accuracy:position.coords.accuracy
+   p_accuracy:null
   });
+
   if(error)throw error;
 
+  closeInvoiceModal();
   notice("فاکتور با شماره "+data+" ثبت شد.");
-  invoiceItems=[];closeInvoiceModal();
-  await loadProducts();await loadSales();await loadInvoices();await loadCustomers();
+  await refreshAll();
+
  }catch(e){
-  const detail=e.code===1?"اجازه مکان‌یابی داده نشد. از تنظیمات مرورگر اجازه بده و دوباره تلاش کن.":e.message;
-  message("saleMessage","ثبت فاکتور ناموفق: "+detail,"error");
- }finally{b.disabled=false}
+  message("saleMessage","ثبت ناموفق: "+e.message,"error");
+ }finally{
+  setBusy("recordSaleButton",false);
+ }
 }
 
-/* ردیابی زنده ویزیتور */
+async function openEditInvoice(id){
+ const inv=invoiceRows.find(x=>String(x.id)===String(id));if(!inv)return;
+ if(profile?.role!=="manager"&&String(inv.visitor_id)!==String(currentUser.id))return notice("اجازه ویرایش این فاکتور را نداری.","error");
+ const {data,error}=await db.from("sales").select("product_id,quantity,products(*)").eq("invoice_id",id);
+ if(error)return notice(error.message,"error");
+ editingInvoiceId=id;
+ invoiceItems=(data||[]).map(x=>({product:x.products||productList.find(p=>p.id===x.product_id),quantity:safeNumber(x.quantity)})).filter(x=>x.product);
+ renderInvoiceItems();renderSaleProductOptions();renderCustomerOptions();
+ $("invoiceModalTitle").textContent="ویرایش فاکتور";
+ $("saleCustomer").value=inv.customer_id||"";
+ $("salePaid").value=inv.paid||0;$("saleNote").value=inv.note||"";
+ $("invoiceLocationConsent").checked=true;$("invoiceLocationConsent").disabled=true;
+ $("recordSaleButton").textContent="ذخیره تغییرات";
+ $("invoiceModal").classList.remove("hidden");
+}
+
+async function saveInvoiceEdit(){
+ if(!editingInvoiceId||!invoiceItems.length)return message("saleMessage","اقلام فاکتور را بررسی کن.","error");
+ setBusy("recordSaleButton",true);
+ try{
+  const items=invoiceItems.map(x=>({product_id:Number(x.product.id),quantity:x.quantity}));
+  const {error}=await db.rpc("update_invoice",{
+   p_invoice_id:Number(editingInvoiceId),p_items:items,p_note:$("saleNote").value.trim()
+  });
+  if(error)throw error;
+  closeInvoiceModal();notice("ویرایش فاکتور ثبت شد.");
+  await refreshAll();
+ }catch(e){message("saleMessage","ویرایش ناموفق: "+e.message,"error")}
+ finally{setBusy("recordSaleButton",false)}
+}
+
+/* ردیابی موقعیت ویزیتور */
 function setTrackingUI(active,text){
- $("trackingStatus").textContent=text|| (active?"ردیابی زنده فعال است.":"ردیابی خاموش است.");
- $("startTrackingButton").disabled=active;
- $("stopTrackingButton").disabled=!active;
+ $("trackingStatus").textContent=text||(active?"ردیابی فعال است.":"ردیابی خاموش است.");
+ $("startTrackingButton").disabled=active;$("stopTrackingButton").disabled=!active;
 }
-
 async function saveLiveLocation(position){
  if(!currentUser||profile?.role!=="visitor")return;
  const now=new Date().toISOString();
- const row={
-  visitor_id:currentUser.id,
-  latitude:position.coords.latitude,
-  longitude:position.coords.longitude,
-  accuracy:position.coords.accuracy,
-  tracking_active:true,
-  recorded_at:now,
-  updated_at:now
- };
- const {error}=await db.from("visitor_locations").upsert(row,{onConflict:"visitor_id"});
+ const {error}=await db.from("visitor_locations").upsert({
+  visitor_id:currentUser.id,latitude:position.coords.latitude,longitude:position.coords.longitude,
+  accuracy:position.coords.accuracy,tracking_active:true,recorded_at:now,updated_at:now
+ },{onConflict:"visitor_id"});
  if(error)throw error;
- lastPosition=position;
  setTrackingUI(true,"ردیابی فعال است. آخرین ارسال: "+fmtDate(now));
 }
-
 async function startTracking(){
  if(profile?.role!=="visitor"||locationWatchId!==null||trackingBusy)return;
- if(!navigator.geolocation)return notice("مرورگر مکان‌یابی را پشتیبانی نمی‌کند.","error");
- if(!window.isSecureContext)return notice("برای مکان‌یابی، سایت باید روی HTTPS یا localhost اجرا شود.","error");
-
+ if(!navigator.geolocation)return notice("مرورگر مکان‌یابی ندارد.","error");
+ if(!window.isSecureContext)return notice("برای مکان‌یابی باید سایت روی HTTPS یا localhost باشد.","error");
  trackingBusy=true;
  try{
-  const first=await getCurrentPosition();
-  await saveLiveLocation(first);
-
-  locationWatchId=navigator.geolocation.watchPosition(
-   async position=>{
-    try{await saveLiveLocation(position)}
-    catch(e){setTrackingUI(true,"خطا در ارسال موقعیت: "+e.message)}
-   },
-   error=>{
-    setTrackingUI(true,"خطای مکان‌یابی: "+error.message);
-   },
-   {enableHighAccuracy:true,maximumAge:5000,timeout:20000}
-  );
-  setTrackingUI(true,"ردیابی زنده فعال شد.");
-  notice("ردیابی زنده شروع شد.");
- }catch(e){
-  setTrackingUI(false,"شروع ردیابی ناموفق: "+e.message);
-  notice("شروع ردیابی ناموفق: "+e.message,"error");
- }finally{trackingBusy=false}
+  const first=await getCurrentPosition();await saveLiveLocation(first);
+  locationWatchId=navigator.geolocation.watchPosition(async p=>{
+   try{await saveLiveLocation(p)}catch(e){setTrackingUI(true,"خطا در ارسال: "+e.message)}
+  },e=>setTrackingUI(true,"خطای مکان‌یابی: "+e.message),{enableHighAccuracy:true,maximumAge:5000,timeout:20000});
+  notice("ردیابی شروع شد.");
+ }catch(e){setTrackingUI(false,"شروع ردیابی ناموفق: "+e.message);notice(e.message,"error")}
+ finally{trackingBusy=false}
 }
-
 async function stopTracking(){
  if(profile?.role!=="visitor"||trackingBusy)return;
  trackingBusy=true;
  try{
-  if(locationWatchId!==null){
-   navigator.geolocation.clearWatch(locationWatchId);
-   locationWatchId=null;
-  }
-  const {error}=await db.from("visitor_locations")
-   .update({tracking_active:false,updated_at:new Date().toISOString()})
-   .eq("visitor_id",currentUser.id);
+  if(locationWatchId!==null){navigator.geolocation.clearWatch(locationWatchId);locationWatchId=null}
+  const {error}=await db.from("visitor_locations").update({tracking_active:false,updated_at:new Date().toISOString()}).eq("visitor_id",currentUser.id);
   if(error)throw error;
-  setTrackingUI(false,"ردیابی متوقف شد. آخرین موقعیت ذخیره‌شده باقی می‌ماند.");
+  setTrackingUI(false,"ردیابی متوقف شد؛ آخرین موقعیت باقی می‌ماند.");
   notice("ردیابی متوقف شد.");
- }catch(e){
-  notice("توقف ردیابی: "+e.message,"error");
- }finally{trackingBusy=false}
+ }catch(e){notice(e.message,"error")}
+ finally{trackingBusy=false}
 }
-
 async function stopTrackingOnLogout(){
- if(locationWatchId!==null){
-  navigator.geolocation.clearWatch(locationWatchId);
-  locationWatchId=null;
- }
+ if(locationWatchId!==null){navigator.geolocation.clearWatch(locationWatchId);locationWatchId=null}
  if(db&&currentUser&&profile?.role==="visitor"){
-  await db.from("visitor_locations")
-   .update({tracking_active:false,updated_at:new Date().toISOString()})
-   .eq("visitor_id",currentUser.id);
+  await db.from("visitor_locations").update({tracking_active:false,updated_at:new Date().toISOString()}).eq("visitor_id",currentUser.id);
  }
 }
 
 /* صفحه موقعیت مدیر */
 function openLocationPage(){
  if(profile?.role!=="manager")return;
- $("managerPanel").classList.add("hidden");
- $("locationPage").classList.remove("hidden");
+ $("managerPanel").classList.add("hidden");$("locationPage").classList.remove("hidden");
  loadVisitorLocations();
  if(locationRefreshTimer)clearInterval(locationRefreshTimer);
  locationRefreshTimer=setInterval(loadVisitorLocations,15000);
 }
 function closeLocationPage(){
- $("locationPage").classList.add("hidden");
- $("managerPanel").classList.remove("hidden");
+ $("locationPage").classList.add("hidden");$("managerPanel").classList.remove("hidden");
  if(locationRefreshTimer){clearInterval(locationRefreshTimer);locationRefreshTimer=null}
 }
-
 async function loadVisitorLocations(){
  if(profile?.role!=="manager")return;
- const box=$("managerLocations");
- if(!box)return;
- box.textContent="در حال دریافت موقعیت‌ها...";
+ const box=$("managerLocations");if(!box)return;
+ box.textContent="در حال دریافت...";
  const {data,error}=await db.from("visitor_locations")
   .select("visitor_id,latitude,longitude,accuracy,tracking_active,recorded_at,updated_at")
   .order("recorded_at",{ascending:false});
-
- if(error){box.textContent="خطا در دریافت موقعیت‌ها: "+error.message;return}
-
- const rows=data||[];
- const visitorMap=new Map(visitors.map(v=>[v.id,v]));
- if(!rows.length){box.textContent="هنوز موقعیتی ثبت نشده است.";return}
-
+ if(error){box.textContent=error.message;return}
+ const map=new Map(visitors.map(v=>[v.id,v]));
  box.innerHTML="";
- rows.forEach(loc=>{
-  const v=visitorMap.get(loc.visitor_id);
-  const name=v?(v.full_name||v.nickname):"ویزیتور حذف‌شده یا ناشناس";
-  const d=document.createElement("div");d.className="location-card";
-  const title=document.createElement("h3");title.textContent=name;
-  const status=document.createElement("p");
-  status.innerHTML=loc.tracking_active?"<span class='status-active'>ردیابی فعال</span>":"<span class='status-fired'>ردیابی خاموش</span>";
+ if(!data?.length){box.textContent="موقعیتی ثبت نشده است.";return}
+ data.forEach(loc=>{
+  const v=map.get(loc.visitor_id),d=document.createElement("div");d.className="location-card";
+  const h=document.createElement("h3");h.textContent=v?(v.full_name||v.nickname):"ویزیتور ناشناس";
+  const status=document.createElement("p");status.textContent=loc.tracking_active?"ردیابی فعال":"ردیابی خاموش";
+  status.className=loc.tracking_active?"status-active":"status-fired";
   const time=document.createElement("p");time.textContent="آخرین ثبت: "+fmtDate(loc.recorded_at);
-  const accuracy=document.createElement("p");accuracy.textContent="دقت تقریبی دستگاه: "+(loc.accuracy?Math.round(loc.accuracy)+" متر":"نامشخص");
   const coords=document.createElement("p");coords.textContent="مختصات: "+loc.latitude+", "+loc.longitude;
-  const actions=document.createElement("div");actions.className="location-actions";
-  const map=document.createElement("button");map.textContent="نمایش روی نقشه";
-  map.onclick=()=>window.open("https://www.openstreetmap.org/?mlat="+encodeURIComponent(loc.latitude)+"&mlon="+encodeURIComponent(loc.longitude)+"#map=17/"+encodeURIComponent(loc.latitude)+"/"+encodeURIComponent(loc.longitude),"_blank","noopener");
-  actions.appendChild(map);
-  d.append(title,status,time,accuracy,coords,actions);
-  box.appendChild(d);
+  const b=document.createElement("button");b.textContent="نمایش روی نقشه";
+  b.onclick=()=>window.open("https://www.openstreetmap.org/?mlat="+encodeURIComponent(loc.latitude)+"&mlon="+encodeURIComponent(loc.longitude)+"#map=17/"+loc.latitude+"/"+loc.longitude,"_blank","noopener");
+  d.append(h,status,time,coords,b);box.append(d);
  });
- $("locationUpdated").textContent="آخرین به‌روزرسانی صفحه: "+fmtDate(new Date());
+ $("locationUpdated").textContent="به‌روزرسانی: "+fmtDate(new Date());
 }
 
 /* خرید */
 function openPurchaseModal(){
  if(profile?.role!=="manager")return;
- $("purchaseModal").classList.remove("hidden");
- $("purchaseMessage").classList.add("hidden");
- $("purchaseQuantity").value="";$("purchaseUnitPrice").value="";
- purchaseTotal();
+ $("purchaseModal").classList.remove("hidden");$("purchaseMessage").classList.add("hidden");
+ $("purchaseQuantity").value="";$("purchaseUnitPrice").value="";purchaseTotal();
 }
 function closePurchaseModal(){$("purchaseModal").classList.add("hidden")}
 function renderPurchaseProductOptions(){
  const s=$("purchaseProduct");if(!s)return;
  s.innerHTML='<option value="">انتخاب محصول</option>';
- productList.forEach(p=>{
-  const o=document.createElement("option");o.value=p.id;o.textContent=p.name;s.appendChild(o);
- });
+ productList.forEach(p=>{const o=document.createElement("option");o.value=p.id;o.textContent=p.name;s.append(o)});
 }
 function purchaseTotal(){
+ if(!$("purchaseTotal"))return;
  const q=Number($("purchaseQuantity").value),p=Number($("purchaseUnitPrice").value);
  $("purchaseTotal").textContent=q>0&&$("purchaseUnitPrice").value!==""?"جمع خرید: "+money(q*p):"";
 }
@@ -992,72 +952,57 @@ $("purchaseQuantity").addEventListener("input",purchaseTotal);
 $("purchaseUnitPrice").addEventListener("input",purchaseTotal);
 
 async function recordPurchase(){
+ const id=$("purchaseProduct").value,q=Number($("purchaseQuantity").value),price=Number($("purchaseUnitPrice").value);
  if(profile?.role!=="manager")return;
- const b=$("recordPurchaseButton"),id=$("purchaseProduct").value;
- const q=Number($("purchaseQuantity").value),price=Number($("purchaseUnitPrice").value);
  if(!id||!Number.isInteger(q)||q<1||$("purchaseUnitPrice").value===""||!Number.isFinite(price)||price<0)
   return message("purchaseMessage","اطلاعات خرید معتبر نیست.","error");
- if(b.disabled)return;b.disabled=true;
+ setBusy("recordPurchaseButton",true);
  try{
   const {error}=await db.rpc("record_purchase",{p_product_id:Number(id),p_quantity:q,p_unit_price:price});
   if(error)throw error;
-  closePurchaseModal();notice("خرید ثبت شد و موجودی افزایش پیدا کرد.");
-  await loadProducts();await loadPurchases();
- }catch(e){
-  message("purchaseMessage","ثبت خرید ناموفق: "+e.message,"error");
- }finally{b.disabled=false}
+  closePurchaseModal();notice("خرید ثبت و موجودی به‌روزرسانی شد.");
+  await Promise.all([loadProducts(),loadPurchases()]);
+ }catch(e){message("purchaseMessage",e.message,"error")}
+ finally{setBusy("recordPurchaseButton",false)}
 }
-
 async function loadPurchases(){
  if(profile?.role!=="manager")return;
- $("purchaseReport").textContent="در حال دریافت گزارش خرید...";
- const {data,error}=await db.from("purchases")
-  .select("id,product_id,quantity,unit_price,total_price,created_at,products(name)")
-  .order("created_at",{ascending:false}).limit(100);
- if(error){$("purchaseReport").textContent="خطا در دریافت گزارش: "+error.message;return}
+ $("purchaseReport").textContent="در حال دریافت...";
+ const {data,error}=await db.from("purchases").select("id,product_id,quantity,unit_price,total_price,created_at,products(name)").order("created_at",{ascending:false}).limit(100);
+ if(error){$("purchaseReport").textContent=error.message;return}
  if(!data?.length){$("purchaseReport").textContent="خریدی ثبت نشده است.";return}
  let h="<table><tr><th>محصول</th><th>تعداد</th><th>قیمت واحد</th><th>جمع</th><th>تاریخ</th></tr>";
- data.forEach(x=>h+="<tr><td>"+escapeHtml(x.products?.name||"محصول حذف‌شده")+"</td><td>"+money(x.quantity)+"</td><td>"+money(x.unit_price)+"</td><td>"+money(x.total_price)+"</td><td>"+escapeHtml(fmtDate(x.created_at))+"</td></tr>");
+ data.forEach(x=>h+="<tr><td>"+escapeHtml(x.products?.name||"محصول")+"</td><td>"+money(x.quantity)+"</td><td>"+money(x.unit_price)+"</td><td>"+money(x.total_price)+"</td><td>"+escapeHtml(fmtDate(x.created_at))+"</td></tr>");
  $("purchaseReport").innerHTML=h+"</table>";
 }
 
-/* مشتریان و بستانکاری */
+/* مشتری و پرداخت */
 function openCustomerModal(){
  if(profile?.role!=="manager")return;
- renderVisitorSelect();
- $("customerName").value="";$("customerPhone").value="";$("customerAddress").value="";
- $("customerMessage").textContent="";$("customerModal").classList.remove("hidden");
+ renderVisitorSelect();$("customerName").value="";$("customerPhone").value="";
+ $("customerAddress").value="";$("customerMessage").textContent="";
+ $("customerModal").classList.remove("hidden");
 }
 function closeCustomerModal(){$("customerModal").classList.add("hidden")}
-
 async function saveCustomer(){
- if(profile?.role!=="manager")return;
- const b=$("saveCustomerButton"),name=$("customerName").value.trim();
- if(!name)return message("customerMessage","نام مشتری را وارد کن.","error");
- if(b.disabled)return;b.disabled=true;
+ const name=$("customerName").value.trim();if(profile?.role!=="manager"||!name)return message("customerMessage","نام مشتری را وارد کن.","error");
+ setBusy("saveCustomerButton",true);
  try{
   const {error}=await db.from("customers").insert({
-   name,phone:$("customerPhone").value.trim(),
-   address:$("customerAddress").value.trim(),
+   name,phone:$("customerPhone").value.trim(),address:$("customerAddress").value.trim(),
    assigned_visitor_id:$("customerVisitor").value||null
   });
   if(error)throw error;
   closeCustomerModal();await loadCustomers();notice("مشتری ثبت شد.");
- }catch(e){
-  message("customerMessage","ثبت مشتری ناموفق: "+e.message,"error");
- }finally{b.disabled=false}
+ }catch(e){message("customerMessage",e.message,"error")}
+ finally{setBusy("saveCustomerButton",false)}
 }
-
 async function loadCustomers(){
  if(!db)return;
  const {data,error}=await db.from("customers").select("*").order("name");
- if(error){
-  if(profile?.role==="manager")$("customerList").textContent=error.message;
-  return;
- }
+ if(error){if(profile?.role==="manager")$("customerList").textContent=error.message;return}
  customers=data||[];renderCustomerOptions();await renderCustomerTables();
 }
-
 async function renderCustomerTables(){
  const [ir,pr,cr]=await Promise.all([
   db.from("invoices").select("customer_id,total,paid"),
@@ -1067,18 +1012,16 @@ async function renderCustomerTables(){
  const err=ir.error||pr.error||cr.error;
  if(err){$("customerList").textContent=err.message;$("visitorCustomerList").textContent=err.message;return}
  const invoices=ir.data||[],payments=pr.data||[],credits=cr.data||[];
- const balances=customers.map(c=>{
+ const rows=customers.map(c=>{
   const debt=invoices.filter(x=>String(x.customer_id)===String(c.id)).reduce((s,x)=>s+safeNumber(x.total)-safeNumber(x.paid),0);
   const received=payments.filter(x=>String(x.customer_id)===String(c.id)).reduce((s,x)=>s+safeNumber(x.amount),0);
   const credit=credits.filter(x=>String(x.customer_id)===String(c.id)).reduce((s,x)=>s+safeNumber(x.amount),0);
   return {...c,balance:debt-received-credit};
  });
  const render=(target,manager)=>{
-  let h="<table><tr><th>مشتری</th><th>تلفن</th><th>مانده حساب</th>";
-  if(manager)h+="<th>عملیات</th>";
-  h+="</tr>";
-  balances.forEach(c=>{
-   h+="<tr><td>"+escapeHtml(c.name)+"</td><td>"+escapeHtml(c.phone||"-")+"</td><td>"+(c.balance<0?"بستانکار: "+money(Math.abs(c.balance)):money(c.balance))+"</td>";
+  let h="<table><tr><th>مشتری</th><th>تلفن</th><th>مانده</th>"+(manager?"<th>عملیات</th>":"")+"</tr>";
+  rows.forEach(c=>{
+   h+="<tr><td>"+escapeHtml(c.name)+"</td><td>"+escapeHtml(c.phone||"-")+"</td><td>"+(c.balance<0?"بستانکار: "+money(-c.balance):money(c.balance))+"</td>";
    if(manager)h+="<td><button onclick='openPaymentModal("+Number(c.id)+")'>ثبت دریافت</button></td>";
    h+="</tr>";
   });
@@ -1087,275 +1030,215 @@ async function renderCustomerTables(){
  if(profile?.role==="manager")render($("customerList"),true);
  render($("visitorCustomerList"),false);
 }
-
 function openPaymentModal(id){
  if(profile?.role!=="manager")return;
  const c=customers.find(x=>String(x.id)===String(id));if(!c)return;
- selectedPaymentCustomer=id;
- $("paymentCustomerName").textContent="مشتری: "+c.name;
+ selectedPaymentCustomer=id;$("paymentCustomerName").textContent="مشتری: "+c.name;
  $("paymentAmount").value="";$("paymentNote").value="";$("paymentMessage").textContent="";
  $("paymentModal").classList.remove("hidden");
 }
 function closePaymentModal(){$("paymentModal").classList.add("hidden");selectedPaymentCustomer=null}
-
 async function savePayment(){
+ const amount=Number($("paymentAmount").value);
  if(profile?.role!=="manager"||selectedPaymentCustomer===null)return;
- const amount=Number($("paymentAmount").value),b=$("savePaymentButton");
  if(!Number.isFinite(amount)||amount<=0)return message("paymentMessage","مبلغ معتبر وارد کن.","error");
- if(b.disabled)return;b.disabled=true;
+ setBusy("savePaymentButton",true);
  try{
   const {error}=await db.rpc("record_customer_payment",{
-   p_customer_id:Number(selectedPaymentCustomer),
-   p_amount:amount,p_note:$("paymentNote").value.trim()
+   p_customer_id:Number(selectedPaymentCustomer),p_amount:amount,p_note:$("paymentNote").value.trim()
   });
   if(error)throw error;
-  closePaymentModal();await loadCustomers();notice("پرداخت مشتری ثبت شد.");
- }catch(e){
-  message("paymentMessage","ثبت پرداخت ناموفق: "+e.message,"error");
- }finally{b.disabled=false}
+  closePaymentModal();await loadCustomers();notice("پرداخت ثبت شد.");
+ }catch(e){message("paymentMessage",e.message,"error")}
+ finally{setBusy("savePaymentButton",false)}
 }
 
-/* فاکتورها و مرجوعی جزئی */
+/* فاکتورها و مرجوعی */
 async function loadInvoices(){
  if(!db)return;
- const {data,error}=await db.from("invoices").select("*,customers(name)")
-  .order("created_at",{ascending:false}).limit(100);
- if(error){
-  $("myInvoices").textContent=error.message;
-  if(profile?.role==="manager")$("invoiceReport").textContent=error.message;
-  return;
- }
+ const {data,error}=await db.from("invoices").select("*,customers(name)").order("created_at",{ascending:false}).limit(100);
+ if(error){$("myInvoices").textContent=error.message;if(profile?.role==="manager")$("invoiceReport").textContent=error.message;return}
  invoiceRows=data||[];
- const make=()=>{
-  if(!invoiceRows.length)return "هنوز فاکتوری ثبت نشده است.";
-  let h="<table><tr><th>شماره</th><th>مشتری</th><th>مبلغ فعلی</th><th>پرداخت اولیه</th><th>تاریخ</th><th>عملیات</th></tr>";
-  invoiceRows.forEach(x=>{
-   h+="<tr><td>"+escapeHtml(x.invoice_code||x.id)+"</td><td>"+escapeHtml(x.customers?.name||"بدون مشتری")+"</td><td>"+money(x.total)+"</td><td>"+money(x.paid)+"</td><td>"+escapeHtml(fmtDate(x.created_at))+"</td><td><div class='inline-actions'><button onclick='printInvoice("+Number(x.id)+")'>چاپ</button><button class='secondary' onclick='openReturnModal("+Number(x.id)+")'>مرجوعی جزئی</button></div></td></tr>";
-  });
-  return h+"</table>";
- };
- $("myInvoices").innerHTML=make();
- if(profile?.role==="manager")$("invoiceReport").innerHTML=make();
+ let h="<table><tr><th>شماره</th><th>مشتری</th><th>مبلغ</th><th>پرداخت اولیه</th><th>تاریخ</th><th>عملیات</th></tr>";
+ invoiceRows.forEach(x=>{
+  h+="<tr><td>"+escapeHtml(x.invoice_code||x.id)+"</td><td>"+escapeHtml(x.customers?.name||"بدون مشتری")+"</td><td>"+money(x.total)+"</td><td>"+money(x.paid)+"</td><td>"+escapeHtml(fmtDate(x.created_at))+"</td><td><div class='inline-actions'><button onclick='printInvoice("+Number(x.id)+")'>چاپ</button><button class='secondary' onclick='openEditInvoice("+Number(x.id)+")'>ویرایش</button><button class='danger' onclick='openReturnModal("+Number(x.id)+")'>مرجوعی</button></div></td></tr>";
+ });
+ const html=invoiceRows.length?h+"</table>":"فاکتوری ثبت نشده است.";
+ $("myInvoices").innerHTML=html;if(profile?.role==="manager")$("invoiceReport").innerHTML=html;
 }
 
 async function openReturnModal(id){
  const inv=invoiceRows.find(x=>String(x.id)===String(id));if(!inv)return;
  selectedReturnInvoice=inv;returnLines=[];
- $("returnInvoiceInfo").textContent="فاکتور "+(inv.invoice_code||inv.id)+" | مشتری: "+(inv.customers?.name||"بدون مشتری")+" | مبلغ فعلی: "+money(inv.total);
+ $("returnInvoiceInfo").textContent="فاکتور "+(inv.invoice_code||inv.id)+" | مشتری: "+(inv.customers?.name||"بدون مشتری");
  $("returnReason").value="";$("returnMessage").textContent="در حال دریافت اقلام...";
- $("returnLines").innerHTML="";$("returnModal").classList.remove("hidden");
- const {data,error}=await db.from("sales")
-  .select("id,product_id,quantity,returned_quantity,unit_price,total_price,products(name,unit)")
-  .eq("invoice_id",id);
- if(error){$("returnMessage").textContent="خطا: "+error.message;return}
- returnLines=(data||[]).map(x=>({...x,returnQty:0}));
- renderReturnLines();
+ $("returnModal").classList.remove("hidden");
+ const {data,error}=await db.from("sales").select("id,product_id,quantity,returned_quantity,unit_price,products(name,unit)").eq("invoice_id",id);
+ if(error){$("returnMessage").textContent=error.message;return}
+ returnLines=(data||[]).map(x=>({...x,returnQty:0}));renderReturnLines();
 }
-
 function renderReturnLines(){
  if(!returnLines.length){$("returnLines").textContent="اقلامی برای مرجوعی وجود ندارد.";return}
- let h="<table><tr><th>کالا</th><th>تعداد فاکتور</th><th>قبلاً مرجوع</th><th>قابل مرجوع</th><th>تعداد این مرجوعی</th></tr>";
+ let h="<table><tr><th>کالا</th><th>تعداد</th><th>قبلی</th><th>قابل مرجوع</th><th>تعداد مرجوعی</th></tr>";
  returnLines.forEach((x,i)=>{
   const remaining=Math.max(0,safeNumber(x.quantity)-safeNumber(x.returned_quantity));
-  h+="<tr><td>"+escapeHtml(x.products?.name||"کالا")+"</td><td>"+money(x.quantity)+"</td><td>"+money(x.returned_quantity||0)+"</td><td>"+money(remaining)+"</td><td><input type='number' min='0' max='"+remaining+"' value='0' id='returnQty"+i+"' onchange='setReturnQty("+i+",this.value)' oninput='setReturnQty("+i+",this.value)' "+(remaining===0?"disabled":"")+"></td></tr>";
+  h+="<tr><td>"+escapeHtml(x.products?.name||"کالا")+"</td><td>"+money(x.quantity)+"</td><td>"+money(x.returned_quantity||0)+"</td><td>"+money(remaining)+"</td><td><input type='number' min='0' max='"+remaining+"' value='0' oninput='setReturnQty("+i+",this.value)' "+(!remaining?"disabled":"")+"></td></tr>";
  });
  $("returnLines").innerHTML=h+"</table>";
- $("returnMessage").textContent="تعداد مرجوعی را برای هر کالا وارد کن؛ مبلغ به‌صورت بستانکاری حساب مشتری محاسبه می‌شود، نه دریافت وجه نقد.";
+ $("returnMessage").textContent="مبلغ مرجوعی به‌صورت بستانکاری برای مشتری ثبت می‌شود.";
 }
 function setReturnQty(i,v){
- const n=Number(v),remaining=Math.max(0,safeNumber(returnLines[i].quantity)-safeNumber(returnLines[i].returned_quantity));
- returnLines[i].returnQty=Number.isInteger(n)&&n>=0&&n<=remaining?n:0;
+ const n=Number(v),x=returnLines[i],max=Math.max(0,safeNumber(x.quantity)-safeNumber(x.returned_quantity));
+ x.returnQty=Number.isInteger(n)&&n>=0&&n<=max?n:0;
 }
-function closeReturnModal(){
- $("returnModal").classList.add("hidden");selectedReturnInvoice=null;returnLines=[];
-}
-
+function closeReturnModal(){$("returnModal").classList.add("hidden");selectedReturnInvoice=null;returnLines=[]}
 async function processReturn(){
  if(!selectedReturnInvoice)return;
  const items=returnLines.filter(x=>x.returnQty>0).map(x=>({sale_id:Number(x.id),quantity:x.returnQty}));
- if(!items.length)return message("returnMessage","حداقل تعداد یک کالا را وارد کن.","error");
- const b=$("processReturnButton");if(b.disabled)return;b.disabled=true;
+ if(!items.length)return message("returnMessage","تعداد مرجوعی را وارد کن.","error");
+ setBusy("processReturnButton",true);
  try{
   const {data,error}=await db.rpc("process_invoice_return",{
-   p_invoice_id:Number(selectedReturnInvoice.id),
-   p_items:items,p_reason:$("returnReason").value.trim()
+   p_invoice_id:Number(selectedReturnInvoice.id),p_items:items,p_reason:$("returnReason").value.trim()
   });
   if(error)throw error;
   const result=Array.isArray(data)?data[0]:data;
-  closeReturnModal();
-  notice("مرجوعی ثبت شد. مبلغ فاکتور جدید: "+money(result?.new_invoice_total)+" | بستانکاری اضافه‌شده: "+money(result?.credit_added));
-  await loadProducts();await loadSales();await loadInvoices();await loadCustomers();
- }catch(e){
-  message("returnMessage","ثبت مرجوعی ناموفق: "+e.message,"error");
- }finally{b.disabled=false}
+  closeReturnModal();notice("مرجوعی ثبت شد. بستانکاری: "+money(result?.credit_added));
+  await refreshAll();
+ }catch(e){message("returnMessage",e.message,"error")}
+ finally{setBusy("processReturnButton",false)}
 }
 
 async function printInvoice(id){
- const w=window.open("","_blank");if(!w)return alert("اجازه باز شدن پنجره چاپ را در مرورگر فعال کن.");
- const inv=invoiceRows.find(x=>String(x.id)===String(id));if(!inv){w.close();return}
- const {data,error}=await db.from("sales")
-  .select("quantity,returned_quantity,unit_price,total_price,products(name,unit)")
-  .eq("invoice_id",id);
+ const inv=invoiceRows.find(x=>String(x.id)===String(id));if(!inv)return;
+ const w=window.open("","_blank");if(!w)return alert("اجازه باز شدن پنجره چاپ را فعال کن.");
+ const {data,error}=await db.from("sales").select("quantity,returned_quantity,unit_price,products(name,unit)").eq("invoice_id",id);
  if(error){w.close();return alert(error.message)}
  let rows="";
  (data||[]).forEach(x=>{
-  const netQty=Math.max(0,safeNumber(x.quantity)-safeNumber(x.returned_quantity));
-  const netTotal=netQty*safeNumber(x.unit_price);
-  rows+="<tr><td>"+escapeHtml(x.products?.name||"محصول")+"</td><td>"+money(netQty)+" "+escapeHtml(x.products?.unit||"")+"</td><td>"+money(x.unit_price)+"</td><td>"+money(netTotal)+"</td></tr>";
+  const qty=Math.max(0,safeNumber(x.quantity)-safeNumber(x.returned_quantity));
+  rows+="<tr><td>"+escapeHtml(x.products?.name||"محصول")+"</td><td>"+money(qty)+" "+escapeHtml(x.products?.unit||"")+"</td><td>"+money(x.unit_price)+"</td><td>"+money(qty*safeNumber(x.unit_price))+"</td></tr>";
  });
- w.document.write("<html lang='fa' dir='rtl'><meta charset='UTF-8'><title>فاکتور</title><style>body{font-family:Tahoma;padding:30px}h2{text-align:center}table{width:100%;border-collapse:collapse;margin-top:25px}td,th{border:1px solid #aaa;padding:12px;text-align:right}.total{margin-top:25px;font-weight:bold}</style><h2>FOOD DISTRIBUTION PRO</h2><h3>فاکتور فروش: "+escapeHtml(inv.invoice_code||inv.id)+"</h3><p>مشتری: "+escapeHtml(inv.customers?.name||"بدون مشتری")+"</p><p>تاریخ: "+escapeHtml(fmtDate(inv.created_at))+"</p><table><tr><th>محصول</th><th>تعداد خالص</th><th>قیمت واحد</th><th>جمع خالص</th></tr>"+rows+"</table><p class='total'>مبلغ کل فعلی: "+money(inv.total)+"</p><p>پرداخت اولیه: "+money(inv.paid)+"</p><p>مانده فاکتور: "+money(safeNumber(inv.total)-safeNumber(inv.paid))+"</p><p>توضیحات: "+escapeHtml(inv.note||"-")+"</p><script>window.onload=()=>window.print()<\/script></html>");
+ w.document.write("<html lang='fa' dir='rtl'><meta charset='UTF-8'><title>فاکتور</title><style>body{font-family:Tahoma;padding:30px}table{width:100%;border-collapse:collapse;margin-top:20px}td,th{border:1px solid #aaa;padding:10px;text-align:right}</style><h2>FOOD DISTRIBUTION PRO</h2><h3>فاکتور: "+escapeHtml(inv.invoice_code||inv.id)+"</h3><p>مشتری: "+escapeHtml(inv.customers?.name||"-")+"</p><p>تاریخ: "+escapeHtml(fmtDate(inv.created_at))+"</p><table><tr><th>محصول</th><th>تعداد خالص</th><th>قیمت</th><th>جمع</th></tr>"+rows+"</table><h3>مبلغ فعلی: "+money(inv.total)+"</h3><p>پرداخت اولیه: "+money(inv.paid)+"</p><p>مانده: "+money(safeNumber(inv.total)-safeNumber(inv.paid))+"</p><p>"+escapeHtml(inv.note||"")+"</p><script>window.onload=()=>window.print()<\/script></html>");
  w.document.close();
 }
 
-/* گزارش فروش */
+/* گزارش فروش و سود */
 async function loadSales(){
  if(!currentUser)return;
  const {data,error}=await db.from("sales")
-  .select("id,quantity,returned_quantity,unit_price,total_price,created_at,visitor_id,invoice_id,products(name,buy_price)")
+  .select("id,quantity,returned_quantity,unit_price,total_price,created_at,visitor_id,invoice_id,buy_price_at_sale,products(name)")
   .order("created_at",{ascending:false}).limit(1000);
  if(error){if(profile?.role==="manager")$("managerSales").textContent=error.message;return}
  recentSales=data||[];
- const netOf=x=>Math.max(0,safeNumber(x.quantity)-safeNumber(x.returned_quantity))*safeNumber(x.unit_price);
+ const qty=x=>Math.max(0,safeNumber(x.quantity)-safeNumber(x.returned_quantity));
+ const net=x=>qty(x)*safeNumber(x.unit_price);
+ const total=recentSales.reduce((s,x)=>s+net(x),0);
+ const known=recentSales.filter(x=>x.buy_price_at_sale!==null&&x.buy_price_at_sale!==undefined);
+ const profit=known.reduce((s,x)=>s+qty(x)*(safeNumber(x.unit_price)-safeNumber(x.buy_price_at_sale)),0);
  $("salesCount").textContent=money(recentSales.length);
- const total=recentSales.reduce((s,x)=>s+netOf(x),0);
- const profit=recentSales.reduce((s,x)=>s+netOf(x)-Math.max(0,safeNumber(x.quantity)-safeNumber(x.returned_quantity))*safeNumber(x.products?.buy_price),0);
- $("salesTotal").textContent=money(total);$("profitTotal").textContent=money(profit);
+ $("salesTotal").textContent=money(total);
+ $("profitTotal").textContent=money(profit);
+ $("unknownProfitCount").textContent=money(recentSales.length-known.length);
  if(profile?.role!=="manager"){await loadVisitorStats();return}
- let h="<table><tr><th>محصول</th><th>تعداد خالص</th><th>مبلغ خالص</th><th>تاریخ</th></tr>";
- recentSales.slice(0,100).forEach(x=>{
-  h+="<tr><td>"+escapeHtml(x.products?.name||"محصول")+"</td><td>"+money(Math.max(0,safeNumber(x.quantity)-safeNumber(x.returned_quantity)))+"</td><td>"+money(netOf(x))+"</td><td>"+escapeHtml(fmtDate(x.created_at))+"</td></tr>";
+ let h="<table><tr><th>محصول</th><th>تعداد خالص</th><th>فروش خالص</th><th>قیمت خرید تاریخی</th><th>سود</th><th>تاریخ</th></tr>";
+ recentSales.slice(0,150).forEach(x=>{
+  const p=x.buy_price_at_sale===null||x.buy_price_at_sale===undefined?null:qty(x)*(safeNumber(x.unit_price)-safeNumber(x.buy_price_at_sale));
+  h+="<tr><td>"+escapeHtml(x.products?.name||"محصول")+"</td><td>"+money(qty(x))+"</td><td>"+money(net(x))+"</td><td>"+(x.buy_price_at_sale==null?"نامشخص":money(x.buy_price_at_sale))+"</td><td>"+(p===null?"نامشخص":money(p))+"</td><td>"+escapeHtml(fmtDate(x.created_at))+"</td></tr>";
  });
  $("managerSales").innerHTML=h+"</table>";
  renderSalesChart();renderVisitorPerformance();
 }
-
 function renderSalesChart(){
  const daily={};
- recentSales.forEach(x=>{
-  const day=new Date(x.created_at).toLocaleDateString("fa-IR");
-  daily[day]=(daily[day]||0)+Math.max(0,safeNumber(x.quantity)-safeNumber(x.returned_quantity))*safeNumber(x.unit_price);
- });
- const entries=Object.entries(daily).slice(0,7).reverse();
- const max=Math.max(1,...entries.map(x=>x[1]));
- $("salesChart").innerHTML=entries.length?entries.map(([day,value])=>
-  "<div class='bar-row'><span>"+escapeHtml(day)+"</span><div class='bar-bg'><div class='bar-fill' style='width:"+(value/max*100)+"%'></div></div><b>"+money(value)+"</b></div>"
- ).join(""):"فروشی برای نمایش وجود ندارد.";
+ recentSales.forEach(x=>{const day=new Date(x.created_at).toLocaleDateString("fa-IR");daily[day]=(daily[day]||0)+Math.max(0,safeNumber(x.quantity)-safeNumber(x.returned_quantity))*safeNumber(x.unit_price)});
+ const entries=Object.entries(daily).slice(0,7).reverse(),max=Math.max(1,...entries.map(x=>x[1]));
+ $("salesChart").innerHTML=entries.length?entries.map(([day,value])=>"<div class='bar-row'><span>"+escapeHtml(day)+"</span><div class='bar-bg'><div class='bar-fill' style='width:"+(value/max*100)+"%'></div></div><b>"+money(value)+"</b></div>").join(""):"فروشی وجود ندارد.";
 }
-
 function renderVisitorPerformance(){
  const totals={};
- recentSales.forEach(x=>{
-  const id=x.visitor_id||"unknown";
-  totals[id]=(totals[id]||0)+Math.max(0,safeNumber(x.quantity)-safeNumber(x.returned_quantity))*safeNumber(x.unit_price);
- });
- let h="<table><tr><th>ویزیتور</th><th>وضعیت</th><th>مجموع فروش خالص</th></tr>";
- visitors.forEach(v=>{
-  h+="<tr><td>"+escapeHtml(v.full_name||v.nickname)+"</td><td>"+(v.active?"فعال":"اخراج‌شده")+"</td><td>"+money(totals[v.id]||0)+"</td></tr>";
- });
+ recentSales.forEach(x=>{const id=x.visitor_id||"unknown";totals[id]=(totals[id]||0)+Math.max(0,safeNumber(x.quantity)-safeNumber(x.returned_quantity))*safeNumber(x.unit_price)});
+ let h="<table><tr><th>ویزیتور</th><th>وضعیت</th><th>فروش خالص</th></tr>";
+ visitors.forEach(v=>h+="<tr><td>"+escapeHtml(v.full_name||v.nickname)+"</td><td>"+(v.active?"فعال":"غیرفعال")+"</td><td>"+money(totals[v.id]||0)+"</td></tr>");
  $("visitorPerformance").innerHTML=h+"</table>";
 }
 
-/* آمار دوره‌ای */
+/* آمار روز، ماه، سال */
 function startOfToday(){const d=new Date();d.setHours(0,0,0,0);return d}
 function startOfMonth(){const d=new Date();d.setDate(1);d.setHours(0,0,0,0);return d}
 function startOfYear(){const d=new Date();d.setMonth(0,1);d.setHours(0,0,0,0);return d}
-
 async function periodStats(start,end){
- const {data:inv,error:ie}=await db.from("invoices").select("id,total,created_at")
-  .eq("visitor_id",currentUser.id).gte("created_at",start.toISOString()).lt("created_at",end.toISOString());
- if(ie)throw ie;
- const invoices=inv||[],ids=invoices.map(x=>x.id);
- let gross=0,count=invoices.length,returns=0;
+ const {data:inv,error}=await db.from("invoices").select("id").eq("visitor_id",currentUser.id).gte("created_at",start.toISOString()).lt("created_at",end.toISOString());
+ if(error)throw error;
+ const ids=(inv||[]).map(x=>x.id);let gross=0,returns=0;
  if(ids.length){
-  const [{data:sales,error:se},{data:r,error:re}]=await Promise.all([
+  const [{data:s,error:se},{data:r,error:re}]=await Promise.all([
    db.from("sales").select("total_price").in("invoice_id",ids),
-   db.from("invoice_returns").select("invoice_id,total_amount,created_at")
-    .in("invoice_id",ids).gte("created_at",start.toISOString()).lt("created_at",end.toISOString())
+   db.from("invoice_returns").select("total_amount").in("invoice_id",ids).gte("created_at",start.toISOString()).lt("created_at",end.toISOString())
   ]);
   if(se)throw se;if(re)throw re;
-  gross=(sales||[]).reduce((s,x)=>s+safeNumber(x.total_price),0);
-  returns=(r||[]).reduce((s,x)=>s+safeNumber(x.total_amount),0);
+  gross=(s||[]).reduce((a,x)=>a+safeNumber(x.total_price),0);
+  returns=(r||[]).reduce((a,x)=>a+safeNumber(x.total_amount),0);
  }
- return {sales:Math.max(0,gross-returns),count};
+ return {sales:Math.max(0,gross-returns),count:ids.length};
 }
-
 async function loadVisitorStats(){
  try{
   const today=startOfToday(),month=startOfMonth(),year=startOfYear();
   const tomorrow=new Date(today);tomorrow.setDate(tomorrow.getDate()+1);
   const nextMonth=new Date(month);nextMonth.setMonth(nextMonth.getMonth()+1);
   const nextYear=new Date(year);nextYear.setFullYear(nextYear.getFullYear()+1);
-  const [d,m,y]=await Promise.all([
-   periodStats(today,tomorrow),periodStats(month,nextMonth),periodStats(year,nextYear)
-  ]);
-  $("visitorDailySales").textContent=money(d.sales);
-  $("visitorDailyCount").textContent=money(d.count);
-  $("visitorMonthlySales").textContent=money(m.sales);
-  $("visitorMonthlyCount").textContent=money(m.count);
-  $("visitorYearlySales").textContent=money(y.sales);
-  $("visitorYearlyCount").textContent=money(y.count);
- }catch(e){notice("دریافت آمار دوره‌ای ممکن نشد: "+e.message,"error")}
+  const [d,m,y]=await Promise.all([periodStats(today,tomorrow),periodStats(month,nextMonth),periodStats(year,nextYear)]);
+  $("visitorDailySales").textContent=money(d.sales);$("visitorDailyCount").textContent=money(d.count);
+  $("visitorMonthlySales").textContent=money(m.sales);$("visitorMonthlyCount").textContent=money(m.count);
+  $("visitorYearlySales").textContent=money(y.sales);$("visitorYearlyCount").textContent=money(y.count);
+ }catch(e){notice("خطای آمار: "+e.message,"error")}
 }
-
 async function loadArchivedReports(){
  if(profile?.role!=="manager")return;
- const box=$("archivedReports");box.textContent="در حال دریافت آرشیو...";
+ const box=$("archivedReports");box.textContent="در حال دریافت...";
  const {data,error}=await db.from("visitor_period_reports")
   .select("visitor_id,period_type,period_start,period_end,sales_total,invoice_count,profiles(full_name,nickname)")
   .order("period_start",{ascending:false}).limit(500);
- if(error){box.textContent="دریافت آرشیو ممکن نشد: "+error.message;return}
- if(!data?.length){box.textContent="هنوز گزارشی در آرشیو ثبت نشده است.";return}
- let h="<table><tr><th>ویزیتور</th><th>نوع دوره</th><th>شروع</th><th>پایان</th><th>فروش خالص</th><th>تعداد فاکتور</th></tr>";
- data.forEach(x=>{
-  h+="<tr><td>"+escapeHtml(x.profiles?.full_name||x.profiles?.nickname||"ویزیتور")+"</td><td>"+escapeHtml(x.period_type)+"</td><td>"+escapeHtml(x.period_start)+"</td><td>"+escapeHtml(x.period_end)+"</td><td>"+money(x.sales_total)+"</td><td>"+money(x.invoice_count)+"</td></tr>";
- });
+ if(error){box.textContent=error.message;return}
+ if(!data?.length){box.textContent="آرشیوی ثبت نشده است.";return}
+ let h="<table><tr><th>ویزیتور</th><th>نوع دوره</th><th>شروع</th><th>پایان</th><th>فروش خالص</th><th>فاکتور</th></tr>";
+ data.forEach(x=>h+="<tr><td>"+escapeHtml(x.profiles?.full_name||x.profiles?.nickname||"ویزیتور")+"</td><td>"+escapeHtml(x.period_type)+"</td><td>"+escapeHtml(x.period_start)+"</td><td>"+escapeHtml(x.period_end)+"</td><td>"+money(x.sales_total)+"</td><td>"+money(x.invoice_count)+"</td></tr>");
  box.innerHTML=h+"</table>";
 }
-
 async function copySalesForHoloo(){
  if(profile?.role!=="manager")return;
- const rows=[["نام کالا","تعداد خالص","قیمت واحد","مبلغ خالص","تاریخ"]];
- recentSales.forEach(x=>rows.push([
-  x.products?.name||"محصول",
-  Math.max(0,safeNumber(x.quantity)-safeNumber(x.returned_quantity)),
-  safeNumber(x.unit_price),
-  Math.max(0,safeNumber(x.quantity)-safeNumber(x.returned_quantity))*safeNumber(x.unit_price),
-  new Date(x.created_at).toLocaleDateString("fa-IR")
- ]));
- const text=rows.map(r=>r.join("\t")).join("\n");
- try{
-  await navigator.clipboard.writeText(text);
-  notice("خروجی متنی کپی شد. قالب قطعی ورود مستقیم به همه نسخه‌های هلو تضمین نشده است.");
- }catch(e){notice("کپی خودکار انجام نشد؛ مرورگر اجازه Clipboard نداد.","error")}
+ const rows=[["نام کالا","تعداد خالص","قیمت واحد","مبلغ خالص","قیمت خرید تاریخی","سود","تاریخ"]];
+ recentSales.forEach(x=>{
+  const q=Math.max(0,safeNumber(x.quantity)-safeNumber(x.returned_quantity));
+  rows.push([x.products?.name||"محصول",q,safeNumber(x.unit_price),q*safeNumber(x.unit_price),x.buy_price_at_sale??"نامشخص",x.buy_price_at_sale==null?"نامشخص":q*(safeNumber(x.unit_price)-safeNumber(x.buy_price_at_sale)),new Date(x.created_at).toLocaleDateString("fa-IR")]);
+ });
+ try{await navigator.clipboard.writeText(rows.map(r=>r.join("\t")).join("\n"));notice("خروجی کپی شد.")}
+ catch(e){notice("مرورگر اجازه کپی نداد.","error")}
+}
+
+async function refreshAll(){
+ await Promise.all([loadProducts(),loadSales(),loadInvoices(),loadCustomers()]);
+ if(profile?.role==="manager")await Promise.all([loadPurchases(),loadArchivedReports()]);
 }
 
 async function logout(){
  await stopTrackingOnLogout();
  if(locationRefreshTimer){clearInterval(locationRefreshTimer);locationRefreshTimer=null}
- if(db)await db.auth.signOut();
+ await db.auth.signOut();
  currentUser=null;profile=null;productList=[];invoiceItems=[];customers=[];visitors=[];
- $("dashboard").classList.add("hidden");
- $("locationPage").classList.add("hidden");
- $("managerPanel").classList.remove("hidden");
- $("loginBox").classList.remove("hidden");
- $("username").value="";$("password").value="";
- $("authMessage").classList.add("hidden");
-}
-
-async function restoreSession(){
- const {data,error}=await db.auth.getSession();
- if(!error&&data.session)await loadApp(data.session.user);
+ $("dashboard").classList.add("hidden");$("locationPage").classList.add("hidden");
+ $("managerPanel").classList.remove("hidden");$("loginBox").classList.remove("hidden");
+ $("username").value="";$("password").value="";$("authMessage").classList.add("hidden");
 }
 
 startConnection();
 </script>
+
 <script>
-  if ("serviceWorker" in navigator && location.protocol !== "file:") {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./sw.js")
-        .catch(error => console.error(error));
-    });
-  }
-  </script>
+if("serviceWorker" in navigator&&location.protocol!=="file:"){
+ window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(console.error));
+}
+</script>
 </body>
 </html>
