@@ -394,6 +394,7 @@ function startConnection(){
  try{
   if(!window.supabase?.createClient)throw Error("کتابخانه Supabase بارگذاری نشده است.");
   db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLIC_KEY);
+  console.log("SUPABASE CLIENT:", db);
   $("setup").classList.add("hidden");
   $("loginBox").classList.remove("hidden");
   restoreSession();
