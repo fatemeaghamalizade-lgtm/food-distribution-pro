@@ -1249,3 +1249,724 @@ if("serviceWorker" in navigator&&location.protocol!=="file:"){
  window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(console.error));
 }
 </script>
+
+<script>
+  /* =========================================
+     تکمیل و اصلاح FOOD DISTRIBUTION PRO
+     قیمت خرید / فروش / مصرف‌کننده
+  ========================================= */
+  
+  /* دریافت محصولات */
+  async function loadProducts(){
+   if(!db || !profile)return;
+  
+   const manager=profile.role==="manager";
+  
+   const fields=manager
+    ?"*"
+    :"id,name,category,unit,sell_price,consumer_price,stock,min_stock,barcode,description,image_url,is_archived";
+  
+   const {data,error}=await db
+    .from("products")
+    .select(fields)
+    .eq("is_archived",false)
+    .order("name");
+  
+   if(error){
+    notice("خطای دریافت محصولات: "+error.message,"error");
+    return;
+   }
+  
+   productList=data||[];
+  
+   $("productCount").textContent=money(productList.length);
+   $("lowStockCount").textContent=money(
+    productList.filter(p=>safeNumber(p.stock)<=safeNumber(p.min_stock)).length
+   );
+  
+   if(manager){
+    const stockValue=productList.reduce(
+     (sum,p)=>sum+safeNumber(p.stock)*safeNumber(p.buy_price),0
+    );
+    $("stockValue").textContent=money(stockValue);
+    renderLowStock();
+    renderPurchaseProductOptions();
+   }
+  
+   renderProducts();
+   renderSaleProductOptions();
+  }
+  
+  /* نمایش محصولات */
+  async function renderProducts(){
+   const token=++productRenderToken;
+   const manager=profile?.role==="manager";
+   const target=manager?$("products"):$("visitorProducts");
+  
+   if(!target)return;
+  
+   const search=(manager
+    ?$("productSearch").value
+    :$("visitorProductSearch").value
+   ).trim().toLocaleLowerCase("fa");
+  
+   target.innerHTML="";
+  
+   const list=productList.filter(p=>
+    (p.name+" "+(p.category||"")+" "+(p.barcode||""))
+     .toLocaleLowerCase("fa").includes(search)
+   );
+  
+   for(const p of list){
+    const d=document.createElement("div");
+    d.className="product";
+  
+    if(p.image_url){
+     const url=await getProductImage(p.image_url);
+     if(token!==productRenderToken)return;
+  
+     if(url){
+      const img=document.createElement("img");
+      img.src=url;
+      img.alt=p.name;
+      d.append(img);
+     }
+    }
+  
+    const h=document.createElement("h3");
+    h.textContent=p.name;
+    d.append(h);
+  
+    const cat=document.createElement("p");
+    cat.textContent="دسته: "+(p.category||"بدون دسته");
+    d.append(cat);
+  
+    const sell=document.createElement("p");
+    sell.className="price";
+    sell.textContent="قیمت فروش: "+money(p.sell_price);
+    d.append(sell);
+  
+    const consumer=document.createElement("p");
+    consumer.className="price";
+    consumer.textContent="قیمت مصرف‌کننده: "+
+     (p.consumer_price==null?"نامشخص":money(p.consumer_price));
+    d.append(consumer);
+  
+    if(manager){
+     const buy=document.createElement("p");
+     buy.className="price";
+     buy.textContent="قیمت خرید: "+money(p.buy_price);
+     d.append(buy);
+    }
+  
+    const stock=document.createElement("p");
+    stock.textContent="موجودی: "+money(p.stock)+" "+(p.unit||"");
+    d.append(stock);
+  
+    if(safeNumber(p.stock)<=safeNumber(p.min_stock)){
+     const warning=document.createElement("p");
+     warning.className="warning";
+     warning.textContent="موجودی کم است";
+     d.append(warning);
+    }
+  
+    if(manager){
+     const archive=document.createElement("button");
+     archive.className="danger";
+     archive.textContent="آرشیو محصول";
+  
+     archive.onclick=async()=>{
+      if(!confirm("محصول آرشیو شود؟ سوابق قبلی حفظ می‌شود."))return;
+  
+      const {error}=await db
+       .from("products")
+       .update({is_archived:true})
+       .eq("id",p.id);
+  
+      if(error)return notice(error.message,"error");
+  
+      await loadProducts();
+      notice("محصول آرشیو شد.");
+     };
+  
+     d.append(archive);
+    }
+  
+    target.append(d);
+   }
+  }
+  
+  /* محاسبه دو قیمت در پیش‌نمایش فاکتور */
+  function renderInvoiceItems(){
+   const box=$("invoiceItems");
+  
+   if(!invoiceItems.length){
+    box.textContent="هنوز محصولی اضافه نشده است.";
+    $("invoiceTotal").textContent="";
+    return;
+   }
+  
+   let sellTotal=0;
+   let consumerTotal=0;
+   let consumerKnown=true;
+  
+   let h="<table><tr>"+
+    "<th>محصول</th>"+
+    "<th>تعداد</th>"+
+    "<th>قیمت فروش</th>"+
+    "<th>جمع فروش</th>"+
+    "<th>قیمت مصرف‌کننده</th>"+
+    "<th>جمع مصرف‌کننده</th>"+
+    "<th></th></tr>";
+  
+   invoiceItems.forEach((x,i)=>{
+    const p=x.product;
+    const qty=safeNumber(x.quantity);
+  
+    const sell=safeNumber(p.sell_price);
+    const sellAmount=qty*sell;
+  
+    sellTotal+=sellAmount;
+  
+    let consumerCell="نامشخص";
+    let consumerAmountCell="نامشخص";
+  
+    if(p.consumer_price!==null && p.consumer_price!==undefined){
+     const consumer=safeNumber(p.consumer_price);
+     const amount=qty*consumer;
+  
+     consumerTotal+=amount;
+     consumerCell=money(consumer);
+     consumerAmountCell=money(amount);
+    }else{
+     consumerKnown=false;
+    }
+  
+    h+="<tr>"+
+     "<td>"+escapeHtml(p.name)+"</td>"+
+     "<td>"+money(qty)+"</td>"+
+     "<td>"+money(sell)+"</td>"+
+     "<td>"+money(sellAmount)+"</td>"+
+     "<td>"+consumerCell+"</td>"+
+     "<td>"+consumerAmountCell+"</td>"+
+     "<td><button class='danger' onclick='removeInvoiceItem("+i+")'>حذف</button></td>"+
+     "</tr>";
+   });
+  
+   box.innerHTML=h+"</table>";
+  
+   const difference=consumerKnown
+    ?consumerTotal-sellTotal
+    :null;
+  
+   $("invoiceTotal").innerHTML=
+    "<div>مبلغ قابل پرداخت بر اساس قیمت فروش: <b>"+
+    money(sellTotal)+"</b></div>"+
+    "<div>جمع قیمت مصرف‌کننده: <b>"+
+    (consumerKnown?money(consumerTotal):"نامشخص")+"</b></div>"+
+    "<div>اختلاف دو مبلغ: <b>"+
+    (difference===null?"نامشخص":money(difference))+"</b></div>";
+  }
+  
+  /* ویرایش فاکتور با حفظ قیمت‌های تاریخی */
+  async function openEditInvoice(id){
+   const inv=invoiceRows.find(x=>String(x.id)===String(id));
+   if(!inv)return;
+  
+   if(profile?.role!=="manager" &&
+      String(inv.visitor_id)!==String(currentUser.id)){
+    return notice("اجازه ویرایش این فاکتور را نداری.","error");
+   }
+  
+   const {data,error}=await db
+    .from("sales")
+    .select(
+     "id,product_id,quantity,returned_quantity,unit_price,consumer_price_at_sale,products(name,unit,stock,min_stock,category,barcode,image_url)"
+    )
+    .eq("invoice_id",id);
+  
+   if(error)return notice(error.message,"error");
+  
+   editingInvoiceId=id;
+  
+   invoiceItems=(data||[]).map(x=>{
+    const p=x.products||{};
+  
+    return {
+     product:{
+      id:x.product_id,
+      name:p.name||"محصول",
+      unit:p.unit||"عدد",
+      stock:p.stock,
+      min_stock:p.min_stock,
+      category:p.category,
+      barcode:p.barcode,
+      image_url:p.image_url,
+  
+      /* قیمت تاریخی همان فاکتور */
+      sell_price:x.unit_price,
+      consumer_price:x.consumer_price_at_sale
+     },
+  
+     /* تعداد خالص؛ تعداد مرجوع‌شده دوباره اضافه نمی‌شود */
+     quantity:Math.max(
+      0,
+      safeNumber(x.quantity)-safeNumber(x.returned_quantity)
+     )
+    };
+   });
+  
+   renderInvoiceItems();
+   renderSaleProductOptions();
+   renderCustomerOptions();
+  
+   $("invoiceModalTitle").textContent="ویرایش فاکتور";
+   $("saleCustomer").value=inv.customer_id||"";
+   $("salePaid").value=inv.paid||0;
+   $("saleNote").value=inv.note||"";
+   $("recordSaleButton").textContent="ذخیره تغییرات";
+   $("saleMessage").textContent="";
+   $("invoiceModal").classList.remove("hidden");
+  }
+  
+  /* گزارش فاکتورها */
+  async function loadInvoices(){
+   if(!db)return;
+  
+   const {data,error}=await db
+    .from("invoices")
+    .select("*,customers(name)")
+    .order("created_at",{ascending:false})
+    .limit(100);
+  
+   if(error){
+    $("myInvoices").textContent=error.message;
+    if(profile?.role==="manager"){
+     $("invoiceReport").textContent=error.message;
+    }
+    return;
+   }
+  
+   invoiceRows=data||[];
+  
+   let h="<table><tr>"+
+    "<th>شماره فاکتور</th>"+
+    "<th>مشتری</th>"+
+    "<th>مبلغ فروش</th>"+
+    "<th>مبلغ مصرف‌کننده</th>"+
+    "<th>اختلاف</th>"+
+    "<th>دریافتی</th>"+
+    "<th>مانده</th>"+
+    "<th>تاریخ</th>"+
+    "<th>عملیات</th>"+
+    "</tr>";
+  
+   invoiceRows.forEach(x=>{
+    const sell=safeNumber(x.total);
+    const paid=safeNumber(x.paid);
+  
+    const consumer=x.consumer_total==null
+     ?null:safeNumber(x.consumer_total);
+  
+    const difference=consumer===null
+     ?null:consumer-sell;
+  
+    const balance=sell-paid;
+  
+    h+="<tr>"+
+     "<td>"+escapeHtml(x.invoice_code||x.id)+"</td>"+
+     "<td>"+escapeHtml(x.customers?.name||"بدون مشتری")+"</td>"+
+     "<td>"+money(sell)+"</td>"+
+     "<td>"+(consumer===null?"نامشخص":money(consumer))+"</td>"+
+     "<td>"+(difference===null?"نامشخص":money(difference))+"</td>"+
+     "<td>"+money(paid)+"</td>"+
+     "<td>"+money(balance)+"</td>"+
+     "<td>"+escapeHtml(fmtDate(x.created_at))+"</td>"+
+     "<td><div class='inline-actions'>"+
+     "<button onclick='printInvoice("+Number(x.id)+")'>چاپ</button>"+
+     "<button class='secondary' onclick='openEditInvoice("+Number(x.id)+")'>ویرایش</button>"+
+     "<button class='danger' onclick='openReturnModal("+Number(x.id)+")'>مرجوعی</button>"+
+     "</div></td>"+
+     "</tr>";
+   });
+  
+   const html=invoiceRows.length?h+"</table>":"فاکتوری ثبت نشده است.";
+  
+   $("myInvoices").innerHTML=html;
+  
+   if(profile?.role==="manager"){
+    $("invoiceReport").innerHTML=html;
+   }
+  }
+  
+  /* گزارش فروش و سود مدیر */
+  async function loadSales(){
+   if(!currentUser)return;
+  
+   const manager=profile?.role==="manager";
+  
+   const fields=manager
+    ?"id,quantity,returned_quantity,unit_price,total_price,consumer_price_at_sale,created_at,visitor_id,invoice_id,buy_price_at_sale,products(name)"
+    :"id,quantity,returned_quantity,unit_price,total_price,consumer_price_at_sale,created_at,visitor_id,invoice_id,products(name)";
+  
+   const {data,error}=await db
+    .from("sales")
+    .select(fields)
+    .order("created_at",{ascending:false})
+    .limit(1000);
+  
+   if(error){
+    if(manager)$("managerSales").textContent=error.message;
+    return;
+   }
+  
+   recentSales=data||[];
+  
+   const qty=x=>Math.max(
+    0,
+    safeNumber(x.quantity)-safeNumber(x.returned_quantity)
+   );
+  
+   const sellAmount=x=>qty(x)*safeNumber(x.unit_price);
+  
+   let totalSell=0;
+   let totalConsumer=0;
+   let consumerKnown=true;
+   let profit=0;
+   let unknownProfit=0;
+  
+   recentSales.forEach(x=>{
+    totalSell+=sellAmount(x);
+  
+    if(x.consumer_price_at_sale==null){
+     consumerKnown=false;
+    }else{
+     totalConsumer+=qty(x)*safeNumber(x.consumer_price_at_sale);
+    }
+  
+    if(manager){
+     if(x.buy_price_at_sale==null){
+      unknownProfit++;
+     }else{
+      profit+=qty(x)*(
+       safeNumber(x.unit_price)-safeNumber(x.buy_price_at_sale)
+      );
+     }
+    }
+   });
+  
+   $("salesCount").textContent=money(recentSales.length);
+   $("salesTotal").textContent=money(totalSell);
+  
+   if(manager){
+    $("profitTotal").textContent=money(profit);
+    $("unknownProfitCount").textContent=money(unknownProfit);
+  
+    let h="<table><tr>"+
+     "<th>محصول</th>"+
+     "<th>تعداد خالص</th>"+
+     "<th>قیمت فروش واحد</th>"+
+     "<th>مبلغ فروش</th>"+
+     "<th>قیمت مصرف‌کننده واحد</th>"+
+     "<th>مبلغ مصرف‌کننده</th>"+
+     "<th>اختلاف</th>"+
+     "<th>قیمت خرید تاریخی</th>"+
+     "<th>سود</th>"+
+     "<th>تاریخ</th>"+
+     "</tr>";
+  
+    recentSales.slice(0,150).forEach(x=>{
+     const q=qty(x);
+     const sell=safeNumber(x.unit_price);
+     const sellTotal=q*sell;
+  
+     const consumer=x.consumer_price_at_sale==null
+      ?null:safeNumber(x.consumer_price_at_sale);
+  
+     const consumerTotal=consumer===null
+      ?null:q*consumer;
+  
+     const difference=consumerTotal===null
+      ?null:consumerTotal-sellTotal;
+  
+     const buy=x.buy_price_at_sale==null
+      ?null:safeNumber(x.buy_price_at_sale);
+  
+     const rowProfit=buy===null
+      ?null:q*(sell-buy);
+  
+     h+="<tr>"+
+      "<td>"+escapeHtml(x.products?.name||"محصول")+"</td>"+
+      "<td>"+money(q)+"</td>"+
+      "<td>"+money(sell)+"</td>"+
+      "<td>"+money(sellTotal)+"</td>"+
+      "<td>"+(consumer===null?"نامشخص":money(consumer))+"</td>"+
+      "<td>"+(consumerTotal===null?"نامشخص":money(consumerTotal))+"</td>"+
+      "<td>"+(difference===null?"نامشخص":money(difference))+"</td>"+
+      "<td>"+(buy===null?"نامشخص":money(buy))+"</td>"+
+      "<td>"+(rowProfit===null?"نامشخص":money(rowProfit))+"</td>"+
+      "<td>"+escapeHtml(fmtDate(x.created_at))+"</td>"+
+      "</tr>";
+    });
+  
+    $("managerSales").innerHTML=h+"</table>";
+  
+    renderSalesChart();
+    renderVisitorPerformance();
+  
+   }else{
+    await loadVisitorStats();
+   }
+  }
+  
+  /* چاپ فاکتور با هر دو قیمت */
+  async function printInvoice(id){
+   const inv=invoiceRows.find(x=>String(x.id)===String(id));
+   if(!inv)return;
+  
+   const w=window.open("","_blank");
+  
+   if(!w){
+    return alert("اجازه باز شدن پنجره چاپ را فعال کن.");
+   }
+  
+   const manager=profile?.role==="manager";
+  
+   const fields=manager
+    ?"quantity,returned_quantity,unit_price,consumer_price_at_sale,buy_price_at_sale,products(name,unit)"
+    :"quantity,returned_quantity,unit_price,consumer_price_at_sale,products(name,unit)";
+  
+   const {data,error}=await db
+    .from("sales")
+    .select(fields)
+    .eq("invoice_id",id);
+  
+   if(error){
+    w.close();
+    return alert(error.message);
+   }
+  
+   let rows="";
+   let consumerTotal=0;
+   let consumerKnown=true;
+  
+   (data||[]).forEach(x=>{
+    const qty=Math.max(
+     0,
+     safeNumber(x.quantity)-safeNumber(x.returned_quantity)
+    );
+  
+    const sell=safeNumber(x.unit_price);
+    const sellAmount=qty*sell;
+  
+    let consumerCell="نامشخص";
+    let consumerAmountCell="نامشخص";
+  
+    if(x.consumer_price_at_sale==null){
+     consumerKnown=false;
+    }else{
+     const cp=safeNumber(x.consumer_price_at_sale);
+     const amount=qty*cp;
+  
+     consumerTotal+=amount;
+     consumerCell=money(cp);
+     consumerAmountCell=money(amount);
+    }
+  
+    rows+="<tr>"+
+     "<td>"+escapeHtml(x.products?.name||"محصول")+"</td>"+
+     "<td>"+money(qty)+" "+escapeHtml(x.products?.unit||"")+"</td>"+
+     "<td>"+money(sell)+"</td>"+
+     "<td>"+money(sellAmount)+"</td>"+
+     "<td>"+consumerCell+"</td>"+
+     "<td>"+consumerAmountCell+"</td>"+
+     "</tr>";
+   });
+  
+   const sellTotal=safeNumber(inv.total);
+  
+   const finalConsumer=inv.consumer_total==null
+    ?(consumerKnown?consumerTotal:null)
+    :safeNumber(inv.consumer_total);
+  
+   const difference=finalConsumer===null
+    ?null:finalConsumer-sellTotal;
+  
+   const html=
+   "<html lang='fa' dir='rtl'>"+
+   "<meta charset='UTF-8'>"+
+   "<title>فاکتور فروش</title>"+
+   "<style>"+
+   "body{font-family:Tahoma;padding:25px;color:#222}"+
+   "table{width:100%;border-collapse:collapse;margin-top:20px}"+
+   "td,th{border:1px solid #aaa;padding:9px;text-align:right}"+
+   "th{background:#eee}"+
+   ".summary{margin-top:25px;line-height:2.5}"+
+   "</style>"+
+   "<h2>FOOD DISTRIBUTION PRO ADRIAN NOVIN</h2>"+
+   "<h3>فاکتور: "+escapeHtml(inv.invoice_code||inv.id)+"</h3>"+
+   "<p>مشتری: "+escapeHtml(inv.customers?.name||"-")+"</p>"+
+   "<p>تاریخ: "+escapeHtml(fmtDate(inv.created_at))+"</p>"+
+   "<table><tr>"+
+   "<th>محصول</th><th>تعداد خالص</th>"+
+   "<th>قیمت فروش</th><th>جمع فروش</th>"+
+   "<th>قیمت مصرف‌کننده</th><th>جمع مصرف‌کننده</th>"+
+   "</tr>"+rows+"</table>"+
+   "<div class='summary'>"+
+   "<b>مبلغ قابل پرداخت بر اساس قیمت فروش: "+money(sellTotal)+"</b><br>"+
+   "مبلغ مصرف‌کننده: "+(finalConsumer===null?"نامشخص":money(finalConsumer))+"<br>"+
+   "اختلاف دو مبلغ: "+(difference===null?"نامشخص":money(difference))+"<br>"+
+   "پرداخت اولیه: "+money(inv.paid)+"<br>"+
+   "مانده: "+money(sellTotal-safeNumber(inv.paid))+
+   "</div>"+
+   "<p>"+escapeHtml(inv.note||"")+"</p>"+
+   "<script>window.onload=()=>window.print()<\/script>"+
+   "</html>";
+  
+   w.document.open();
+   w.document.write(html);
+   w.document.close();
+  }
+  
+  /* خروجی هلو با اطلاعات دو قیمت */
+  async function copySalesForHoloo(){
+   if(profile?.role!=="manager")return;
+  
+   const rows=[[
+    "نام کالا",
+    "تعداد خالص",
+    "قیمت فروش واحد",
+    "مبلغ فروش",
+    "قیمت مصرف‌کننده واحد",
+    "مبلغ مصرف‌کننده",
+    "اختلاف",
+    "قیمت خرید تاریخی",
+    "سود",
+    "تاریخ"
+   ]];
+  
+   recentSales.forEach(x=>{
+    const q=Math.max(
+     0,
+     safeNumber(x.quantity)-safeNumber(x.returned_quantity)
+    );
+  
+    const sell=safeNumber(x.unit_price);
+    const sellTotal=q*sell;
+  
+    const consumer=x.consumer_price_at_sale==null
+     ?null:safeNumber(x.consumer_price_at_sale);
+  
+    const consumerTotal=consumer===null
+     ?null:q*consumer;
+  
+    const difference=consumerTotal===null
+     ?null:consumerTotal-sellTotal;
+  
+    const buy=x.buy_price_at_sale==null
+     ?null:safeNumber(x.buy_price_at_sale);
+  
+    const profit=buy===null
+     ?null:q*(sell-buy);
+  
+    rows.push([
+     x.products?.name||"محصول",
+     q,
+     sell,
+     sellTotal,
+     consumer===null?"نامشخص":consumer,
+     consumerTotal===null?"نامشخص":consumerTotal,
+     difference===null?"نامشخص":difference,
+     buy===null?"نامشخص":buy,
+     profit===null?"نامشخص":profit,
+     new Date(x.created_at).toLocaleDateString("fa-IR")
+    ]);
+   });
+  
+   try{
+    await navigator.clipboard.writeText(
+     rows.map(r=>r.join("\t")).join("\n")
+    );
+    notice("خروجی کامل فروش و قیمت‌ها کپی شد.");
+   }catch(e){
+    notice("مرورگر اجازه کپی نداد.","error");
+   }
+  }
+  
+  /* نمایش قیمت مصرف‌کننده در اقلام مرجوعی */
+  async function openReturnModal(id){
+   const inv=invoiceRows.find(x=>String(x.id)===String(id));
+   if(!inv)return;
+  
+   selectedReturnInvoice=inv;
+   returnLines=[];
+  
+   $("returnInvoiceInfo").textContent=
+    "فاکتور "+(inv.invoice_code||inv.id)+
+    " | مشتری: "+(inv.customers?.name||"بدون مشتری");
+  
+   $("returnReason").value="";
+   $("returnMessage").textContent="در حال دریافت اقلام...";
+   $("returnModal").classList.remove("hidden");
+  
+   const {data,error}=await db
+    .from("sales")
+    .select(
+     "id,product_id,quantity,returned_quantity,unit_price,consumer_price_at_sale,products(name,unit)"
+    )
+    .eq("invoice_id",id);
+  
+   if(error){
+    $("returnMessage").textContent=error.message;
+    return;
+   }
+  
+   returnLines=(data||[]).map(x=>({...x,returnQty:0}));
+   renderReturnLines();
+  }
+  
+  function renderReturnLines(){
+   if(!returnLines.length){
+    $("returnLines").textContent="اقلامی برای مرجوعی وجود ندارد.";
+    return;
+   }
+  
+   let h="<table><tr>"+
+    "<th>کالا</th>"+
+    "<th>تعداد قابل مرجوع</th>"+
+    "<th>قیمت فروش</th>"+
+    "<th>قیمت مصرف‌کننده</th>"+
+    "<th>تعداد مرجوعی</th>"+
+    "</tr>";
+  
+   returnLines.forEach((x,i)=>{
+    const remaining=Math.max(
+     0,
+     safeNumber(x.quantity)-safeNumber(x.returned_quantity)
+    );
+  
+    h+="<tr>"+
+     "<td>"+escapeHtml(x.products?.name||"کالا")+"</td>"+
+     "<td>"+money(remaining)+"</td>"+
+     "<td>"+money(x.unit_price)+"</td>"+
+     "<td>"+(
+      x.consumer_price_at_sale==null
+       ?"نامشخص"
+       :money(x.consumer_price_at_sale)
+     )+"</td>"+
+     "<td><input type='number' min='0' max='"+remaining+
+     "' value='0' oninput='setReturnQty("+i+",this.value)' "+
+     (!remaining?"disabled":"")+"></td>"+
+     "</tr>";
+   });
+  
+   $("returnLines").innerHTML=h+"</table>";
+  
+   $("returnMessage").textContent=
+    "محاسبه مرجوعی بر اساس قیمت‌های تاریخی همان فاکتور انجام می‌شود.";
+  }
+  </script>
+  
+  </body>
+  </html>
+  
