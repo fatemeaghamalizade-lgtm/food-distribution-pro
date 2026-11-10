@@ -542,6 +542,7 @@ async function getProductImage(path){
 }
 
 
+
 async function addProduct(){
  if(profile?.role!=="manager")return;
 
@@ -552,11 +553,22 @@ async function addProduct(){
  const stock=Number($("stock").value);
  const min=Number($("minStock").value||0);
 
- if(!name||$("buyPrice").value===""||$("sellPrice").value===""||$("consumerPrice").value===""||$("stock").value==="")
+ if(
+  !name||
+  $("buyPrice").value===""||
+  $("sellPrice").value===""||
+  $("consumerPrice").value===""||
+  $("stock").value===""
+ ){
   return notice("اطلاعات محصول را کامل کن.","error");
+ }
 
- if(![buy,sell,consumer,stock,min].every(Number.isFinite)||[buy,sell,consumer,stock,min].some(x=>x<0))
+ if(
+  ![buy,sell,consumer,stock,min].every(Number.isFinite)||
+  [buy,sell,consumer,stock,min].some(x=>x<0)
+ ){
   return notice("مقادیر معتبر نیستند.","error");
+ }
 
  setBusy("addProductButton",true);
  let path=null;
@@ -586,7 +598,12 @@ async function addProduct(){
   await loadProducts();
   notice("محصول ثبت شد.");
 
-  ["productName","unit","buyPrice","sellPrice","consumerPrice","stock","minStock","barcode","description"].forEach(id=>$(id).value="");
+  [
+   "productName","unit","buyPrice","sellPrice",
+   "consumerPrice","stock","minStock",
+   "barcode","description"
+  ].forEach(id=>$(id).value="");
+
   $("productImage").value="";
 
  }catch(e){
@@ -595,16 +612,6 @@ async function addProduct(){
  }finally{
   setBusy("addProductButton",false);
  }
-}
-
-async function loadProducts(){
- const {data,error}=await db.from("products").select("*").eq("is_archived",false).order("name");
- if(error)return notice("دریافت محصولات: "+error.message,"error");
- productList=data||[];
- $("productCount").textContent=money(productList.length);
- $("stockValue").textContent=money(productList.reduce((s,p)=>s+safeNumber(p.stock)*safeNumber(p.buy_price),0));
- $("lowStockCount").textContent=money(productList.filter(p=>safeNumber(p.stock)<=safeNumber(p.min_stock)).length);
- renderProducts();renderSaleProductOptions();renderPurchaseProductOptions();renderLowStock();
 }
 
 
@@ -646,22 +653,25 @@ async function renderProducts(){
   const code=document.createElement("p");
   code.textContent="بارکد: "+(p.barcode||"-");
 
-  const sell=document.createElement("p");
-  sell.className="price";
-  sell.textContent="قیمت فروش: "+money(p.sell_price);
+ 
+const sell=document.createElement("p");
+sell.className="price";
+sell.textContent="قیمت فروش: "+money(p.sell_price);
 
-  const consumer=document.createElement("p");
-  consumer.className="price";
-  consumer.textContent="قیمت مصرف‌کننده: "+money(p.consumer_price);
+const consumer=document.createElement("p");
+consumer.className="price";
+consumer.textContent="قیمت مصرف‌کننده: "+money(p.consumer_price);
 
-  d.append(h,cat,code,sell,consumer);
+if(manager){
+ const buy=document.createElement("p");
+ buy.className="price";
+ buy.textContent="قیمت خرید: "+money(p.buy_price);
+ d.append(buy);
+}
 
-  if(manager){
-   const buy=document.createElement("p");
-   buy.className="price";
-   buy.textContent="قیمت خرید: "+money(p.buy_price);
-   d.append(buy);
-  }
+d.append(sell,consumer);
+
+
 
   const stock=document.createElement("p");
   stock.textContent="موجودی: "+money(p.stock)+" "+(p.unit||"");
@@ -826,7 +836,6 @@ async function openEditInvoice(id){
  $("invoiceModalTitle").textContent="ویرایش فاکتور";
  $("saleCustomer").value=inv.customer_id||"";
  $("salePaid").value=inv.paid||0;$("saleNote").value=inv.note||"";
- $("invoiceLocationConsent").checked=true;$("invoiceLocationConsent").disabled=true;
  $("recordSaleButton").textContent="ذخیره تغییرات";
  $("invoiceModal").classList.remove("hidden");
 }
@@ -1240,5 +1249,3 @@ if("serviceWorker" in navigator&&location.protocol!=="file:"){
  window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(console.error));
 }
 </script>
-</body>
-</html>
