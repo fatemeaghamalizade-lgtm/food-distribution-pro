@@ -1965,48 +1965,7 @@ if("serviceWorker" in navigator&&location.protocol!=="file:"){
    $("returnMessage").textContent=
     "محاسبه مرجوعی بر اساس قیمت‌های تاریخی همان فاکتور انجام می‌شود.";
   }
-  async function loadProducts() {
-    try {
-        let query = supabase
-            .from("products")
-            .select(
-                isManager
-                    ? "*"
-                    : "id,name,category,unit,sell_price,consumer_price,stock,min_stock,barcode,description,image_url,is_archived"
-            )
-            .eq("is_archived", false)
-            .order("name");
-
-        const { data, error } = await query;
-
-        if (error) throw error;
-
-        productList = data || [];
-
-        if (typeof renderProducts === "function") {
-            renderProducts();
-        }
-
-        if (typeof renderLowStock === "function") {
-            renderLowStock();
-        }
-
-        if (typeof renderSaleProductOptions === "function") {
-            renderSaleProductOptions();
-        }
-
-        if (isManager && typeof renderPurchaseProductOptions === "function") {
-            renderPurchaseProductOptions();
-        }
-
-        return true;
-
-    } catch (error) {
-        console.error("خطا در بارگذاری محصولات:", error);
-        alert("بارگذاری محصولات ناموفق بود: " + error.message);
-        return false;
-    }
-}
+  
   </script>
   
   </body>
