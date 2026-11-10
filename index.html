@@ -71,15 +71,23 @@ th{background:#eef1fa;color:var(--main)}
 .page-head button{width:auto}
 @media(max-width:600px){header h1{font-size:19px}.card{padding:15px}.modalbox{padding:15px}.bar-row{grid-template-columns:75px 1fr 55px}}
 @media print{.no-print{display:none!important}}
+.header-logo{
+  width:min(260px,70vw);
+  max-height:130px;
+  object-fit:contain;
+  display:block;
+  margin:0 auto 12px;
+  border-radius:12px;
+}
 </style>
 </head>
 
 <body>
-<header>
-<h1>FOOD DISTRIBUTION PRO ADRIAN NOVIN</h1>
-<p>سیستم هوشمند مدیریت فروش و پخش مواد غذایی آدرین نوین</p>
-</header>
-
+  <header>
+    <img class="header-logo" src="./logo-new.png" alt="لوگوی آدرین نوین">
+    <h1>FOOD DISTRIBUTION PRO ADRIAN NOVIN</h1>
+    <p>سیستم هوشمند مدیریت فروش و پخش مواد غذایی آدرین نوین</p>
+    </header>
 <main>
 
 <section id="setup" class="card hidden">
@@ -1972,3 +1980,21 @@ if("serviceWorker" in navigator&&location.protocol!=="file:"){
   </body>
   </html>
   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
