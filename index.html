@@ -639,6 +639,7 @@ function closeApproveVisitorModal() {
 }
 
 // تأیید درخواست و ساخت حساب
+
 async function approveVisitorRequest() {
   if (!selectedRegistrationRequest) {
     return message("approveVisitorMessage", "درخواستی انتخاب نشده است.", "error");
@@ -668,35 +669,46 @@ async function approveVisitorRequest() {
     });
 
     if (error) {
-  let details = "";
+      let details = "";
 
-  try {
-    const response = error.context;
+      try {
+        const response = error.context;
 
-    if (response && typeof response.json === "function") {
-      const result = await response.json();
-      details = result.error || result.message || JSON.stringify(result);
+        if (response) {
+          details = typeof response.clone === "function"
+            ? await response.clone().text()
+            : String(response);
+        }
+      } catch (e) {
+        details = String(e);
+      }
+
+      console.error("SUPABASE APPROVAL ERROR:", error);
+      console.error("SUPABASE ERROR DETAILS:", details);
+
+      throw new Error(
+        "جزئیات خطا: " + (details || error.message)
+      );
     }
-  } catch (e) {}
 
-  throw new Error(details || error.message || "خطای نامشخص");
-}
-
-if (!data?.success) {
-  throw new Error(data?.error || "تأیید درخواست ناموفق بود.");
-}
+    if (!data || !data.success) {
+      throw new Error(data?.error || "تأیید درخواست ناموفق بود.");
+    }
 
     closeApproveVisitorModal();
-    notice("حساب ویزیتور با موفقیت ساخته شد. نام کاربری: " + data.username);
+
+    notice("حساب ویزیتور ساخته شد. نام کاربری: " + data.username);
+
     await loadRegistrationRequests();
     await loadVisitors();
 
   } catch (error) {
-    message("approveVisitorMessage", "خطا: " + error.message, "error");
+    message("approveVisitorMessage", error.message, "error");
   } finally {
     setBusy("approveVisitorButton", false);
   }
 }
+
 
 // رد درخواست
 async function rejectVisitorRequest(request) {
