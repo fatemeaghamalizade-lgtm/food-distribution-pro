@@ -108,8 +108,6 @@ th{background:#eef1fa;color:var(--main)}
 <input id="fullName" placeholder="نام و نام خانوادگی">
 <input id="phone" placeholder="شماره موبایل">
 <input id="nickname" placeholder="نام کاربری">
-<input id="newPassword" type="password" placeholder="رمز عبور">
-<input id="repeatPassword" type="password" placeholder="تکرار رمز عبور">
 <button id="registerButton" onclick="registerVisitor()">ثبت‌نام</button>
 </div>
 <div id="authMessage" class="message hidden"></div>
@@ -170,6 +168,34 @@ th{background:#eef1fa;color:var(--main)}
 <div id="activeVisitorsList"></div>
 <h3>ویزیتورهای غیرفعال</h3>
 <div id="dismissedVisitorsList"></div>
+</div>
+
+<div class="card">
+  <h3 class="section-title">درخواست‌های ثبت‌نام ویزیتورها</h3>
+  <button class="secondary" onclick="loadRegistrationRequests()">
+    به‌روزرسانی درخواست‌ها
+  </button>
+  <div id="registrationRequests" class="tablewrap">
+    <p class="small">برای مشاهده درخواست‌ها روی به‌روزرسانی بزنید.</p>
+  </div>
+</div>
+
+<div id="approveVisitorModal" class="modal hidden">
+  <div class="modalbox" style="max-width:460px">
+    <div class="modalhead">
+      <h2>تأیید ویزیتور</h2>
+      <button class="close" onclick="closeApproveVisitorModal()">بستن</button>
+    </div>
+    <p id="approveVisitorName"></p>
+    <input id="approveVisitorPassword" type="password"
+      placeholder="رمز جدید ویزیتور (حداقل ۸ نویسه)">
+    <input id="approveVisitorPasswordRepeat" type="password"
+      placeholder="تکرار رمز جدید">
+    <button id="approveVisitorButton" onclick="approveVisitorRequest()">
+      تأیید و ساخت حساب
+    </button>
+    <p id="approveVisitorMessage" class="small"></p>
+  </div>
 </div>
 
 <div class="card">
@@ -421,24 +447,51 @@ async function login(){
  await loadApp(data.user);
 }
 
-async function registerVisitor(){
- const fullName=$("fullName").value.trim(),phone=$("phone").value.trim();
- const nick=$("nickname").value.trim(),pass=$("newPassword").value,repeat=$("repeatPassword").value;
- if(!fullName||!phone||!nick||!pass||!repeat)return message("authMessage","همه قسمت‌ها را کامل کن.","error");
- if(!/^[a-zA-Z0-9_.-]{3,30}$/.test(nick))return message("authMessage","نام کاربری باید ۳ تا ۳۰ نویسه مجاز داشته باشد.","error");
- if(pass.length<8||pass!==repeat)return message("authMessage","رمز حداقل ۸ نویسه و تکرار آن باید یکسان باشد.","error");
- setBusy("registerButton",true);
- try{
-  const {data,error}=await db.auth.signUp({
-   email:usernameEmail(nick),password:pass,
-   options:{data:{full_name:fullName,phone,nickname:nick}}
-  });
-  if(error)throw error;
-  if(!data.session)return message("authMessage","حساب ساخته شد؛ تأیید ایمیل یا تنظیمات ثبت‌نام Supabase را بررسی کن.");
-  await loadApp(data.user);
- }catch(e){message("authMessage","ثبت‌نام ناموفق: "+e.message,"error")}
- finally{setBusy("registerButton",false)}
+
+async function registerVisitor() {
+  const fullName = $("fullName").value.trim();
+  const phone = $("phone").value.trim();
+  const nick = $("nickname").value.trim();
+
+  if (!fullName || !phone || !nick) {
+    return message("authMessage", "همه قسمت‌ها را کامل کن.", "error");
+  }
+
+  if (!/^[a-zA-Z0-9_.-]{3,30}$/.test(nick)) {
+    return message("authMessage", "نام کاربری باید ۳ تا ۳۰ نویسه مجاز داشته باشد.", "error");
+  }
+
+  setBusy("registerButton", true);
+
+  try {
+    const { data, error } = await db.functions.invoke("bright-worker", {
+      body: {
+        action: "submit_request",
+        full_name: fullName,
+        phone: phone,
+        nickname: nick
+      }
+    });
+
+    if (error) throw error;
+    if (!data?.success) throw new Error(data?.error || "ثبت درخواست ناموفق بود.");
+
+    message(
+      "authMessage",
+      "درخواست شما ارسال شد. پس از تأیید مدیر، نام کاربری و رمز ورودتان فعال می‌شود."
+    );
+
+    $("fullName").value = "";
+    $("phone").value = "";
+    $("nickname").value = "";
+
+  } catch (e) {
+    message("authMessage", "خطا: " + e.message, "error");
+  } finally {
+    setBusy("registerButton", false);
+  }
 }
+
 
 async function loadApp(user){
  currentUser=user;
@@ -499,6 +552,164 @@ async function loadVisitors(){
   $("dismissedVisitorsList").append(d);
  });
  renderVisitorSelect();
+}
+
+let selectedRegistrationRequest = null;
+
+// دریافت درخواست‌های ثبت‌نام
+async function loadRegistrationRequests() {
+  const container = $("registrationRequests");
+  container.textContent = "در حال دریافت درخواست‌ها...";
+
+  try {
+    const { data, error } = await db.functions.invoke("bright-worker", {
+      body: {
+        action: "list_requests"
+      }
+    });
+
+    if (error) throw error;
+    if (!data?.success) {
+      throw new Error(data?.error || "دریافت درخواست‌ها ناموفق بود.");
+    }
+
+    container.innerHTML = "";
+
+    const requests = data.requests || [];
+
+    if (!requests.length) {
+      container.textContent = "درخواست ثبت‌نام جدیدی وجود ندارد.";
+      return;
+    }
+
+    requests.forEach(request => {
+      const card = document.createElement("div");
+      card.className = "product";
+
+      const name = document.createElement("h3");
+      name.textContent = request.full_name || "بدون نام";
+
+      const info = document.createElement("p");
+      info.textContent =
+        "نام کاربری: " + request.nickname +
+        " | موبایل: " + request.phone;
+
+      const date = document.createElement("p");
+      date.className = "small";
+      date.textContent = "زمان درخواست: " +
+        new Date(request.created_at).toLocaleString("fa-IR");
+
+      const approve = document.createElement("button");
+      approve.textContent = "تأیید و تعیین رمز";
+      approve.onclick = () => openApproveVisitorModal(request);
+
+      const reject = document.createElement("button");
+      reject.textContent = "رد درخواست";
+      reject.className = "danger";
+      reject.onclick = () => rejectVisitorRequest(request);
+
+      card.append(name, info, date, approve, reject);
+      container.append(card);
+    });
+
+  } catch (error) {
+    container.textContent = "خطا: " + error.message;
+  }
+}
+
+// باز کردن پنجره تأیید
+function openApproveVisitorModal(request) {
+  selectedRegistrationRequest = request;
+
+  $("approveVisitorName").textContent =
+    "تأیید حساب برای: " + request.full_name +
+    " (" + request.nickname + ")";
+
+  $("approveVisitorPassword").value = "";
+  $("approveVisitorPasswordRepeat").value = "";
+  $("approveVisitorMessage").textContent = "";
+
+  $("approveVisitorModal").classList.remove("hidden");
+}
+
+// بستن پنجره تأیید
+function closeApproveVisitorModal() {
+  $("approveVisitorModal").classList.add("hidden");
+  selectedRegistrationRequest = null;
+}
+
+// تأیید درخواست و ساخت حساب
+async function approveVisitorRequest() {
+  if (!selectedRegistrationRequest) {
+    return message("approveVisitorMessage", "درخواستی انتخاب نشده است.", "error");
+  }
+
+  const password = $("approveVisitorPassword").value;
+  const repeat = $("approveVisitorPasswordRepeat").value;
+
+  if (password.length < 8) {
+    return message("approveVisitorMessage", "رمز باید حداقل ۸ نویسه باشد.", "error");
+  }
+
+  if (password !== repeat) {
+    return message("approveVisitorMessage", "تکرار رمز یکسان نیست.", "error");
+  }
+
+  setBusy("approveVisitorButton", true);
+
+  try {
+    const { data, error } = await db.functions.invoke("bright-worker", {
+      body: {
+        action: "review_request",
+        request_id: selectedRegistrationRequest.id,
+        decision: "approve",
+        new_password: password
+      }
+    });
+
+    if (error) throw error;
+    if (!data?.success) {
+      throw new Error(data?.error || "تأیید درخواست ناموفق بود.");
+    }
+
+    closeApproveVisitorModal();
+    notice("حساب ویزیتور با موفقیت ساخته شد. نام کاربری: " + data.username);
+    await loadRegistrationRequests();
+    await loadVisitors();
+
+  } catch (error) {
+    message("approveVisitorMessage", "خطا: " + error.message, "error");
+  } finally {
+    setBusy("approveVisitorButton", false);
+  }
+}
+
+// رد درخواست
+async function rejectVisitorRequest(request) {
+  if (!confirm("آیا از رد درخواست " + request.full_name + " مطمئن هستید؟")) {
+    return;
+  }
+
+  try {
+    const { data, error } = await db.functions.invoke("bright-worker", {
+      body: {
+        action: "review_request",
+        request_id: request.id,
+        decision: "reject"
+      }
+    });
+
+    if (error) throw error;
+    if (!data?.success) {
+      throw new Error(data?.error || "رد درخواست ناموفق بود.");
+    }
+
+    notice("درخواست با موفقیت رد شد.");
+    await loadRegistrationRequests();
+
+  } catch (error) {
+    notice("خطا در رد درخواست: " + error.message, "error");
+  }
 }
 
 async function dismissVisitor(id,name){
@@ -1980,18 +2191,6 @@ if("serviceWorker" in navigator&&location.protocol!=="file:"){
   </body>
   </html>
   
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
