@@ -1152,18 +1152,27 @@ async function startTracking(){
     }
    },
    function(error){
-    let message="خطای نامشخص در مکان‌یابی";
+    if(error.code===1){
+     setTrackingUI(false,"اجازه دسترسی به موقعیت مکانی داده نشد.");
 
-    if(error.code===1) message="اجازه دسترسی به موقعیت مکانی داده نشد.";
-    if(error.code===2) message="موقعیت مکانی در دسترس نیست.";
-    if(error.code===3) message="دریافت موقعیت بیش از حد طول کشید.";
-
-    setTrackingUI(false,message);
-
-    if(locationWatchId!==null){
-     navigator.geolocation.clearWatch(locationWatchId);
-     locationWatchId=null;
+     if(locationWatchId!==null){
+      navigator.geolocation.clearWatch(locationWatchId);
+      locationWatchId=null;
+     }
+     return;
     }
+
+    if(error.code===2){
+     setTrackingUI(true,"موقعیت فعلاً در دسترس نیست؛ در انتظار تلاش مجدد...");
+     return;
+    }
+
+    if(error.code===3){
+     setTrackingUI(true,"دریافت موقعیت طول کشید؛ در انتظار تلاش مجدد...");
+     return;
+    }
+
+    setTrackingUI(true,"خطای مکان‌یابی؛ در انتظار تلاش مجدد...");
    },
    {
     enableHighAccuracy:false,
