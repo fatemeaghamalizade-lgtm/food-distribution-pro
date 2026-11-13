@@ -270,17 +270,27 @@ th{background:#eef1fa;color:var(--main)}
 <div id="managerLocations"></div>
 </div>
 </section>
+hidden">
 <section id="productPage" class="hidden">
   <div class="card">
+
     <div class="page-head">
       <h2>فهرست محصولات</h2>
-      <button class="secondary" onclick="closeProductPage()">بازگشت</button>
+      <button class="secondary" onclick="closeProductPage()">
+        بازگشت
+      </button>
     </div>
 
-    <input id="catalogSearch" placeholder="جست‌وجوی محصولات..." oninput="renderProducts()">
+    <input
+      id="catalogSearch"
+      placeholder="جست‌وجوی نام محصول، دسته‌بندی یا بارکد..."
+      oninput="renderProducts()"
+    >
 
     <div id="catalogActions"></div>
+
     <div id="products" class="grid"></div>
+
   </div>
 </section>
 <section id="visitorPanel" class="hidden">
@@ -903,95 +913,7 @@ async function addProduct(){
 }
 
 
-async function renderProducts(){
- const token=++productRenderToken;
- const manager=profile?.role==="manager";
- const target=manager?$("products"):$("visitorProducts");
- if(!target)return;
-
- const search=(manager?$("productSearch").value:$("visitorProductSearch").value).trim().toLocaleLowerCase("fa");
- target.innerHTML="";
-
- const list=productList.filter(p=>
-  (p.name+" "+(p.category||"")+" "+(p.barcode||""))
-  .toLocaleLowerCase("fa").includes(search)
- );
-
- for(const p of list){
-  const d=document.createElement("div");
-  d.className="product";
-
-  if(p.image_url){
-   const url=await getProductImage(p.image_url);
-   if(token!==productRenderToken)return;
-   if(url){
-    const img=document.createElement("img");
-    img.src=url;
-    img.alt=p.name;
-    d.append(img);
-   }
-  }
-
-  const h=document.createElement("h3");
-  h.textContent=p.name;
-
-  const cat=document.createElement("p");
-  cat.textContent="دسته: "+(p.category||"بدون دسته");
-
-  const code=document.createElement("p");
-  code.textContent="بارکد: "+(p.barcode||"-");
-
- 
-const sell=document.createElement("p");
-sell.className="price";
-sell.textContent="قیمت فروش: "+money(p.sell_price);
-
-const consumer=document.createElement("p");
-consumer.className="price";
-consumer.textContent="قیمت مصرف‌کننده: "+money(p.consumer_price);
-
-if(manager){
- const buy=document.createElement("p");
- buy.className="price";
- buy.textContent="قیمت خرید: "+money(p.buy_price);
- d.append(buy);
-}
-
-d.append(sell,consumer);
-
-
-
-  const stock=document.createElement("p");
-  stock.textContent="موجودی: "+money(p.stock)+" "+(p.unit||"");
-  d.append(stock);
-
-  if(safeNumber(p.stock)<=safeNumber(p.min_stock)){
-   const w=document.createElement("p");
-   w.className="warning";
-   w.textContent="موجودی کم است";
-   d.append(w);
-  }
-
-  if(manager){
-   const b=document.createElement("button");
-   b.className="danger";
-   b.textContent="آرشیو محصول";
-
-   b.onclick=async()=>{
-    if(!confirm("محصول آرشیو شود؟ سوابق قبلی حفظ می‌شود."))return;
-    const {error}=await db.from("products").update({is_archived:true}).eq("id",p.id);
-    if(error)notice(error.message,"error");
-    else{
-     await loadProducts();
-     notice("محصول آرشیو شد.");
-    }
-   };
-   d.append(b);
-  }
-
-  target.append(d);
- }
-}
+renderProducts
 
 function renderLowStock(){
  if(profile?.role!=="manager")return;
@@ -1625,143 +1547,47 @@ if("serviceWorker" in navigator&&location.protocol!=="file:"){
   
   /* دریافت محصولات */
   async function loadProducts(){
-   if(!db || !profile)return;
-  
-   const manager=profile.role==="manager";
-  
-   const fields=manager
-    ?"*"
-    :"id,name,category,unit,sell_price,consumer_price,stock,min_stock,barcode,description,image_url,is_archived";
-  
-   const {data,error}=await db
+  if(!db || !profile)return;
+
+  const manager=profile.role==="manager";
+
+  const fields=manager
+    ?"id,name,category,unit,sell_price,consumer_price,buy_price,barcode,description,image_url,is_archived"
+    :"id,name,category,unit,sell_price,consumer_price,barcode,description,image_url,is_archived";
+
+  const {data,error}=await db
     .from("products")
     .select(fields)
     .eq("is_archived",false)
     .order("name");
-  
-   if(error){
+
+  if(error){
     notice("خطای دریافت محصولات: "+error.message,"error");
     return;
-   }
-  
-   productList=data||[];
-  
-   $("productCount").textContent=money(productList.length);
-   $("lowStockCount").textContent=money(
-    productList.filter(p=>safeNumber(p.stock)<=safeNumber(p.min_stock)).length
-   );
-  
-   if(manager){
-    const stockValue=productList.reduce(
-     (sum,p)=>sum+safeNumber(p.stock)*safeNumber(p.buy_price),0
-    );
-    $("stockValue").textContent=money(stockValue);
-    renderLowStock();
+  }
+
+  productList=data||[];
+
+  if($("productCount")){
+    $("productCount").textContent=money(productList.length);
+  }
+
+  // موجودی و ارزش موجودی در صفحه نمایش داده نمی‌شود.
+  if($("lowStockCount")){
+    $("lowStockCount").textContent="—";
+  }
+
+  if($("stockValue")){
+    $("stockValue").textContent="—";
+  }
+
+  if(manager){
     renderPurchaseProductOptions();
-   }
-  
-   renderProducts();
-   renderSaleProductOptions();
   }
-  
-  /* نمایش محصولات */
-  async function renderProducts(){
-   const token=++productRenderToken;
-   const manager=profile?.role==="manager";
-   const target=manager?$("products"):$("visitorProducts");
-  
-   if(!target)return;
-  
-   const search=(manager
-    ?$("productSearch").value
-    :$("visitorProductSearch").value
-   ).trim().toLocaleLowerCase("fa");
-  
-   target.innerHTML="";
-  
-   const list=productList.filter(p=>
-    (p.name+" "+(p.category||"")+" "+(p.barcode||""))
-     .toLocaleLowerCase("fa").includes(search)
-   );
-  
-   for(const p of list){
-    const d=document.createElement("div");
-    d.className="product";
-  
-    if(p.image_url){
-     const url=await getProductImage(p.image_url);
-     if(token!==productRenderToken)return;
-  
-     if(url){
-      const img=document.createElement("img");
-      img.src=url;
-      img.alt=p.name;
-      d.append(img);
-     }
-    }
-  
-    const h=document.createElement("h3");
-    h.textContent=p.name;
-    d.append(h);
-  
-    const cat=document.createElement("p");
-    cat.textContent="دسته: "+(p.category||"بدون دسته");
-    d.append(cat);
-  
-    const sell=document.createElement("p");
-    sell.className="price";
-    sell.textContent="قیمت فروش: "+money(p.sell_price);
-    d.append(sell);
-  
-    const consumer=document.createElement("p");
-    consumer.className="price";
-    consumer.textContent="قیمت مصرف‌کننده: "+
-     (p.consumer_price==null?"نامشخص":money(p.consumer_price));
-    d.append(consumer);
-  
-    if(manager){
-     const buy=document.createElement("p");
-     buy.className="price";
-     buy.textContent="قیمت خرید: "+money(p.buy_price);
-     d.append(buy);
-    }
-  
-    const stock=document.createElement("p");
-    stock.textContent="موجودی: "+money(p.stock)+" "+(p.unit||"");
-    d.append(stock);
-  
-    if(safeNumber(p.stock)<=safeNumber(p.min_stock)){
-     const warning=document.createElement("p");
-     warning.className="warning";
-     warning.textContent="موجودی کم است";
-     d.append(warning);
-    }
-  
-    if(manager){
-     const archive=document.createElement("button");
-     archive.className="danger";
-     archive.textContent="آرشیو محصول";
-  
-     archive.onclick=async()=>{
-      if(!confirm("محصول آرشیو شود؟ سوابق قبلی حفظ می‌شود."))return;
-  
-      const {error}=await db
-       .from("products")
-       .update({is_archived:true})
-       .eq("id",p.id);
-  
-      if(error)return notice(error.message,"error");
-  
-      await loadProducts();
-      notice("محصول آرشیو شد.");
-     };
-  
-     d.append(archive);
-    }
-  
-    target.append(d);
-   }
-  }
+
+  renderProducts();
+  renderSaleProductOptions();
+}
   
   /* محاسبه دو قیمت در پیش‌نمایش فاکتور */
   function renderInvoiceItems(){
@@ -2358,6 +2184,7 @@ function openProductPage() {
     add.textContent = "افزودن محصول";
     add.onclick = openProductModal;
     actions.append(add);
+
   }
 
   renderProducts();
