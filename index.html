@@ -2719,7 +2719,17 @@ function addSelectedInvoiceProducts() {
       });
     }
   });
+  invoiceItems.sort((a, b) => {
+  const indexA = productList.findIndex(
+    p => String(p.id) === String(a.product.id)
+  );
 
+  const indexB = productList.findIndex(
+    p => String(p.id) === String(b.product.id)
+  );
+
+  return indexA - indexB;
+});
   renderInvoiceItems();
 
   closeInvoicePicker();
