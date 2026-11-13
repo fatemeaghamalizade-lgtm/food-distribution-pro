@@ -272,7 +272,6 @@ header h1{font-size:19px}
 <h3 class="section-title">گزارش فروش و سود</h3>
 <button class="secondary" onclick="loadSales()">به‌روزرسانی گزارش</button>
 <div id="managerSales" class="tablewrap"></div>
-<button class="secondary" onclick="copySalesForHoloo()">کپی خروجی متنی برای هلو</button>
 </div>
 
 <div class="card">
@@ -1286,6 +1285,17 @@ async function recordSale(){
 
  if(!invoiceItems.length){
   return message("saleMessage","ابتدا محصول اضافه کن.","error");
+  const photoFile = $("invoicePhoto")?.files?.[0] || null;
+
+if (photoFile) {
+  if (!["image/jpeg", "image/png", "image/webp"].includes(photoFile.type)) {
+    return message("saleMessage", "فرمت عکس باید JPG، PNG یا WEBP باشد.", "error");
+  }
+
+  if (photoFile.size > 5 * 1024 * 1024) {
+    return message("saleMessage", "حجم عکس نباید بیشتر از ۵ مگابایت باشد.", "error");
+  }
+}
  }
 
  setBusy("recordSaleButton",true);
@@ -1320,9 +1330,27 @@ async function recordSale(){
 
   if(error)throw error;
 
-  closeInvoiceModal();
+  if(error) throw error;
 
-  notice("فاکتور با شماره "+data+" ثبت شد.");
+// اگر عکس انتخاب شده باشد، بعد از ثبت فاکتور آپلود می‌شود
+let photoWarning = "";
+
+if (photoFile) {
+  try {
+    await uploadInvoicePhoto(photoFile, data);
+  } catch (photoError) {
+    console.error("Photo upload error:", photoError);
+    photoWarning = " فاکتور ثبت شد، اما عکس ذخیره نشد: " + photoError.message;
+  }
+}
+
+closeInvoiceModal();
+
+if (photoWarning) {
+  notice("فاکتور با شماره " + data + " ثبت شد." + photoWarning, "error");
+} else {
+  notice("فاکتور با شماره " + data + " ثبت شد.");
+}
 
   await refreshAll();
 
@@ -1951,6 +1979,183 @@ async function savePayment(){
 
 /* فاکتورها و مرجوعی */
 
+async function printInvoice(id) {
+  const printWindow = window.open("", "_blank");
+
+  if (!printWindow) {
+    return notice("پنجره چاپ مسدود شده است. اجازه باز شدن پنجره را فعال کن.", "error");
+  }
+
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html lang="fa" dir="rtl">
+    <head>
+      <meta charset="UTF-8">
+      <title>چاپ فاکتور</title>
+      <style>
+        body {
+          font-family: Tahoma, Arial, sans-serif;
+          direction: rtl;
+          padding: 25px;
+          color: #222;
+        }
+
+        h2, h3 {
+          text-align: center;
+        }
+
+        .info {
+          line-height: 2.2;
+          margin: 20px 0;
+        }
+
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 20px;
+        }
+
+        th, td {
+          border: 1px solid #777;
+          padding: 9px;
+          text-align: center;
+        }
+
+        th {
+          background: #eee;
+        }
+
+        .total {
+          margin-top: 20px;
+          line-height: 2.2;
+          font-weight: bold;
+        }
+
+        .photo {
+          max-width: 100%;
+          max-height: 450px;
+          display: block;
+          margin: 25px auto;
+        }
+
+        @media print {
+          body { padding: 5px; }
+        }
+      </style>
+    </head>
+    <body>
+      <h2>آدرین نوین</h2>
+      <h3>فاکتور فروش</h3>
+      <p>در حال دریافت اطلاعات فاکتور...</p>
+    </body>
+    </html>
+  `);
+
+  printWindow.document.close();
+
+  try {
+    const { data: inv, error: invoiceError } = await db
+      .from("invoices")
+      .select("*,customers(name)")
+      .eq("id", id)
+      .single();
+
+    if (invoiceError) throw invoiceError;
+
+    const { data: items, error: itemsError } = await db
+      .from("sales")
+      .select("quantity,unit_price,consumer_price_at_sale,products(name,unit)")
+      .eq("invoice_id", id);
+
+    if (itemsError) throw itemsError;
+
+    let photoUrl = null;
+
+    if (inv.invoice_image_url) {
+      photoUrl = await getInvoicePhotoUrl(inv.invoice_image_url);
+    }
+
+    let rows = "";
+
+    (items || []).forEach((item, index) => {
+      const quantity = safeNumber(item.quantity);
+      const price = safeNumber(item.unit_price);
+
+      rows += `
+        <tr>
+          <td>${index + 1}</td>
+          <td>${escapeHtml(item.products?.name || "کالا")}</td>
+          <td>${escapeHtml(item.products?.unit || "-")}</td>
+          <td>${money(quantity)}</td>
+          <td>${money(price)}</td>
+          <td>${money(quantity * price)}</td>
+          <td>${item.consumer_price_at_sale == null
+            ? "نامشخص"
+            : money(item.consumer_price_at_sale)}</td>
+        </tr>
+      `;
+    });
+
+    const total = safeNumber(inv.total);
+    const paid = safeNumber(inv.paid);
+
+    printWindow.document.body.innerHTML = `
+      <h2>آدرین نوین</h2>
+      <h3>فاکتور فروش</h3>
+
+      <div class="info">
+        <div>شماره فاکتور: ${escapeHtml(inv.invoice_code || inv.id)}</div>
+        <div>مشتری: ${escapeHtml(inv.customers?.name || "بدون مشتری")}</div>
+        <div>تاریخ: ${escapeHtml(fmtDate(inv.created_at))}</div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ردیف</th>
+            <th>محصول</th>
+            <th>واحد</th>
+            <th>تعداد</th>
+            <th>قیمت فروش</th>
+            <th>جمع فروش</th>
+            <th>قیمت مصرف‌کننده</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+
+      <div class="total">
+        <div>جمع کل: ${money(total)}</div>
+        <div>پرداخت اولیه: ${money(paid)}</div>
+        <div>مانده: ${money(Math.max(0, total - paid))}</div>
+        <div>توضیحات: ${escapeHtml(inv.note || "-")}</div>
+      </div>
+
+      ${photoUrl
+        ? `<h3>عکس فاکتور</h3>
+           <img class="photo" src="${escapeHtml(photoUrl)}" alt="عکس فاکتور">`
+        : ""}
+    `;
+
+    const printNow = () => {
+      printWindow.focus();
+      printWindow.print();
+    };
+
+    const photo = printWindow.document.querySelector(".photo");
+
+    if (photo) {
+      photo.onload = printNow;
+      photo.onerror = printNow;
+    } else {
+      printNow();
+    }
+
+  } catch (e) {
+    printWindow.close();
+    notice("چاپ فاکتور ناموفق بود: " + e.message, "error");
+  }
+}
 async function loadInvoices(){
  if(!db)return;
 
@@ -1971,24 +2176,43 @@ async function loadInvoices(){
 
  invoiceRows=data||[];
 
- let h="<table><tr><th>شماره</th><th>مشتری</th><th>مبلغ</th><th>پرداخت اولیه</th><th>تاریخ</th><th>عملیات</th></tr>";
+ let h="<table><tr><th>شماره</th><th>مشتری</th><th>مبلغ</th><th>پرداخت اولیه</th><th>تاریخ</th><th>عکس فاکتور</th><th>عملیات</th></tr>";
 
- invoiceRows.forEach(x=>{
-  h+="<tr>";
-  h+="<td>"+escapeHtml(x.invoice_code||x.id)+"</td>";
-  h+="<td>"+escapeHtml(x.customers?.name||"بدون مشتری")+"</td>";
-  h+="<td>"+money(x.total)+"</td>";
-  h+="<td>"+money(x.paid)+"</td>";
-  h+="<td>"+escapeHtml(fmtDate(x.created_at))+"</td>";
+  for (const x of invoiceRows) {
+  h += "<tr>";
 
-  h+="<td><div class='inline-actions'>";
-  h+="<button onclick='printInvoice("+Number(x.id)+")'>چاپ</button>";
-  h+="<button class='secondary' onclick='openEditInvoice("+Number(x.id)+")'>ویرایش</button>";
-  h+="<button class='danger' onclick='openReturnModal("+Number(x.id)+")'>مرجوعی</button>";
-  h+="</div></td>";
+  h += "<td>" + escapeHtml(x.invoice_code || x.id) + "</td>";
+  h += "<td>" + escapeHtml(x.customers?.name || "بدون مشتری") + "</td>";
+  h += "<td>" + money(x.total) + "</td>";
+  h += "<td>" + money(x.paid) + "</td>";
+  h += "<td>" + escapeHtml(fmtDate(x.created_at)) + "</td>";
 
-  h+="</tr>";
- });
+  // نمایش عکس فاکتور در صورت وجود
+  h += "<td>";
+
+  if (x.invoice_image_url) {
+    const photoUrl = await getInvoicePhotoUrl(x.invoice_image_url);
+
+    if (photoUrl) {
+      h += "<a href=\"" + escapeHtml(photoUrl) +
+        "\" target=\"_blank\" rel=\"noopener noreferrer\">مشاهده عکس</a>";
+    } else {
+      h += "عکس در دسترس نیست";
+    }
+  } else {
+    h += "ندارد";
+  }
+
+  h += "</td>";
+
+  h += "<td><div class='inline-actions'>";
+  h += "<button onclick='printInvoice(" + Number(x.id) + ")'>چاپ</button>";
+  h += "<button class='secondary' onclick='openEditInvoice(" + Number(x.id) + ")'>ویرایش</button>";
+  h += "<button class='danger' onclick='openReturnModal(" + Number(x.id) + ")'>مرجوعی</button>";
+  h += "</div></td>";
+
+  h += "</tr>";
+}
 
  const html=invoiceRows.length?h+"</table>":"فاکتوری ثبت نشده است.";
 
@@ -2817,6 +3041,7 @@ function openInvoiceModal() {
   $("invoiceModalTitle").textContent = "ثبت فاکتور فروش";
   $("salePaid").value = "";
   $("saleNote").value = "";
+  if ($("invoicePhoto")) $("invoicePhoto").value = "";
   $("saleMessage").textContent = "";
   $("recordSaleButton").textContent = "ثبت فاکتور";
 
