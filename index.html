@@ -130,23 +130,42 @@ header h1{font-size:19px}
 <button onclick="startConnection()">تلاش دوباره برای اتصال</button>
 </section>
 
+
 <section id="loginBox" class="card hidden">
-<h2>ورود به حساب</h2>
-<input id="username" placeholder="نام کاربری">
-<input id="password" type="password" placeholder="رمز عبور">
-<button onclick="login()">ورود به سیستم</button>
-<button class="secondary" onclick="toggleRegister()">ثبت‌نام ویزیتور</button>
+  <h2>ورود به سامانه پخش مواد غذایی</h2>
 
-<div id="registerBox" class="hidden">
-<h3>ثبت‌نام ویزیتور</h3>
-<input id="fullName" placeholder="نام و نام خانوادگی">
-<input id="phone" placeholder="شماره موبایل">
-<input id="nickname" placeholder="نام کاربری">
-<button id="registerButton" onclick="registerVisitor()">ثبت‌نام</button>
-</div>
+  <button type="button" onclick="showLoginForm('manager')">
+    ورود مدیر
+  </button>
 
-<div id="authMessage" class="message hidden"></div>
+  <button type="button" class="secondary" onclick="showLoginForm('visitor')">
+    ورود ویزیتور
+  </button>
+
+  <button type="button" class="secondary" onclick="showRegisterForm()">
+    ثبت‌نام ویزیتور
+  </button>
+
+  <div id="loginForm" class="hidden">
+    <h3 id="loginTitle">ورود به حساب</h3>
+    <input id="username" placeholder="نام کاربری">
+    <input id="password" type="password" placeholder="رمز عبور">
+    <button onclick="login()">ورود به سیستم</button>
+    <button class="secondary" onclick="backToAuthOptions()">بازگشت</button>
+  </div>
+
+  <div id="registerBox" class="hidden">
+    <h3>ثبت‌نام ویزیتور</h3>
+    <input id="fullName" placeholder="نام و نام خانوادگی">
+    <input id="phone" placeholder="شماره موبایل">
+    <input id="nickname" placeholder="نام کاربری">
+    <button id="registerButton" onclick="registerVisitor()">ثبت‌نام</button>
+    <button class="secondary" onclick="backToAuthOptions()">بازگشت</button>
+  </div>
+
+  <div id="authMessage" class="message hidden"></div>
 </section>
+
 
 <section id="dashboard" class="hidden">
 
@@ -524,6 +543,30 @@ function startConnection(){
 
 function toggleRegister(){
  $("registerBox").classList.toggle("hidden");
+}
+
+function showLoginForm(role){
+  $("registerBox").classList.add("hidden");
+  $("loginForm").classList.remove("hidden");
+
+  $("loginTitle").textContent =
+    role === "manager" ? "ورود مدیر" : "ورود ویزیتور";
+
+  $("username").value="";
+  $("password").value="";
+  $("authMessage").classList.add("hidden");
+}
+
+function showRegisterForm(){
+  $("loginForm").classList.add("hidden");
+  $("registerBox").classList.remove("hidden");
+  $("authMessage").classList.add("hidden");
+}
+
+function backToAuthOptions(){
+  $("loginForm").classList.add("hidden");
+  $("registerBox").classList.add("hidden");
+  $("authMessage").classList.add("hidden");
 }
 
 async function login(){
