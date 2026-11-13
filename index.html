@@ -69,7 +69,12 @@ th{background:#eef1fa;color:var(--main)}
 .consent input{width:auto;margin:5px 0}
 .page-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .page-head button{width:auto}
-@media(max-width:600px){header h1{font-size:19px}.card{padding:15px}.modalbox{padding:15px}.bar-row{grid-template-columns:75px 1fr 55px}}
+@media(max-width:600px){
+header h1{font-size:19px}
+.card{padding:15px}
+.modalbox{padding:15px}
+.bar-row{grid-template-columns:75px 1fr 55px}
+}
 @media print{.no-print{display:none!important}}
 .header-logo{
   width:min(260px,70vw);
@@ -79,38 +84,29 @@ th{background:#eef1fa;color:var(--main)}
   margin:0 auto 12px;
   border-radius:12px;
 }
-/* مخفی‌سازی هر فیلد قدیمی موجودی */
-#stock,
-#minStock,
-#lowStockCount,
-#stockValue,
-#lowStockList {
-  display: none !important;
-}
 
 /* صفحه مستقل محصولات */
-#productPage .product {
-  min-width: 0;
+#productPage .product{min-width:0}
+
+#invoicePickerList{
+  max-height:60vh;
+  overflow:auto;
 }
 
-#invoicePickerList {
-  max-height: 60vh;
-  overflow: auto;
-}
-
-#invoicePickerList input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
+#invoicePickerList input[type="checkbox"]{
+  width:20px;
+  height:20px;
 }
 </style>
 </head>
 
 <body>
-  <header>
-    <img class="header-logo" src="./logo-new.png" alt="لوگوی آدرین نوین">
-    <h1>FOOD DISTRIBUTION PRO ADRIAN NOVIN</h1>
-    <p>سیستم هوشمند مدیریت فروش و پخش مواد غذایی آدرین نوین</p>
-    </header>
+<header>
+  <img class="header-logo" src="./logo-new.png" alt="لوگوی آدرین نوین">
+  <h1>FOOD DISTRIBUTION PRO ADRIAN NOVIN</h1>
+  <p>سیستم هوشمند مدیریت فروش و پخش مواد غذایی آدرین نوین</p>
+</header>
+
 <main>
 
 <section id="setup" class="card hidden">
@@ -133,10 +129,12 @@ th{background:#eef1fa;color:var(--main)}
 <input id="nickname" placeholder="نام کاربری">
 <button id="registerButton" onclick="registerVisitor()">ثبت‌نام</button>
 </div>
+
 <div id="authMessage" class="message hidden"></div>
 </section>
 
 <section id="dashboard" class="hidden">
+
 <div class="card">
 <h2 id="welcome"></h2>
 <p id="roleText"></p>
@@ -148,17 +146,17 @@ th{background:#eef1fa;color:var(--main)}
 <div class="stat">تعداد محصولات<strong id="productCount">۰</strong></div>
 <div class="stat">ردیف‌های فروش<strong id="salesCount">۰</strong></div>
 <div class="stat">فروش خالص<strong id="salesTotal">۰</strong></div>
-<div class="stat">کالاهای کم‌موجود<strong id="lowStockCount">۰</strong></div>
-<div class="stat manager-only">ارزش موجودی خرید<strong id="stockValue">۰</strong></div>
 <div class="stat manager-only">سود ناخالص قابل محاسبه<strong id="profitTotal">۰</strong></div>
 <div class="stat manager-only">فروش با سود نامشخص<strong id="unknownProfitCount">۰</strong></div>
 </div>
 
 <section id="managerPanel" class="hidden">
-  <div class="card">
-    <h3 class="section-title">مدیریت محصولات</h3>
-    <button onclick="openProductPage()">باز کردن فهرست محصولات</button>
-    </div>
+
+<div class="card">
+<h3 class="section-title">مدیریت محصولات</h3>
+<button onclick="openProductPage()">باز کردن فهرست محصولات</button>
+</div>
+
 <div class="card">
 <h3 class="section-title">داشبورد گزارشات</h3>
 <p class="small">گزارش فروش بر اساس حداکثر ۱۰۰۰ ردیف فروش اخیر است.</p>
@@ -180,11 +178,6 @@ th{background:#eef1fa;color:var(--main)}
 </div>
 
 <div class="card">
-<h3 class="section-title">هشدار کمبود موجودی</h3>
-<div id="lowStockList"></div>
-</div>
-
-<div class="card">
 <h3 class="section-title">مدیریت ویزیتورها</h3>
 <button class="secondary" onclick="loadVisitors()">به‌روزرسانی</button>
 <h3>ویزیتورهای فعال</h3>
@@ -194,31 +187,27 @@ th{background:#eef1fa;color:var(--main)}
 </div>
 
 <div class="card">
-  <h3 class="section-title">درخواست‌های ثبت‌نام ویزیتورها</h3>
-  <button class="secondary" onclick="loadRegistrationRequests()">
-    به‌روزرسانی درخواست‌ها
-  </button>
-  <div id="registrationRequests" class="tablewrap">
-    <p class="small">برای مشاهده درخواست‌ها روی به‌روزرسانی بزنید.</p>
-  </div>
+<h3 class="section-title">درخواست‌های ثبت‌نام ویزیتورها</h3>
+<button class="secondary" onclick="loadRegistrationRequests()">
+به‌روزرسانی درخواست‌ها
+</button>
+<div id="registrationRequests" class="tablewrap">
+<p class="small">برای مشاهده درخواست‌ها روی به‌روزرسانی بزنید.</p>
+</div>
 </div>
 
 <div id="approveVisitorModal" class="modal hidden">
-  <div class="modalbox" style="max-width:460px">
-    <div class="modalhead">
-      <h2>تأیید ویزیتور</h2>
-      <button class="close" onclick="closeApproveVisitorModal()">بستن</button>
-    </div>
-    <p id="approveVisitorName"></p>
-    <input id="approveVisitorPassword" type="password"
-      placeholder="رمز جدید ویزیتور (حداقل ۸ نویسه)">
-    <input id="approveVisitorPasswordRepeat" type="password"
-      placeholder="تکرار رمز جدید">
-    <button id="approveVisitorButton" onclick="approveVisitorRequest()">
-      تأیید و ساخت حساب
-    </button>
-    <p id="approveVisitorMessage" class="small"></p>
-  </div>
+<div class="modalbox" style="max-width:460px">
+<div class="modalhead">
+<h2>تأیید ویزیتور</h2>
+<button class="close" onclick="closeApproveVisitorModal()">بستن</button>
+</div>
+<p id="approveVisitorName"></p>
+<input id="approveVisitorPassword" type="password" placeholder="رمز جدید ویزیتور (حداقل ۸ نویسه)">
+<input id="approveVisitorPasswordRepeat" type="password" placeholder="تکرار رمز جدید">
+<button id="approveVisitorButton" onclick="approveVisitorRequest()">تأیید و ساخت حساب</button>
+<p id="approveVisitorMessage" class="small"></p>
+</div>
 </div>
 
 <div class="card">
@@ -226,8 +215,6 @@ th{background:#eef1fa;color:var(--main)}
 <button onclick="openCategoryModal()">افزودن دسته‌بندی</button>
 <div id="categoryList" class="small"></div>
 </div>
-
-
 
 <div class="card">
 <h3 class="section-title">مدیریت مشتریان</h3>
@@ -270,29 +257,25 @@ th{background:#eef1fa;color:var(--main)}
 <div id="managerLocations"></div>
 </div>
 </section>
-hidden">
+
 <section id="productPage" class="hidden">
-  <div class="card">
+<div class="card">
+<div class="page-head">
+<h2>فهرست محصولات</h2>
+<button class="secondary" onclick="closeProductPage()">بازگشت</button>
+</div>
 
-    <div class="page-head">
-      <h2>فهرست محصولات</h2>
-      <button class="secondary" onclick="closeProductPage()">
-        بازگشت
-      </button>
-    </div>
+<input
+  id="catalogSearch"
+  placeholder="جست‌وجوی نام محصول، دسته‌بندی یا بارکد..."
+  oninput="renderProducts()"
+>
 
-    <input
-      id="catalogSearch"
-      placeholder="جست‌وجوی نام محصول، دسته‌بندی یا بارکد..."
-      oninput="renderProducts()"
-    >
-
-    <div id="catalogActions"></div>
-
-    <div id="products" class="grid"></div>
-
-  </div>
+<div id="catalogActions"></div>
+<div id="products" class="grid"></div>
+</div>
 </section>
+
 <section id="visitorPanel" class="hidden">
 
 <div class="card">
@@ -304,9 +287,9 @@ hidden">
 </div>
 
 <div class="card">
-  <h3 class="section-title">فهرست محصولات</h3>
-  <button onclick="openProductPage()">مشاهده فهرست محصولات</button>
-  </div>
+<h3 class="section-title">فهرست محصولات</h3>
+<button onclick="openProductPage()">مشاهده فهرست محصولات</button>
+</div>
 
 <div class="card">
 <h3 class="section-title">فاکتور فروش</h3>
@@ -343,7 +326,10 @@ hidden">
 <!-- دسته‌بندی -->
 <div id="categoryModal" class="modal hidden">
 <div class="modalbox" style="max-width:460px">
-<div class="modalhead"><h2>افزودن دسته‌بندی</h2><button class="close" onclick="closeCategoryModal()">بستن</button></div>
+<div class="modalhead">
+<h2>افزودن دسته‌بندی</h2>
+<button class="close" onclick="closeCategoryModal()">بستن</button>
+</div>
 <input id="newCategory" placeholder="نام دسته‌بندی">
 <button onclick="addCategory()">ثبت دسته‌بندی</button>
 </div>
@@ -352,18 +338,23 @@ hidden">
 <!-- محصول -->
 <div id="productModal" class="modal hidden">
 <div class="modalbox">
-<div class="modalhead"><h2>افزودن محصول</h2><button class="close" onclick="closeProductModal()">بستن</button></div>
+<div class="modalhead">
+<h2>افزودن محصول</h2>
+<button class="close" onclick="closeProductModal()">بستن</button>
+</div>
+
 <div class="grid">
 <input id="productName" placeholder="نام محصول">
-<select id="categorySelect"><option value="">بدون دسته‌بندی</option></select>
+<select id="categorySelect">
+<option value="">بدون دسته‌بندی</option>
+</select>
 <input id="unit" placeholder="واحد">
 <input id="buyPrice" type="number" min="0" placeholder="قیمت خرید">
 <input id="sellPrice" type="number" min="0" placeholder="قیمت فروش">
 <input id="consumerPrice" type="number" min="0" placeholder="قیمت مصرف‌کننده">
-<input id="stock" type="number" min="0" placeholder="موجودی اولیه">
 <input id="barcode" placeholder="بارکد">
-<input id="minStock" type="number" min="0" placeholder="حداقل موجودی">
 </div>
+
 <textarea id="description" placeholder="توضیحات"></textarea>
 <label>عکس محصول</label>
 <input id="productImage" type="file" accept="image/jpeg,image/png,image/webp">
@@ -373,7 +364,10 @@ hidden">
 
 <div id="customerModal" class="modal hidden">
 <div class="modalbox">
-<div class="modalhead"><h2>ثبت مشتری</h2><button class="close" onclick="closeCustomerModal()">بستن</button></div>
+<div class="modalhead">
+<h2>ثبت مشتری</h2>
+<button class="close" onclick="closeCustomerModal()">بستن</button>
+</div>
 <input id="customerName" placeholder="نام مشتری">
 <input id="customerPhone" placeholder="شماره تماس">
 <textarea id="customerAddress" placeholder="آدرس"></textarea>
@@ -386,7 +380,10 @@ hidden">
 
 <div id="paymentModal" class="modal hidden">
 <div class="modalbox" style="max-width:500px">
-<div class="modalhead"><h2>ثبت دریافت وجه</h2><button class="close" onclick="closePaymentModal()">بستن</button></div>
+<div class="modalhead">
+<h2>ثبت دریافت وجه</h2>
+<button class="close" onclick="closePaymentModal()">بستن</button>
+</div>
 <p id="paymentCustomerName"></p>
 <input id="paymentAmount" type="number" min="1" placeholder="مبلغ دریافتی">
 <textarea id="paymentNote" placeholder="توضیحات"></textarea>
@@ -397,7 +394,10 @@ hidden">
 
 <div id="purchaseModal" class="modal hidden">
 <div class="modalbox">
-<div class="modalhead"><h2>ثبت خرید</h2><button class="close" onclick="closePurchaseModal()">بستن</button></div>
+<div class="modalhead">
+<h2>ثبت خرید</h2>
+<button class="close" onclick="closePurchaseModal()">بستن</button>
+</div>
 <select id="purchaseProduct"></select>
 <div class="grid">
 <input id="purchaseQuantity" type="number" min="1" placeholder="تعداد">
@@ -411,13 +411,17 @@ hidden">
 
 <div id="invoiceModal" class="modal hidden">
 <div class="modalbox">
-<div class="modalhead"><h2 id="invoiceModalTitle">ثبت فاکتور فروش</h2><button class="close" onclick="closeInvoiceModal()">بستن</button></div>
-<button type="button" onclick="openInvoicePicker()">
-  انتخاب چند محصول
-  </button>
-  <div id="selectedInvoiceProducts" class="tablewrap"></div>
+<div class="modalhead">
+<h2 id="invoiceModalTitle">ثبت فاکتور فروش</h2>
+<button class="close" onclick="closeInvoiceModal()">بستن</button>
+</div>
+
+<button type="button" onclick="openInvoicePicker()">انتخاب چند محصول</button>
+
+<div id="selectedInvoiceProducts" class="tablewrap"></div>
 <div id="invoiceItems" class="tablewrap"></div>
 <p id="invoiceTotal" class="price"></p>
+
 <label>مشتری</label>
 <select id="saleCustomer"></select>
 <input id="salePaid" type="number" min="0" placeholder="مبلغ دریافتی">
@@ -426,25 +430,29 @@ hidden">
 <p id="saleMessage" class="small"></p>
 </div>
 </div>
+
 <div id="invoicePickerModal" class="modal hidden">
-  <div class="modalbox" style="max-width:900px">
-    <div class="modalhead">
-      <h2>انتخاب محصولات فاکتور</h2>
-      <button class="close" onclick="closeInvoicePicker()">بستن</button>
-    </div>
-
-    <input id="invoicePickerSearch" placeholder="جست‌وجوی محصول..." oninput="renderInvoicePicker()">
-
-    <div id="invoicePickerList"></div>
-
-    <button class="success-btn" onclick="addSelectedInvoiceProducts()">
-      افزودن محصولات انتخاب‌شده به فاکتور
-    </button>
-  </div>
+<div class="modalbox" style="max-width:900px">
+<div class="modalhead">
+<h2>انتخاب محصولات فاکتور</h2>
+<button class="close" onclick="closeInvoicePicker()">بستن</button>
 </div>
+
+<input id="invoicePickerSearch" placeholder="جست‌وجوی محصول..." oninput="renderInvoicePicker()">
+<div id="invoicePickerList"></div>
+
+<button class="success-btn" onclick="addSelectedInvoiceProducts()">
+افزودن محصولات انتخاب‌شده به فاکتور
+</button>
+</div>
+</div>
+
 <div id="returnModal" class="modal hidden">
 <div class="modalbox">
-<div class="modalhead"><h2>مرجوعی جزئی فاکتور</h2><button class="close" onclick="closeReturnModal()">بستن</button></div>
+<div class="modalhead">
+<h2>مرجوعی جزئی فاکتور</h2>
+<button class="close" onclick="closeReturnModal()">بستن</button>
+</div>
 <p id="returnInvoiceInfo"></p>
 <div id="returnLines" class="tablewrap"></div>
 <textarea id="returnReason" placeholder="علت مرجوعی"></textarea>
@@ -455,7 +463,7 @@ hidden">
 
 <script>
 const SUPABASE_URL="https://hlxsrgisljqqvxzdxphs.supabase.co";
-const SUPABASE_PUBLIC_KEY="sb_publishable_CXpWL4cenr9GnHsZqTK9Rw_zExkK1y8";
+const SUPABASE_PUBLIC_KEY="sb_publishable_CXpWL4cenr9GnHsZqTK9Rw_zExK1y8";
 
 let db=null,currentUser=null,profile=null;
 let productList=[],invoiceItems=[],customers=[],visitors=[],recentSales=[],invoiceRows=[],returnLines=[];
@@ -470,17 +478,26 @@ const escapeHtml=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;"
 const usernameEmail=u=>u.trim().toLowerCase()+"@login.food-distribution.invalid";
 
 function message(id,text,type=""){
- const el=$(id);if(!el)return;
- el.textContent=text;el.className="message "+type;el.classList.remove("hidden");
+ const el=$(id);
+ if(!el)return;
+ el.textContent=text;
+ el.className="message "+type;
+ el.classList.remove("hidden");
 }
-function notice(text,type="success"){message("notice",text,type)}
-function setBusy(id,value){if($(id))$(id).disabled=value}
+
+function notice(text,type="success"){
+ message("notice",text,type);
+}
+
+function setBusy(id,value){
+ if($(id))$(id).disabled=value;
+}
 
 function startConnection(){
  try{
   if(!window.supabase?.createClient)throw Error("کتابخانه Supabase بارگذاری نشده است.");
   db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLIC_KEY);
-  console.log("SUPABASE CLIENT:", db);
+  console.log("SUPABASE CLIENT:",db);
   $("setup").classList.add("hidden");
   $("loginBox").classList.remove("hidden");
   restoreSession();
@@ -489,84 +506,125 @@ function startConnection(){
   alert("خطای اتصال: "+e.message);
  }
 }
-function toggleRegister(){$("registerBox").classList.toggle("hidden")}
+
+function toggleRegister(){
+ $("registerBox").classList.toggle("hidden");
+}
 
 async function login(){
- const u=$("username").value.trim(),p=$("password").value;
+ const u=$("username").value.trim();
+ const p=$("password").value;
+
  if(!u||!p)return message("authMessage","نام کاربری و رمز را وارد کن.","error");
- const {data,error}=await db.auth.signInWithPassword({email:u.includes("@")?u:usernameEmail(u),password:p});
+
+ const {data,error}=await db.auth.signInWithPassword({
+  email:u.includes("@")?u:usernameEmail(u),
+  password:p
+ });
+
  if(error)return message("authMessage","ورود ناموفق: "+error.message,"error");
+
  await loadApp(data.user);
 }
 
+async function registerVisitor(){
+ const fullName=$("fullName").value.trim();
+ const phone=$("phone").value.trim();
+ const nick=$("nickname").value.trim();
 
-async function registerVisitor() {
-  const fullName = $("fullName").value.trim();
-  const phone = $("phone").value.trim();
-  const nick = $("nickname").value.trim();
+ if(!fullName||!phone||!nick){
+  return message("authMessage","همه قسمت‌ها را کامل کن.","error");
+ }
 
-  if (!fullName || !phone || !nick) {
-    return message("authMessage", "همه قسمت‌ها را کامل کن.", "error");
-  }
+ if(!/^[a-zA-Z0-9_.-]{3,30}$/.test(nick)){
+  return message("authMessage","نام کاربری باید ۳ تا ۳۰ نویسه مجاز داشته باشد.","error");
+ }
 
-  if (!/^[a-zA-Z0-9_.-]{3,30}$/.test(nick)) {
-    return message("authMessage", "نام کاربری باید ۳ تا ۳۰ نویسه مجاز داشته باشد.", "error");
-  }
+ setBusy("registerButton",true);
 
-  setBusy("registerButton", true);
+ try{
+  const {data,error}=await db.functions.invoke("bright-worker",{
+   body:{
+    action:"submit_request",
+    full_name:fullName,
+    phone:phone,
+    nickname:nick
+   }
+  });
 
-  try {
-    const { data, error } = await db.functions.invoke("bright-worker", {
-      body: {
-        action: "submit_request",
-        full_name: fullName,
-        phone: phone,
-        nickname: nick
-      }
-    });
+  if(error)throw error;
+  if(!data?.success)throw new Error(data?.error||"ثبت درخواست ناموفق بود.");
 
-    if (error) throw error;
-    if (!data?.success) throw new Error(data?.error || "ثبت درخواست ناموفق بود.");
+  message(
+   "authMessage",
+   "درخواست شما ارسال شد. پس از تأیید مدیر، نام کاربری و رمز ورودتان فعال می‌شود."
+  );
 
-    message(
-      "authMessage",
-      "درخواست شما ارسال شد. پس از تأیید مدیر، نام کاربری و رمز ورودتان فعال می‌شود."
-    );
+  $("fullName").value="";
+  $("phone").value="";
+  $("nickname").value="";
 
-    $("fullName").value = "";
-    $("phone").value = "";
-    $("nickname").value = "";
-
-  } catch (e) {
-    message("authMessage", "خطا: " + e.message, "error");
-  } finally {
-    setBusy("registerButton", false);
-  }
+ }catch(e){
+  message("authMessage","خطا: "+e.message,"error");
+ }finally{
+  setBusy("registerButton",false);
+ }
 }
-
 
 async function loadApp(user){
  currentUser=user;
- const {data,error}=await db.from("profiles").select("role,active,full_name,nickname,phone").eq("id",user.id).single();
+
+ const {data,error}=await db.from("profiles")
+  .select("role,active,full_name,nickname,phone")
+  .eq("id",user.id)
+  .single();
+
  if(error||!data){
-  await db.auth.signOut();currentUser=null;
+  await db.auth.signOut();
+  currentUser=null;
   return message("authMessage","پروفایل دریافت نشد: "+(error?.message||""),"error");
  }
+
  profile=data;
+
  if(data.active!==true||!["manager","visitor"].includes(data.role)){
-  await db.auth.signOut();currentUser=null;profile=null;
+  await db.auth.signOut();
+  currentUser=null;
+  profile=null;
   return message("authMessage","حساب فعال نیست. با مدیر تماس بگیر.","error");
  }
+
  $("loginBox").classList.add("hidden");
  $("dashboard").classList.remove("hidden");
+
  $("welcome").textContent="سلام "+(data.full_name||data.nickname||"");
  $("roleText").textContent=data.role==="manager"?"مدیر سیستم":"ویزیتور";
+
  $("managerPanel").classList.toggle("hidden",data.role!=="manager");
  $("visitorPanel").classList.toggle("hidden",data.role!=="visitor");
- document.querySelectorAll(".manager-only").forEach(x=>x.classList.toggle("hidden",data.role!=="manager"));
- await Promise.all([loadCategories(),loadVisitors(),loadCustomers(),loadProducts(),loadSales(),loadInvoices()]);
- if(data.role==="manager")await Promise.all([loadPurchases(),loadArchivedReports(),loadVisitorLocations()]);
- else setTrackingUI(false);
+
+ document.querySelectorAll(".manager-only").forEach(x=>{
+  x.classList.toggle("hidden",data.role!=="manager");
+ });
+
+ await Promise.all([
+  loadCategories(),
+  loadVisitors(),
+  loadCustomers(),
+  loadProducts(),
+  loadSales(),
+  loadInvoices()
+ ]);
+
+ if(data.role==="manager"){
+  await Promise.all([
+   loadPurchases(),
+   loadArchivedReports(),
+   loadVisitorLocations()
+  ]);
+ }else{
+  setTrackingUI(false);
+ }
 }
 
 async function restoreSession(){
@@ -575,271 +633,359 @@ async function restoreSession(){
 }
 
 /* ویزیتورها */
+
 function renderVisitorSelect(){
- const s=$("customerVisitor");if(!s)return;
+ const s=$("customerVisitor");
+ if(!s)return;
+
  s.innerHTML='<option value="">بدون ویزیتور</option>';
+
  visitors.filter(v=>v.active).forEach(v=>{
-  const o=document.createElement("option");o.value=v.id;o.textContent=v.full_name||v.nickname;s.appendChild(o);
+  const o=document.createElement("option");
+  o.value=v.id;
+  o.textContent=v.full_name||v.nickname;
+  s.appendChild(o);
  });
 }
 
 async function loadVisitors(){
- const {data,error}=await db.from("profiles").select("id,full_name,nickname,active").eq("role","visitor").order("full_name");
- if(error){if(profile?.role==="manager")$("activeVisitorsList").textContent=error.message;return}
+ const {data,error}=await db.from("profiles")
+  .select("id,full_name,nickname,active")
+  .eq("role","visitor")
+  .order("full_name");
+
+ if(error){
+  if(profile?.role==="manager")$("activeVisitorsList").textContent=error.message;
+  return;
+ }
+
  visitors=data||[];
+
  if(profile?.role!=="manager")return;
- $("activeVisitorsList").innerHTML="";$("dismissedVisitorsList").innerHTML="";
- const active=visitors.filter(v=>v.active),inactive=visitors.filter(v=>!v.active);
+
+ $("activeVisitorsList").innerHTML="";
+ $("dismissedVisitorsList").innerHTML="";
+
+ const active=visitors.filter(v=>v.active);
+ const inactive=visitors.filter(v=>!v.active);
+
  if(!active.length)$("activeVisitorsList").textContent="ویزیتور فعالی وجود ندارد.";
  if(!inactive.length)$("dismissedVisitorsList").textContent="موردی وجود ندارد.";
+
  active.forEach(v=>{
-  const d=document.createElement("div");d.className="product";
-  const p=document.createElement("p");p.textContent=(v.full_name||v.nickname)+" | فعال";
-  const b=document.createElement("button");b.className="danger";b.textContent="غیرفعال‌سازی";
-  b.onclick=()=>dismissVisitor(v.id,v.full_name||v.nickname);d.append(p,b);$("activeVisitorsList").append(d);
+  const d=document.createElement("div");
+  d.className="product";
+
+  const p=document.createElement("p");
+  p.textContent=(v.full_name||v.nickname)+" | فعال";
+
+  const b=document.createElement("button");
+  b.className="danger";
+  b.textContent="غیرفعال‌سازی";
+  b.onclick=()=>dismissVisitor(v.id,v.full_name||v.nickname);
+
+  d.append(p,b);
+  $("activeVisitorsList").append(d);
  });
+
  inactive.forEach(v=>{
-  const d=document.createElement("div");d.className="product";
+  const d=document.createElement("div");
+  d.className="product";
   d.textContent=(v.full_name||v.nickname)+" | غیرفعال؛ سوابق حفظ شده‌اند.";
   $("dismissedVisitorsList").append(d);
  });
+
  renderVisitorSelect();
 }
 
-let selectedRegistrationRequest = null;
+let selectedRegistrationRequest=null;
 
 // دریافت درخواست‌های ثبت‌نام
-async function loadRegistrationRequests() {
-  const container = $("registrationRequests");
-  container.textContent = "در حال دریافت درخواست‌ها...";
+async function loadRegistrationRequests(){
+ const container=$("registrationRequests");
+ container.textContent="در حال دریافت درخواست‌ها...";
 
-  try {
-    const { data, error } = await db.functions.invoke("bright-worker", {
-      body: {
-        action: "list_requests"
-      }
-    });
+ try{
+  const {data,error}=await db.functions.invoke("bright-worker",{
+   body:{action:"list_requests"}
+  });
 
-    if (error) throw error;
-    if (!data?.success) {
-      throw new Error(data?.error || "دریافت درخواست‌ها ناموفق بود.");
-    }
+  if(error)throw error;
 
-    container.innerHTML = "";
-
-    const requests = data.requests || [];
-
-    if (!requests.length) {
-      container.textContent = "درخواست ثبت‌نام جدیدی وجود ندارد.";
-      return;
-    }
-
-    requests.forEach(request => {
-      const card = document.createElement("div");
-      card.className = "product";
-
-      const name = document.createElement("h3");
-      name.textContent = request.full_name || "بدون نام";
-
-      const info = document.createElement("p");
-      info.textContent =
-        "نام کاربری: " + request.nickname +
-        " | موبایل: " + request.phone;
-
-      const date = document.createElement("p");
-      date.className = "small";
-      date.textContent = "زمان درخواست: " +
-        new Date(request.created_at).toLocaleString("fa-IR");
-
-      const approve = document.createElement("button");
-      approve.textContent = "تأیید و تعیین رمز";
-      approve.onclick = () => openApproveVisitorModal(request);
-
-      const reject = document.createElement("button");
-      reject.textContent = "رد درخواست";
-      reject.className = "danger";
-      reject.onclick = () => rejectVisitorRequest(request);
-
-      card.append(name, info, date, approve, reject);
-      container.append(card);
-    });
-
-  } catch (error) {
-    container.textContent = "خطا: " + error.message;
+  if(!data?.success){
+   throw new Error(data?.error||"دریافت درخواست‌ها ناموفق بود.");
   }
+
+  container.innerHTML="";
+
+  const requests=data.requests||[];
+
+  if(!requests.length){
+   container.textContent="درخواست ثبت‌نام جدیدی وجود ندارد.";
+   return;
+  }
+
+  requests.forEach(request=>{
+   const card=document.createElement("div");
+   card.className="product";
+
+   const name=document.createElement("h3");
+   name.textContent=request.full_name||"بدون نام";
+
+   const info=document.createElement("p");
+   info.textContent="نام کاربری: "+request.nickname+" | موبایل: "+request.phone;
+
+   const date=document.createElement("p");
+   date.className="small";
+   date.textContent="زمان درخواست: "+new Date(request.created_at).toLocaleString("fa-IR");
+
+   const approve=document.createElement("button");
+   approve.textContent="تأیید و تعیین رمز";
+   approve.onclick=()=>openApproveVisitorModal(request);
+
+   const reject=document.createElement("button");
+   reject.textContent="رد درخواست";
+   reject.className="danger";
+   reject.onclick=()=>rejectVisitorRequest(request);
+
+   card.append(name,info,date,approve,reject);
+   container.append(card);
+  });
+
+ }catch(error){
+  container.textContent="خطا: "+error.message;
+ }
 }
 
 // باز کردن پنجره تأیید
-function openApproveVisitorModal(request) {
-  selectedRegistrationRequest = request;
+function openApproveVisitorModal(request){
+ selectedRegistrationRequest=request;
 
-  $("approveVisitorName").textContent =
-    "تأیید حساب برای: " + request.full_name +
-    " (" + request.nickname + ")";
+ $("approveVisitorName").textContent=
+  "تأیید حساب برای: "+request.full_name+" ("+request.nickname+")";
 
-  $("approveVisitorPassword").value = "";
-  $("approveVisitorPasswordRepeat").value = "";
-  $("approveVisitorMessage").textContent = "";
+ $("approveVisitorPassword").value="";
+ $("approveVisitorPasswordRepeat").value="";
+ $("approveVisitorMessage").textContent="";
 
-  $("approveVisitorModal").classList.remove("hidden");
+ $("approveVisitorModal").classList.remove("hidden");
 }
 
 // بستن پنجره تأیید
-function closeApproveVisitorModal() {
-  $("approveVisitorModal").classList.add("hidden");
-  selectedRegistrationRequest = null;
+function closeApproveVisitorModal(){
+ $("approveVisitorModal").classList.add("hidden");
+ selectedRegistrationRequest=null;
 }
 
 // تأیید درخواست و ساخت حساب
+async function approveVisitorRequest(){
+ if(!selectedRegistrationRequest){
+  return message("approveVisitorMessage","درخواستی انتخاب نشده است.","error");
+ }
 
-async function approveVisitorRequest() {
-  if (!selectedRegistrationRequest) {
-    return message("approveVisitorMessage", "درخواستی انتخاب نشده است.", "error");
-  }
+ const password=$("approveVisitorPassword").value;
+ const repeat=$("approveVisitorPasswordRepeat").value;
 
-  const password = $("approveVisitorPassword").value;
-  const repeat = $("approveVisitorPasswordRepeat").value;
+ if(password.length<8){
+  return message("approveVisitorMessage","رمز باید حداقل ۸ نویسه باشد.","error");
+ }
 
-  if (password.length < 8) {
-    return message("approveVisitorMessage", "رمز باید حداقل ۸ نویسه باشد.", "error");
-  }
+ if(password!==repeat){
+  return message("approveVisitorMessage","تکرار رمز یکسان نیست.","error");
+ }
 
-  if (password !== repeat) {
-    return message("approveVisitorMessage", "تکرار رمز یکسان نیست.", "error");
-  }
+ setBusy("approveVisitorButton",true);
 
-  setBusy("approveVisitorButton", true);
+ try{
+  const {data,error}=await db.functions.invoke("bright-worker",{
+   body:{
+    action:"review_request",
+    request_id:selectedRegistrationRequest.id,
+    decision:"approve",
+    new_password:password
+   }
+  });
 
-  try {
-    const { data, error } = await db.functions.invoke("bright-worker", {
-      body: {
-        action: "review_request",
-        request_id: selectedRegistrationRequest.id,
-        decision: "approve",
-        new_password: password
-      }
-    });
+  if(error){
+   let details="";
 
-    if (error) {
-      let details = "";
+   try{
+    const response=error.context;
 
-      try {
-        const response = error.context;
-
-        if (response) {
-          details = typeof response.clone === "function"
-            ? await response.clone().text()
-            : String(response);
-        }
-      } catch (e) {
-        details = String(e);
-      }
-
-      console.error("SUPABASE APPROVAL ERROR:", error);
-      console.error("SUPABASE ERROR DETAILS:", details);
-
-      throw new Error(
-        "جزئیات خطا: " + (details || error.message)
-      );
+    if(response){
+     details=typeof response.clone==="function"
+      ?await response.clone().text()
+      :String(response);
     }
+   }catch(e){
+    details=String(e);
+   }
 
-    if (!data || !data.success) {
-      throw new Error(data?.error || "تأیید درخواست ناموفق بود.");
-    }
+   console.error("SUPABASE APPROVAL ERROR:",error);
+   console.error("SUPABASE ERROR DETAILS:",details);
 
-    closeApproveVisitorModal();
-
-    notice("حساب ویزیتور ساخته شد. نام کاربری: " + data.username);
-
-    await loadRegistrationRequests();
-    await loadVisitors();
-
-  } catch (error) {
-    message("approveVisitorMessage", error.message, "error");
-  } finally {
-    setBusy("approveVisitorButton", false);
+   throw new Error("جزئیات خطا: "+(details||error.message));
   }
+
+  if(!data||!data.success){
+   throw new Error(data?.error||"تأیید درخواست ناموفق بود.");
+  }
+
+  closeApproveVisitorModal();
+
+  notice("حساب ویزیتور ساخته شد. نام کاربری: "+data.username);
+
+  await loadRegistrationRequests();
+  await loadVisitors();
+
+ }catch(error){
+  message("approveVisitorMessage",error.message,"error");
+ }finally{
+  setBusy("approveVisitorButton",false);
+ }
 }
 
-
 // رد درخواست
-async function rejectVisitorRequest(request) {
-  if (!confirm("آیا از رد درخواست " + request.full_name + " مطمئن هستید؟")) {
-    return;
+async function rejectVisitorRequest(request){
+ if(!confirm("آیا از رد درخواست "+request.full_name+" مطمئن هستید؟")){
+  return;
+ }
+
+ try{
+  const {data,error}=await db.functions.invoke("bright-worker",{
+   body:{
+    action:"review_request",
+    request_id:request.id,
+    decision:"reject"
+   }
+  });
+
+  if(error)throw error;
+
+  if(!data?.success){
+   throw new Error(data?.error||"رد درخواست ناموفق بود.");
   }
 
-  try {
-    const { data, error } = await db.functions.invoke("bright-worker", {
-      body: {
-        action: "review_request",
-        request_id: request.id,
-        decision: "reject"
-      }
-    });
+  notice("درخواست با موفقیت رد شد.");
+  await loadRegistrationRequests();
 
-    if (error) throw error;
-    if (!data?.success) {
-      throw new Error(data?.error || "رد درخواست ناموفق بود.");
-    }
-
-    notice("درخواست با موفقیت رد شد.");
-    await loadRegistrationRequests();
-
-  } catch (error) {
-    notice("خطا در رد درخواست: " + error.message, "error");
-  }
+ }catch(error){
+  notice("خطا در رد درخواست: "+error.message,"error");
+ }
 }
 
 async function dismissVisitor(id,name){
  if(profile?.role!=="manager"||!confirm("حساب "+name+" غیرفعال شود؟ سوابق حذف نمی‌شود."))return;
+
  try{
   const {data,error}=await db.rpc("dismiss_visitor",{p_visitor_id:id});
   if(error)throw error;
+
   notice(data||"ویزیتور غیرفعال شد.");
-  await Promise.all([loadVisitors(),loadVisitorLocations(),loadSales()]);
- }catch(e){notice(e.message,"error")}
+
+  await Promise.all([
+   loadVisitors(),
+   loadVisitorLocations(),
+   loadSales()
+  ]);
+
+ }catch(e){
+  notice(e.message,"error");
+ }
 }
 
 /* دسته‌بندی */
-function openCategoryModal(){if(profile?.role==="manager")$("categoryModal").classList.remove("hidden")}
-function closeCategoryModal(){$("categoryModal").classList.add("hidden")}
+
+function openCategoryModal(){
+ if(profile?.role==="manager")$("categoryModal").classList.remove("hidden");
+}
+
+function closeCategoryModal(){
+ $("categoryModal").classList.add("hidden");
+}
+
 async function loadCategories(){
- const {data,error}=await db.from("categories").select("id,name").order("name");
- if(error){$("categoryList").textContent=error.message;return}
+ const {data,error}=await db.from("categories")
+  .select("id,name")
+  .order("name");
+
+ if(error){
+  $("categoryList").textContent=error.message;
+  return;
+ }
+
  $("categorySelect").innerHTML='<option value="">بدون دسته‌بندی</option>';
  $("categoryList").innerHTML="";
+
  (data||[]).forEach(c=>{
-  const o=document.createElement("option");o.value=c.name;o.textContent=c.name;$("categorySelect").append(o);
-  const span=document.createElement("span");span.textContent=c.name+" | ";$("categoryList").append(span);
+  const o=document.createElement("option");
+  o.value=c.name;
+  o.textContent=c.name;
+  $("categorySelect").append(o);
+
+  const span=document.createElement("span");
+  span.textContent=c.name+" | ";
+  $("categoryList").append(span);
  });
 }
+
 async function addCategory(){
- const name=$("newCategory").value.trim();if(profile?.role!=="manager"||!name)return;
+ const name=$("newCategory").value.trim();
+
+ if(profile?.role!=="manager"||!name)return;
+
  const {error}=await db.from("categories").insert({name});
+
  if(error)return notice(error.message,"error");
- $("newCategory").value="";closeCategoryModal();await loadCategories();notice("دسته‌بندی ثبت شد.");
+
+ $("newCategory").value="";
+ closeCategoryModal();
+
+ await loadCategories();
+ notice("دسته‌بندی ثبت شد.");
 }
 
 /* محصولات */
-function openProductModal(){if(profile?.role==="manager")$("productModal").classList.remove("hidden")}
-function closeProductModal(){$("productModal").classList.add("hidden")}
+
+function openProductModal(){
+ if(profile?.role==="manager")$("productModal").classList.remove("hidden");
+}
+
+function closeProductModal(){
+ $("productModal").classList.add("hidden");
+}
 
 async function uploadProductImage(file){
  if(!file)return null;
- if(!["image/jpeg","image/png","image/webp"].includes(file.type))throw Error("فرمت عکس نامعتبر است.");
- if(file.size>5*1024*1024)throw Error("حجم عکس بیشتر از ۵ مگابایت است.");
+
+ if(!["image/jpeg","image/png","image/webp"].includes(file.type)){
+  throw Error("فرمت عکس نامعتبر است.");
+ }
+
+ if(file.size>5*1024*1024){
+  throw Error("حجم عکس بیشتر از ۵ مگابایت است.");
+ }
+
  const ext=file.type==="image/png"?"png":file.type==="image/webp"?"webp":"jpg";
+
  const path=currentUser.id+"/"+Date.now()+"-"+Math.random().toString(36).slice(2)+"."+ext;
- const {error}=await db.storage.from("product-images").upload(path,file,{contentType:file.type});
- if(error)throw error;return path;
+
+ const {error}=await db.storage.from("product-images").upload(path,file,{
+  contentType:file.type
+ });
+
+ if(error)throw error;
+
+ return path;
 }
+
 async function getProductImage(path){
  if(!path)return null;
+
  const {data,error}=await db.storage.from("product-images").createSignedUrl(path,3600);
+
  return error?null:data?.signedUrl||null;
 }
-
-
 
 async function addProduct(){
  if(profile?.role!=="manager")return;
@@ -848,27 +994,25 @@ async function addProduct(){
  const buy=Number($("buyPrice").value);
  const sell=Number($("sellPrice").value);
  const consumer=Number($("consumerPrice").value);
- const stock=Number($("stock").value);
- const min=Number($("minStock").value||0);
 
  if(
   !name||
   $("buyPrice").value===""||
   $("sellPrice").value===""||
-  $("consumerPrice").value===""||
-  $("stock").value===""
+  $("consumerPrice").value===""
  ){
   return notice("اطلاعات محصول را کامل کن.","error");
  }
 
  if(
-  ![buy,sell,consumer,stock,min].every(Number.isFinite)||
-  [buy,sell,consumer,stock,min].some(x=>x<0)
+  ![buy,sell,consumer].every(Number.isFinite)||
+  [buy,sell,consumer].some(x=>x<0)
  ){
   return notice("مقادیر معتبر نیستند.","error");
  }
 
  setBusy("addProductButton",true);
+
  let path=null;
 
  try{
@@ -882,8 +1026,6 @@ async function addProduct(){
    buy_price:buy,
    sell_price:sell,
    consumer_price:consumer,
-   stock,
-   min_stock:min,
    barcode:$("barcode").value.trim()||null,
    description:$("description").value.trim(),
    image_url:path,
@@ -893,54 +1035,40 @@ async function addProduct(){
   if(error)throw error;
 
   closeProductModal();
+
   await loadProducts();
+
   notice("محصول ثبت شد.");
 
   [
-   "productName","unit","buyPrice","sellPrice",
-   "consumerPrice","stock","minStock",
-   "barcode","description"
+   "productName",
+   "unit",
+   "buyPrice",
+   "sellPrice",
+   "consumerPrice",
+   "barcode",
+   "description"
   ].forEach(id=>$(id).value="");
 
   $("productImage").value="";
 
  }catch(e){
   if(path)await db.storage.from("product-images").remove([path]);
+
   notice("ثبت محصول ناموفق: "+e.message,"error");
+
  }finally{
   setBusy("addProductButton",false);
  }
 }
 
-
-renderProducts
-
-function renderLowStock(){
- if(profile?.role!=="manager")return;
- const low=productList.filter(p=>safeNumber(p.stock)<=safeNumber(p.min_stock));
- $("lowStockList").innerHTML="";
- if(!low.length){$("lowStockList").textContent="همه محصولات موجودی مناسبی دارند.";return}
- low.forEach(p=>{
-  const d=document.createElement("div");d.className="warning";
-  d.textContent=p.name+" | موجودی: "+money(p.stock)+" | حداقل: "+money(p.min_stock);
-  $("lowStockList").append(d);
- });
-}
-
-function renderSaleProductOptions(){
- const s=$("saleProduct");if(!s)return;
- const q=$("saleProductSearch").value.trim().toLocaleLowerCase("fa");
- s.innerHTML='<option value="">انتخاب محصول</option>';
- productList.filter(p=>(p.name+" "+(p.barcode||"")+" "+(p.category||"")).toLocaleLowerCase("fa").includes(q))
- .forEach(p=>{const o=document.createElement("option");o.value=p.id;o.textContent=p.name+" | "+money(p.stock)+" "+(p.unit||"");s.append(o)});
-}
-
 /* فاکتور جدید و ویرایش */
+
 function openInvoiceModal(){
  editingInvoiceId=null;
  invoiceItems=[];
+
  renderInvoiceItems();
- renderSaleProductOptions();
  renderCustomerOptions();
 
  $("invoiceModalTitle").textContent="ثبت فاکتور فروش";
@@ -948,37 +1076,59 @@ function openInvoiceModal(){
  $("saleNote").value="";
  $("saleMessage").textContent="";
  $("recordSaleButton").textContent="ثبت فاکتور";
+
  $("invoiceModal").classList.remove("hidden");
 }
-function closeInvoiceModal(){$("invoiceModal").classList.add("hidden");editingInvoiceId=null}
 
-function addInvoiceItem(){
- const id=$("saleProduct").value,qty=Number($("quantity").value);
- const p=productList.find(x=>String(x.id)===String(id));
- if(!p||!Number.isInteger(qty)||qty<1)return notice("محصول و تعداد معتبر انتخاب کن.","error");
- const old=invoiceItems.find(x=>String(x.product.id)===String(p.id));
- const total=qty+(old?.quantity||0);
- if(!editingInvoiceId&&total>safeNumber(p.stock))return notice("موجودی کافی نیست.","error");
- if(old)old.quantity=total;else invoiceItems.push({product:p,quantity:qty});
- $("quantity").value="";renderInvoiceItems();
+function closeInvoiceModal(){
+ $("invoiceModal").classList.add("hidden");
+ editingInvoiceId=null;
 }
 
 function renderInvoiceItems(){
  const box=$("invoiceItems");
- if(!invoiceItems.length){box.textContent="هنوز محصولی اضافه نشده است.";$("invoiceTotal").textContent="";return}
- let total=0,h="<table><tr><th>محصول</th><th>تعداد</th><th>قیمت واحد</th><th>جمع</th><th></th></tr>";
+
+ if(!invoiceItems.length){
+  box.textContent="هنوز محصولی اضافه نشده است.";
+  $("invoiceTotal").textContent="";
+  return;
+ }
+
+ let total=0;
+ let h="<table><tr><th>محصول</th><th>تعداد</th><th>قیمت واحد</th><th>جمع</th><th></th></tr>";
+
  invoiceItems.forEach((x,i)=>{
-  const amount=x.quantity*safeNumber(x.product.sell_price);total+=amount;
-  h+="<tr><td>"+escapeHtml(x.product.name)+"</td><td>"+money(x.quantity)+"</td><td>"+money(x.product.sell_price)+"</td><td>"+money(amount)+"</td><td><button class='danger' onclick='removeInvoiceItem("+i+")'>حذف</button></td></tr>";
+  const amount=x.quantity*safeNumber(x.product.sell_price);
+  total+=amount;
+
+  h+="<tr><td>"+escapeHtml(x.product.name)+"</td>";
+  h+="<td>"+money(x.quantity)+"</td>";
+  h+="<td>"+money(x.product.sell_price)+"</td>";
+  h+="<td>"+money(amount)+"</td>";
+  h+="<td><button class='danger' onclick='removeInvoiceItem("+i+")'>حذف</button></td></tr>";
  });
- box.innerHTML=h+"</table>";$("invoiceTotal").textContent="جمع فاکتور: "+money(total);
+
+ box.innerHTML=h+"</table>";
+ $("invoiceTotal").textContent="جمع فاکتور: "+money(total);
 }
-function removeInvoiceItem(i){invoiceItems.splice(i,1);renderInvoiceItems()}
+
+function removeInvoiceItem(i){
+ invoiceItems.splice(i,1);
+ renderInvoiceItems();
+}
 
 function renderCustomerOptions(){
- const s=$("saleCustomer");if(!s)return;
+ const s=$("saleCustomer");
+ if(!s)return;
+
  s.innerHTML='<option value="">بدون انتخاب مشتری</option>';
- customers.forEach(c=>{const o=document.createElement("option");o.value=c.id;o.textContent=c.name+" | "+(c.phone||"");s.append(o)});
+
+ customers.forEach(c=>{
+  const o=document.createElement("option");
+  o.value=c.id;
+  o.textContent=c.name+" | "+(c.phone||"");
+  s.append(o);
+ });
 }
 
 function getCurrentPosition(){
@@ -1002,20 +1152,23 @@ function getCurrentPosition(){
 async function recordSale(){
  if(editingInvoiceId)return saveInvoiceEdit();
 
- if(!invoiceItems.length)
+ if(!invoiceItems.length){
   return message("saleMessage","ابتدا محصول اضافه کن.","error");
+ }
 
  setBusy("recordSaleButton",true);
 
  try{
   const total=invoiceItems.reduce(
-   (s,x)=>s+x.quantity*safeNumber(x.product.sell_price),0
+   (s,x)=>s+x.quantity*safeNumber(x.product.sell_price),
+   0
   );
 
   const paid=Number($("salePaid").value||0);
 
-  if(!Number.isFinite(paid)||paid<0||paid>total)
+  if(!Number.isFinite(paid)||paid<0||paid>total){
    throw Error("مبلغ دریافتی باید بین صفر و جمع فاکتور باشد.");
+  }
 
   const items=invoiceItems.map(x=>({
    product_id:Number(x.product.id),
@@ -1036,63 +1189,123 @@ async function recordSale(){
   if(error)throw error;
 
   closeInvoiceModal();
+
   notice("فاکتور با شماره "+data+" ثبت شد.");
+
   await refreshAll();
 
  }catch(e){
   message("saleMessage","ثبت ناموفق: "+e.message,"error");
+
  }finally{
   setBusy("recordSaleButton",false);
  }
 }
 
 async function openEditInvoice(id){
- const inv=invoiceRows.find(x=>String(x.id)===String(id));if(!inv)return;
- if(profile?.role!=="manager"&&String(inv.visitor_id)!==String(currentUser.id))return notice("اجازه ویرایش این فاکتور را نداری.","error");
- const {data,error}=await db.from("sales").select("product_id,quantity,products(*)").eq("invoice_id",id);
+ const inv=invoiceRows.find(x=>String(x.id)===String(id));
+
+ if(!inv)return;
+
+ if(
+  profile?.role!=="manager"&&
+  String(inv.visitor_id)!==String(currentUser.id)
+ ){
+  return notice("اجازه ویرایش این فاکتور را نداری.","error");
+ }
+
+ const {data,error}=await db.from("sales")
+  .select("product_id,quantity,products(*)")
+  .eq("invoice_id",id);
+
  if(error)return notice(error.message,"error");
+
  editingInvoiceId=id;
- invoiceItems=(data||[]).map(x=>({product:x.products||productList.find(p=>p.id===x.product_id),quantity:safeNumber(x.quantity)})).filter(x=>x.product);
- renderInvoiceItems();renderSaleProductOptions();renderCustomerOptions();
+
+ invoiceItems=(data||[])
+  .map(x=>({
+   product:x.products||productList.find(p=>p.id===x.product_id),
+   quantity:safeNumber(x.quantity)
+  }))
+  .filter(x=>x.product);
+
+ renderInvoiceItems();
+ renderCustomerOptions();
+
  $("invoiceModalTitle").textContent="ویرایش فاکتور";
  $("saleCustomer").value=inv.customer_id||"";
- $("salePaid").value=inv.paid||0;$("saleNote").value=inv.note||"";
+ $("salePaid").value=inv.paid||0;
+ $("saleNote").value=inv.note||"";
  $("recordSaleButton").textContent="ذخیره تغییرات";
+
  $("invoiceModal").classList.remove("hidden");
 }
 
 async function saveInvoiceEdit(){
- if(!editingInvoiceId||!invoiceItems.length)return message("saleMessage","اقلام فاکتور را بررسی کن.","error");
+ if(!editingInvoiceId||!invoiceItems.length){
+  return message("saleMessage","اقلام فاکتور را بررسی کن.","error");
+ }
+
  setBusy("recordSaleButton",true);
+
  try{
-  const items=invoiceItems.map(x=>({product_id:Number(x.product.id),quantity:x.quantity}));
+  const items=invoiceItems.map(x=>({
+   product_id:Number(x.product.id),
+   quantity:x.quantity
+  }));
+
   const {error}=await db.rpc("update_invoice",{
-   p_invoice_id:Number(editingInvoiceId),p_items:items,p_note:$("saleNote").value.trim()
+   p_invoice_id:Number(editingInvoiceId),
+   p_items:items,
+   p_note:$("saleNote").value.trim()
   });
+
   if(error)throw error;
-  closeInvoiceModal();notice("ویرایش فاکتور ثبت شد.");
+
+  closeInvoiceModal();
+
+  notice("ویرایش فاکتور ثبت شد.");
+
   await refreshAll();
- }catch(e){message("saleMessage","ویرایش ناموفق: "+e.message,"error")}
- finally{setBusy("recordSaleButton",false)}
+
+ }catch(e){
+  message("saleMessage","ویرایش ناموفق: "+e.message,"error");
+
+ }finally{
+  setBusy("recordSaleButton",false);
+ }
 }
 
 /* ردیابی موقعیت ویزیتور */
+
 function setTrackingUI(active,text){
  $("trackingStatus").textContent=text||(active?"ردیابی فعال است.":"ردیابی خاموش است.");
- $("startTrackingButton").disabled=active;$("stopTrackingButton").disabled=!active;
+ $("startTrackingButton").disabled=active;
+ $("stopTrackingButton").disabled=!active;
 }
+
 async function saveLiveLocation(position){
  if(!currentUser||profile?.role!=="visitor")return;
+
  const now=new Date().toISOString();
+
  const {error}=await db.from("visitor_locations").upsert({
-  visitor_id:currentUser.id,latitude:position.coords.latitude,longitude:position.coords.longitude,
-  accuracy:position.coords.accuracy,tracking_active:true,recorded_at:now,updated_at:now
+  visitor_id:currentUser.id,
+  latitude:position.coords.latitude,
+  longitude:position.coords.longitude,
+  accuracy:position.coords.accuracy,
+  tracking_active:true,
+  recorded_at:now,
+  updated_at:now
  },{onConflict:"visitor_id"});
+
  if(error)throw error;
+
  setTrackingUI(true,"ردیابی فعال است. آخرین ارسال: "+fmtDate(now));
 }
+
 async function startTracking(){
- if(profile?.role!=="visitor" || locationWatchId!==null || trackingBusy)return;
+ if(profile?.role!=="visitor"||locationWatchId!==null||trackingBusy)return;
 
  if(!navigator.geolocation){
   return notice("مرورگر شما مکان‌یابی را پشتیبانی نمی‌کند.","error");
@@ -1123,6 +1336,7 @@ async function startTracking(){
       navigator.geolocation.clearWatch(locationWatchId);
       locationWatchId=null;
      }
+
      return;
     }
 
@@ -1146,15 +1360,18 @@ async function startTracking(){
   );
 
   notice("درخواست شروع ردیابی ارسال شد.");
+
  }catch(error){
   setTrackingUI(false,"شروع ردیابی ناموفق: "+error.message);
   notice(error.message,"error");
+
  }finally{
   trackingBusy=false;
  }
-} 
+}
+
 async function stopTracking(){
- if(profile?.role!=="visitor" || trackingBusy)return;
+ if(profile?.role!=="visitor"||trackingBusy)return;
 
  trackingBusy=true;
 
@@ -1164,8 +1381,7 @@ async function stopTracking(){
    locationWatchId=null;
   }
 
-  const {error}=await db
-   .from("visitor_locations")
+  const {error}=await db.from("visitor_locations")
    .update({
     tracking_active:false,
     updated_at:new Date().toISOString()
@@ -1179,986 +1395,569 @@ async function stopTracking(){
 
  }catch(error){
   notice("خطا در توقف ردیابی: "+error.message,"error");
+
  }finally{
   trackingBusy=false;
  }
 }
+
 async function stopTrackingOnLogout(){
- if(locationWatchId!==null){navigator.geolocation.clearWatch(locationWatchId);locationWatchId=null}
+ if(locationWatchId!==null){
+  navigator.geolocation.clearWatch(locationWatchId);
+  locationWatchId=null;
+ }
+
  if(db&&currentUser&&profile?.role==="visitor"){
-  await db.from("visitor_locations").update({tracking_active:false,updated_at:new Date().toISOString()}).eq("visitor_id",currentUser.id);
+  await db.from("visitor_locations")
+   .update({
+    tracking_active:false,
+    updated_at:new Date().toISOString()
+   })
+   .eq("visitor_id",currentUser.id);
  }
 }
 
 /* صفحه موقعیت مدیر */
+
 function openLocationPage(){
  if(profile?.role!=="manager")return;
- $("managerPanel").classList.add("hidden");$("locationPage").classList.remove("hidden");
+
+ $("managerPanel").classList.add("hidden");
+ $("locationPage").classList.remove("hidden");
+
  loadVisitorLocations();
+
  if(locationRefreshTimer)clearInterval(locationRefreshTimer);
+
  locationRefreshTimer=setInterval(loadVisitorLocations,15000);
 }
+
 function closeLocationPage(){
- $("locationPage").classList.add("hidden");$("managerPanel").classList.remove("hidden");
- if(locationRefreshTimer){clearInterval(locationRefreshTimer);locationRefreshTimer=null}
+ $("locationPage").classList.add("hidden");
+ $("managerPanel").classList.remove("hidden");
+
+ if(locationRefreshTimer){
+  clearInterval(locationRefreshTimer);
+  locationRefreshTimer=null;
+ }
 }
+
 async function loadVisitorLocations(){
  if(profile?.role!=="manager")return;
- const box=$("managerLocations");if(!box)return;
+
+ const box=$("managerLocations");
+ if(!box)return;
+
  box.textContent="در حال دریافت...";
+
  const {data,error}=await db.from("visitor_locations")
   .select("visitor_id,latitude,longitude,accuracy,tracking_active,recorded_at,updated_at")
   .order("recorded_at",{ascending:false});
- if(error){box.textContent=error.message;return}
+
+ if(error){
+  box.textContent=error.message;
+  return;
+ }
+
  const map=new Map(visitors.map(v=>[v.id,v]));
+
  box.innerHTML="";
- if(!data?.length){box.textContent="موقعیتی ثبت نشده است.";return}
+
+ if(!data?.length){
+  box.textContent="موقعیتی ثبت نشده است.";
+  return;
+ }
+
  data.forEach(loc=>{
-  const v=map.get(loc.visitor_id),d=document.createElement("div");d.className="location-card";
-  const h=document.createElement("h3");h.textContent=v?(v.full_name||v.nickname):"ویزیتور ناشناس";
-  const status=document.createElement("p");status.textContent=loc.tracking_active?"ردیابی فعال":"ردیابی خاموش";
+  const v=map.get(loc.visitor_id);
+
+  const d=document.createElement("div");
+  d.className="location-card";
+
+  const h=document.createElement("h3");
+  h.textContent=v?(v.full_name||v.nickname):"ویزیتور ناشناس";
+
+  const status=document.createElement("p");
+  status.textContent=loc.tracking_active?"ردیابی فعال":"ردیابی خاموش";
   status.className=loc.tracking_active?"status-active":"status-fired";
-  const time=document.createElement("p");time.textContent="آخرین ثبت: "+fmtDate(loc.recorded_at);
-  const coords=document.createElement("p");coords.textContent="مختصات: "+loc.latitude+", "+loc.longitude;
-  const b=document.createElement("button");b.textContent="نمایش روی نقشه";
-  b.onclick=()=>window.open("https://www.openstreetmap.org/?mlat="+encodeURIComponent(loc.latitude)+"&mlon="+encodeURIComponent(loc.longitude)+"#map=17/"+loc.latitude+"/"+loc.longitude,"_blank","noopener");
-  d.append(h,status,time,coords,b);box.append(d);
+
+  const time=document.createElement("p");
+  time.textContent="آخرین ثبت: "+fmtDate(loc.recorded_at);
+
+  const coords=document.createElement("p");
+  coords.textContent="مختصات: "+loc.latitude+", "+loc.longitude;
+
+  const b=document.createElement("button");
+  b.textContent="نمایش روی نقشه";
+
+  b.onclick=()=>{
+   window.open(
+    "https://www.openstreetmap.org/?mlat="+encodeURIComponent(loc.latitude)+
+    "&mlon="+encodeURIComponent(loc.longitude)+
+    "#map=17/"+loc.latitude+"/"+loc.longitude,
+    "_blank",
+    "noopener"
+   );
+  };
+
+  d.append(h,status,time,coords,b);
+  box.append(d);
  });
+
  $("locationUpdated").textContent="به‌روزرسانی: "+fmtDate(new Date());
 }
 
 /* خرید */
+
 function openPurchaseModal(){
  if(profile?.role!=="manager")return;
- $("purchaseModal").classList.remove("hidden");$("purchaseMessage").classList.add("hidden");
- $("purchaseQuantity").value="";$("purchaseUnitPrice").value="";purchaseTotal();
+
+ $("purchaseModal").classList.remove("hidden");
+ $("purchaseMessage").classList.add("hidden");
+
+ $("purchaseQuantity").value="";
+ $("purchaseUnitPrice").value="";
+
+ purchaseTotal();
 }
-function closePurchaseModal(){$("purchaseModal").classList.add("hidden")}
+
+function closePurchaseModal(){
+ $("purchaseModal").classList.add("hidden");
+}
+
 function renderPurchaseProductOptions(){
- const s=$("purchaseProduct");if(!s)return;
+ const s=$("purchaseProduct");
+ if(!s)return;
+
  s.innerHTML='<option value="">انتخاب محصول</option>';
- productList.forEach(p=>{const o=document.createElement("option");o.value=p.id;o.textContent=p.name;s.append(o)});
+
+ productList.forEach(p=>{
+  const o=document.createElement("option");
+  o.value=p.id;
+  o.textContent=p.name;
+  s.append(o);
+ });
 }
+
 function purchaseTotal(){
  if(!$("purchaseTotal"))return;
- const q=Number($("purchaseQuantity").value),p=Number($("purchaseUnitPrice").value);
- $("purchaseTotal").textContent=q>0&&$("purchaseUnitPrice").value!==""?"جمع خرید: "+money(q*p):"";
+
+ const q=Number($("purchaseQuantity").value);
+ const p=Number($("purchaseUnitPrice").value);
+
+ $("purchaseTotal").textContent=
+  q>0&&$("purchaseUnitPrice").value!==""
+   ?"جمع خرید: "+money(q*p)
+   :"";
 }
+
 $("purchaseQuantity").addEventListener("input",purchaseTotal);
 $("purchaseUnitPrice").addEventListener("input",purchaseTotal);
 
 async function recordPurchase(){
- const id=$("purchaseProduct").value,q=Number($("purchaseQuantity").value),price=Number($("purchaseUnitPrice").value);
+ const id=$("purchaseProduct").value;
+ const q=Number($("purchaseQuantity").value);
+ const price=Number($("purchaseUnitPrice").value);
+
  if(profile?.role!=="manager")return;
- if(!id||!Number.isInteger(q)||q<1||$("purchaseUnitPrice").value===""||!Number.isFinite(price)||price<0)
+
+ if(
+  !id||
+  !Number.isInteger(q)||
+  q<1||
+  $("purchaseUnitPrice").value===""||
+  !Number.isFinite(price)||
+  price<0
+ ){
   return message("purchaseMessage","اطلاعات خرید معتبر نیست.","error");
+ }
+
  setBusy("recordPurchaseButton",true);
+
  try{
-  const {error}=await db.rpc("record_purchase",{p_product_id:Number(id),p_quantity:q,p_unit_price:price});
+  const {error}=await db.rpc("record_purchase",{
+   p_product_id:Number(id),
+   p_quantity:q,
+   p_unit_price:price
+  });
+
   if(error)throw error;
-  closePurchaseModal();notice("خرید ثبت و موجودی به‌روزرسانی شد.");
-  await Promise.all([loadProducts(),loadPurchases()]);
- }catch(e){message("purchaseMessage",e.message,"error")}
- finally{setBusy("recordPurchaseButton",false)}
+
+  closePurchaseModal();
+
+  notice("خرید ثبت شد.");
+
+  await Promise.all([
+   loadProducts(),
+   loadPurchases()
+  ]);
+
+ }catch(e){
+  message("purchaseMessage",e.message,"error");
+
+ }finally{
+  setBusy("recordPurchaseButton",false);
+ }
 }
+
 async function loadPurchases(){
  if(profile?.role!=="manager")return;
+
  $("purchaseReport").textContent="در حال دریافت...";
- const {data,error}=await db.from("purchases").select("id,product_id,quantity,unit_price,total_price,created_at,products(name)").order("created_at",{ascending:false}).limit(100);
- if(error){$("purchaseReport").textContent=error.message;return}
- if(!data?.length){$("purchaseReport").textContent="خریدی ثبت نشده است.";return}
+
+ const {data,error}=await db.from("purchases")
+  .select("id,product_id,quantity,unit_price,total_price,created_at,products(name)")
+  .order("created_at",{ascending:false})
+  .limit(100);
+
+ if(error){
+  $("purchaseReport").textContent=error.message;
+  return;
+ }
+
+ if(!data?.length){
+  $("purchaseReport").textContent="خریدی ثبت نشده است.";
+  return;
+ }
+
  let h="<table><tr><th>محصول</th><th>تعداد</th><th>قیمت واحد</th><th>جمع</th><th>تاریخ</th></tr>";
- data.forEach(x=>h+="<tr><td>"+escapeHtml(x.products?.name||"محصول")+"</td><td>"+money(x.quantity)+"</td><td>"+money(x.unit_price)+"</td><td>"+money(x.total_price)+"</td><td>"+escapeHtml(fmtDate(x.created_at))+"</td></tr>");
+
+ data.forEach(x=>{
+  h+="<tr><td>"+escapeHtml(x.products?.name||"محصول")+"</td>";
+  h+="<td>"+money(x.quantity)+"</td>";
+  h+="<td>"+money(x.unit_price)+"</td>";
+  h+="<td>"+money(x.total_price)+"</td>";
+  h+="<td>"+escapeHtml(fmtDate(x.created_at))+"</td></tr>";
+ });
+
  $("purchaseReport").innerHTML=h+"</table>";
 }
 
 /* مشتری و پرداخت */
+
 function openCustomerModal(){
  if(profile?.role!=="manager")return;
- renderVisitorSelect();$("customerName").value="";$("customerPhone").value="";
- $("customerAddress").value="";$("customerMessage").textContent="";
+
+ renderVisitorSelect();
+
+ $("customerName").value="";
+ $("customerPhone").value="";
+ $("customerAddress").value="";
+ $("customerMessage").textContent="";
+
  $("customerModal").classList.remove("hidden");
 }
-function closeCustomerModal(){$("customerModal").classList.add("hidden")}
+
+function closeCustomerModal(){
+ $("customerModal").classList.add("hidden");
+}
+
 async function saveCustomer(){
- const name=$("customerName").value.trim();if(profile?.role!=="manager"||!name)return message("customerMessage","نام مشتری را وارد کن.","error");
+ const name=$("customerName").value.trim();
+
+ if(profile?.role!=="manager"||!name){
+  return message("customerMessage","نام مشتری را وارد کن.","error");
+ }
+
  setBusy("saveCustomerButton",true);
+
  try{
   const {error}=await db.from("customers").insert({
-   name,phone:$("customerPhone").value.trim(),address:$("customerAddress").value.trim(),
+   name,
+   phone:$("customerPhone").value.trim(),
+   address:$("customerAddress").value.trim(),
    assigned_visitor_id:$("customerVisitor").value||null
   });
+
   if(error)throw error;
-  closeCustomerModal();await loadCustomers();notice("مشتری ثبت شد.");
- }catch(e){message("customerMessage",e.message,"error")}
- finally{setBusy("saveCustomerButton",false)}
+
+  closeCustomerModal();
+
+  await loadCustomers();
+
+  notice("مشتری ثبت شد.");
+
+ }catch(e){
+  message("customerMessage",e.message,"error");
+
+ }finally{
+  setBusy("saveCustomerButton",false);
+ }
 }
+
 async function loadCustomers(){
  if(!db)return;
- const {data,error}=await db.from("customers").select("*").order("name");
- if(error){if(profile?.role==="manager")$("customerList").textContent=error.message;return}
- customers=data||[];renderCustomerOptions();await renderCustomerTables();
+
+ const {data,error}=await db.from("customers")
+  .select("*")
+  .order("name");
+
+ if(error){
+  if(profile?.role==="manager")$("customerList").textContent=error.message;
+  return;
+ }
+
+ customers=data||[];
+
+ renderCustomerOptions();
+
+ await renderCustomerTables();
 }
+
 async function renderCustomerTables(){
  const [ir,pr,cr]=await Promise.all([
   db.from("invoices").select("customer_id,total,paid"),
   db.from("customer_payments").select("customer_id,amount"),
   db.from("customer_credits").select("customer_id,amount")
  ]);
+
  const err=ir.error||pr.error||cr.error;
- if(err){$("customerList").textContent=err.message;$("visitorCustomerList").textContent=err.message;return}
- const invoices=ir.data||[],payments=pr.data||[],credits=cr.data||[];
+
+ if(err){
+  $("customerList").textContent=err.message;
+  $("visitorCustomerList").textContent=err.message;
+  return;
+ }
+
+ const invoices=ir.data||[];
+ const payments=pr.data||[];
+ const credits=cr.data||[];
+
  const rows=customers.map(c=>{
-  const debt=invoices.filter(x=>String(x.customer_id)===String(c.id)).reduce((s,x)=>s+safeNumber(x.total)-safeNumber(x.paid),0);
-  const received=payments.filter(x=>String(x.customer_id)===String(c.id)).reduce((s,x)=>s+safeNumber(x.amount),0);
-  const credit=credits.filter(x=>String(x.customer_id)===String(c.id)).reduce((s,x)=>s+safeNumber(x.amount),0);
+  const debt=invoices
+   .filter(x=>String(x.customer_id)===String(c.id))
+   .reduce((s,x)=>s+safeNumber(x.total)-safeNumber(x.paid),0);
+
+  const received=payments
+   .filter(x=>String(x.customer_id)===String(c.id))
+   .reduce((s,x)=>s+safeNumber(x.amount),0);
+
+  const credit=credits
+   .filter(x=>String(x.customer_id)===String(c.id))
+   .reduce((s,x)=>s+safeNumber(x.amount),0);
+
   return {...c,balance:debt-received-credit};
  });
+
  const render=(target,manager)=>{
   let h="<table><tr><th>مشتری</th><th>تلفن</th><th>مانده</th>"+(manager?"<th>عملیات</th>":"")+"</tr>";
+
   rows.forEach(c=>{
-   h+="<tr><td>"+escapeHtml(c.name)+"</td><td>"+escapeHtml(c.phone||"-")+"</td><td>"+(c.balance<0?"بستانکار: "+money(-c.balance):money(c.balance))+"</td>";
-   if(manager)h+="<td><button onclick='openPaymentModal("+Number(c.id)+")'>ثبت دریافت</button></td>";
+   h+="<tr><td>"+escapeHtml(c.name)+"</td>";
+   h+="<td>"+escapeHtml(c.phone||"-")+"</td>";
+   h+="<td>"+(c.balance<0?"بستانکار: "+money(-c.balance):money(c.balance))+"</td>";
+
+   if(manager){
+    h+="<td><button onclick='openPaymentModal("+Number(c.id)+")'>ثبت دریافت</button></td>";
+   }
+
    h+="</tr>";
   });
+
   target.innerHTML=h+"</table>";
  };
+
  if(profile?.role==="manager")render($("customerList"),true);
+
  render($("visitorCustomerList"),false);
 }
+
 function openPaymentModal(id){
  if(profile?.role!=="manager")return;
- const c=customers.find(x=>String(x.id)===String(id));if(!c)return;
- selectedPaymentCustomer=id;$("paymentCustomerName").textContent="مشتری: "+c.name;
- $("paymentAmount").value="";$("paymentNote").value="";$("paymentMessage").textContent="";
+
+ const c=customers.find(x=>String(x.id)===String(id));
+ if(!c)return;
+
+ selectedPaymentCustomer=id;
+
+ $("paymentCustomerName").textContent="مشتری: "+c.name;
+ $("paymentAmount").value="";
+ $("paymentNote").value="";
+ $("paymentMessage").textContent="";
+
  $("paymentModal").classList.remove("hidden");
 }
-function closePaymentModal(){$("paymentModal").classList.add("hidden");selectedPaymentCustomer=null}
+
+function closePaymentModal(){
+ $("paymentModal").classList.add("hidden");
+ selectedPaymentCustomer=null;
+}
+
 async function savePayment(){
  const amount=Number($("paymentAmount").value);
+
  if(profile?.role!=="manager"||selectedPaymentCustomer===null)return;
- if(!Number.isFinite(amount)||amount<=0)return message("paymentMessage","مبلغ معتبر وارد کن.","error");
+
+ if(!Number.isFinite(amount)||amount<=0){
+  return message("paymentMessage","مبلغ معتبر وارد کن.","error");
+ }
+
  setBusy("savePaymentButton",true);
+
  try{
   const {error}=await db.rpc("record_customer_payment",{
-   p_customer_id:Number(selectedPaymentCustomer),p_amount:amount,p_note:$("paymentNote").value.trim()
+   p_customer_id:Number(selectedPaymentCustomer),
+   p_amount:amount,
+   p_note:$("paymentNote").value.trim()
   });
+
   if(error)throw error;
-  closePaymentModal();await loadCustomers();notice("پرداخت ثبت شد.");
- }catch(e){message("paymentMessage",e.message,"error")}
- finally{setBusy("savePaymentButton",false)}
+
+  closePaymentModal();
+
+  await loadCustomers();
+
+  notice("پرداخت ثبت شد.");
+
+ }catch(e){
+  message("paymentMessage",e.message,"error");
+
+ }finally{
+  setBusy("savePaymentButton",false);
+ }
 }
 
 /* فاکتورها و مرجوعی */
+
 async function loadInvoices(){
  if(!db)return;
- const {data,error}=await db.from("invoices").select("*,customers(name)").order("created_at",{ascending:false}).limit(100);
- if(error){$("myInvoices").textContent=error.message;if(profile?.role==="manager")$("invoiceReport").textContent=error.message;return}
- invoiceRows=data||[];
- let h="<table><tr><th>شماره</th><th>مشتری</th><th>مبلغ</th><th>پرداخت اولیه</th><th>تاریخ</th><th>عملیات</th></tr>";
- invoiceRows.forEach(x=>{
-  h+="<tr><td>"+escapeHtml(x.invoice_code||x.id)+"</td><td>"+escapeHtml(x.customers?.name||"بدون مشتری")+"</td><td>"+money(x.total)+"</td><td>"+money(x.paid)+"</td><td>"+escapeHtml(fmtDate(x.created_at))+"</td><td><div class='inline-actions'><button onclick='printInvoice("+Number(x.id)+")'>چاپ</button><button class='secondary' onclick='openEditInvoice("+Number(x.id)+")'>ویرایش</button><button class='danger' onclick='openReturnModal("+Number(x.id)+")'>مرجوعی</button></div></td></tr>";
- });
- const html=invoiceRows.length?h+"</table>":"فاکتوری ثبت نشده است.";
- $("myInvoices").innerHTML=html;if(profile?.role==="manager")$("invoiceReport").innerHTML=html;
-}
 
-async function openReturnModal(id){
- const inv=invoiceRows.find(x=>String(x.id)===String(id));if(!inv)return;
- selectedReturnInvoice=inv;returnLines=[];
- $("returnInvoiceInfo").textContent="فاکتور "+(inv.invoice_code||inv.id)+" | مشتری: "+(inv.customers?.name||"بدون مشتری");
- $("returnReason").value="";$("returnMessage").textContent="در حال دریافت اقلام...";
- $("returnModal").classList.remove("hidden");
- const {data,error}=await db.from("sales").select("id,product_id,quantity,returned_quantity,unit_price,products(name,unit)").eq("invoice_id",id);
- if(error){$("returnMessage").textContent=error.message;return}
- returnLines=(data||[]).map(x=>({...x,returnQty:0}));renderReturnLines();
-}
-function renderReturnLines(){
- if(!returnLines.length){$("returnLines").textContent="اقلامی برای مرجوعی وجود ندارد.";return}
- let h="<table><tr><th>کالا</th><th>تعداد</th><th>قبلی</th><th>قابل مرجوع</th><th>تعداد مرجوعی</th></tr>";
- returnLines.forEach((x,i)=>{
-  const remaining=Math.max(0,safeNumber(x.quantity)-safeNumber(x.returned_quantity));
-  h+="<tr><td>"+escapeHtml(x.products?.name||"کالا")+"</td><td>"+money(x.quantity)+"</td><td>"+money(x.returned_quantity||0)+"</td><td>"+money(remaining)+"</td><td><input type='number' min='0' max='"+remaining+"' value='0' oninput='setReturnQty("+i+",this.value)' "+(!remaining?"disabled":"")+"></td></tr>";
- });
- $("returnLines").innerHTML=h+"</table>";
- $("returnMessage").textContent="مبلغ مرجوعی به‌صورت بستانکاری برای مشتری ثبت می‌شود.";
-}
-function setReturnQty(i,v){
- const n=Number(v),x=returnLines[i],max=Math.max(0,safeNumber(x.quantity)-safeNumber(x.returned_quantity));
- x.returnQty=Number.isInteger(n)&&n>=0&&n<=max?n:0;
-}
-function closeReturnModal(){$("returnModal").classList.add("hidden");selectedReturnInvoice=null;returnLines=[]}
-async function processReturn(){
- if(!selectedReturnInvoice)return;
- const items=returnLines.filter(x=>x.returnQty>0).map(x=>({sale_id:Number(x.id),quantity:x.returnQty}));
- if(!items.length)return message("returnMessage","تعداد مرجوعی را وارد کن.","error");
- setBusy("processReturnButton",true);
- try{
-  const {data,error}=await db.rpc("process_invoice_return",{
-   p_invoice_id:Number(selectedReturnInvoice.id),p_items:items,p_reason:$("returnReason").value.trim()
-  });
-  if(error)throw error;
-  const result=Array.isArray(data)?data[0]:data;
-  closeReturnModal();notice("مرجوعی ثبت شد. بستانکاری: "+money(result?.credit_added));
-  await refreshAll();
- }catch(e){message("returnMessage",e.message,"error")}
- finally{setBusy("processReturnButton",false)}
-}
+ const {data,error}=await db.from("invoices")
+  .select("*,customers(name)")
+  .order("created_at",{ascending:false})
+  .limit(100);
 
-async function printInvoice(id){
- const inv=invoiceRows.find(x=>String(x.id)===String(id));if(!inv)return;
- const w=window.open("","_blank");if(!w)return alert("اجازه باز شدن پنجره چاپ را فعال کن.");
- const {data,error}=await db.from("sales").select("quantity,returned_quantity,unit_price,products(name,unit)").eq("invoice_id",id);
- if(error){w.close();return alert(error.message)}
- let rows="";
- (data||[]).forEach(x=>{
-  const qty=Math.max(0,safeNumber(x.quantity)-safeNumber(x.returned_quantity));
-  rows+="<tr><td>"+escapeHtml(x.products?.name||"محصول")+"</td><td>"+money(qty)+" "+escapeHtml(x.products?.unit||"")+"</td><td>"+money(x.unit_price)+"</td><td>"+money(qty*safeNumber(x.unit_price))+"</td></tr>";
- });
- w.document.write("<html lang='fa' dir='rtl'><meta charset='UTF-8'><title>فاکتور</title><style>body{font-family:Tahoma;padding:30px}table{width:100%;border-collapse:collapse;margin-top:20px}td,th{border:1px solid #aaa;padding:10px;text-align:right}</style><h2>FOOD DISTRIBUTION PRO</h2><h3>فاکتور: "+escapeHtml(inv.invoice_code||inv.id)+"</h3><p>مشتری: "+escapeHtml(inv.customers?.name||"-")+"</p><p>تاریخ: "+escapeHtml(fmtDate(inv.created_at))+"</p><table><tr><th>محصول</th><th>تعداد خالص</th><th>قیمت</th><th>جمع</th></tr>"+rows+"</table><h3>مبلغ فعلی: "+money(inv.total)+"</h3><p>پرداخت اولیه: "+money(inv.paid)+"</p><p>مانده: "+money(safeNumber(inv.total)-safeNumber(inv.paid))+"</p><p>"+escapeHtml(inv.note||"")+"</p><script>window.onload=()=>window.print()<\/script></html>");
- w.document.close();
-}
+ if(error){
+  $("myInvoices").textContent=error.message;
 
-/* گزارش فروش و سود */
-async function loadSales(){
- if(!currentUser)return;
- const {data,error}=await db.from("sales")
-  .select("id,quantity,returned_quantity,unit_price,total_price,created_at,visitor_id,invoice_id,buy_price_at_sale,products(name)")
-  .order("created_at",{ascending:false}).limit(1000);
- if(error){if(profile?.role==="manager")$("managerSales").textContent=error.message;return}
- recentSales=data||[];
- const qty=x=>Math.max(0,safeNumber(x.quantity)-safeNumber(x.returned_quantity));
- const net=x=>qty(x)*safeNumber(x.unit_price);
- const total=recentSales.reduce((s,x)=>s+net(x),0);
- const known=recentSales.filter(x=>x.buy_price_at_sale!==null&&x.buy_price_at_sale!==undefined);
- const profit=known.reduce((s,x)=>s+qty(x)*(safeNumber(x.unit_price)-safeNumber(x.buy_price_at_sale)),0);
- $("salesCount").textContent=money(recentSales.length);
- $("salesTotal").textContent=money(total);
- $("profitTotal").textContent=money(profit);
- $("unknownProfitCount").textContent=money(recentSales.length-known.length);
- if(profile?.role!=="manager"){await loadVisitorStats();return}
- let h="<table><tr><th>محصول</th><th>تعداد خالص</th><th>فروش خالص</th><th>قیمت خرید تاریخی</th><th>سود</th><th>تاریخ</th></tr>";
- recentSales.slice(0,150).forEach(x=>{
-  const p=x.buy_price_at_sale===null||x.buy_price_at_sale===undefined?null:qty(x)*(safeNumber(x.unit_price)-safeNumber(x.buy_price_at_sale));
-  h+="<tr><td>"+escapeHtml(x.products?.name||"محصول")+"</td><td>"+money(qty(x))+"</td><td>"+money(net(x))+"</td><td>"+(x.buy_price_at_sale==null?"نامشخص":money(x.buy_price_at_sale))+"</td><td>"+(p===null?"نامشخص":money(p))+"</td><td>"+escapeHtml(fmtDate(x.created_at))+"</td></tr>";
- });
- $("managerSales").innerHTML=h+"</table>";
- renderSalesChart();renderVisitorPerformance();
-}
-function renderSalesChart(){
- const daily={};
- recentSales.forEach(x=>{const day=new Date(x.created_at).toLocaleDateString("fa-IR");daily[day]=(daily[day]||0)+Math.max(0,safeNumber(x.quantity)-safeNumber(x.returned_quantity))*safeNumber(x.unit_price)});
- const entries=Object.entries(daily).slice(0,7).reverse(),max=Math.max(1,...entries.map(x=>x[1]));
- $("salesChart").innerHTML=entries.length?entries.map(([day,value])=>"<div class='bar-row'><span>"+escapeHtml(day)+"</span><div class='bar-bg'><div class='bar-fill' style='width:"+(value/max*100)+"%'></div></div><b>"+money(value)+"</b></div>").join(""):"فروشی وجود ندارد.";
-}
-function renderVisitorPerformance(){
- const totals={};
- recentSales.forEach(x=>{const id=x.visitor_id||"unknown";totals[id]=(totals[id]||0)+Math.max(0,safeNumber(x.quantity)-safeNumber(x.returned_quantity))*safeNumber(x.unit_price)});
- let h="<table><tr><th>ویزیتور</th><th>وضعیت</th><th>فروش خالص</th></tr>";
- visitors.forEach(v=>h+="<tr><td>"+escapeHtml(v.full_name||v.nickname)+"</td><td>"+(v.active?"فعال":"غیرفعال")+"</td><td>"+money(totals[v.id]||0)+"</td></tr>");
- $("visitorPerformance").innerHTML=h+"</table>";
-}
+  if(profile?.role==="manager"){
+   $("invoiceReport").textContent=error.message;
+  }
 
-/* آمار روز، ماه، سال */
-function startOfToday(){const d=new Date();d.setHours(0,0,0,0);return d}
-function startOfMonth(){const d=new Date();d.setDate(1);d.setHours(0,0,0,0);return d}
-function startOfYear(){const d=new Date();d.setMonth(0,1);d.setHours(0,0,0,0);return d}
-async function periodStats(start,end){
- const {data:inv,error}=await db.from("invoices").select("id").eq("visitor_id",currentUser.id).gte("created_at",start.toISOString()).lt("created_at",end.toISOString());
- if(error)throw error;
- const ids=(inv||[]).map(x=>x.id);let gross=0,returns=0;
- if(ids.length){
-  const [{data:s,error:se},{data:r,error:re}]=await Promise.all([
-   db.from("sales").select("total_price").in("invoice_id",ids),
-   db.from("invoice_returns").select("total_amount").in("invoice_id",ids).gte("created_at",start.toISOString()).lt("created_at",end.toISOString())
-  ]);
-  if(se)throw se;if(re)throw re;
-  gross=(s||[]).reduce((a,x)=>a+safeNumber(x.total_price),0);
-  returns=(r||[]).reduce((a,x)=>a+safeNumber(x.total_amount),0);
+  return;
  }
- return {sales:Math.max(0,gross-returns),count:ids.length};
-}
-async function loadVisitorStats(){
- try{
-  const today=startOfToday(),month=startOfMonth(),year=startOfYear();
-  const tomorrow=new Date(today);tomorrow.setDate(tomorrow.getDate()+1);
-  const nextMonth=new Date(month);nextMonth.setMonth(nextMonth.getMonth()+1);
-  const nextYear=new Date(year);nextYear.setFullYear(nextYear.getFullYear()+1);
-  const [d,m,y]=await Promise.all([periodStats(today,tomorrow),periodStats(month,nextMonth),periodStats(year,nextYear)]);
-  $("visitorDailySales").textContent=money(d.sales);$("visitorDailyCount").textContent=money(d.count);
-  $("visitorMonthlySales").textContent=money(m.sales);$("visitorMonthlyCount").textContent=money(m.count);
-  $("visitorYearlySales").textContent=money(y.sales);$("visitorYearlyCount").textContent=money(y.count);
- }catch(e){notice("خطای آمار: "+e.message,"error")}
-}
-async function loadArchivedReports(){
- if(profile?.role!=="manager")return;
- const box=$("archivedReports");box.textContent="در حال دریافت...";
- const {data,error}=await db.from("visitor_period_reports")
-  .select("visitor_id,period_type,period_start,period_end,sales_total,invoice_count,profiles(full_name,nickname)")
-  .order("period_start",{ascending:false}).limit(500);
- if(error){box.textContent=error.message;return}
- if(!data?.length){box.textContent="آرشیوی ثبت نشده است.";return}
- let h="<table><tr><th>ویزیتور</th><th>نوع دوره</th><th>شروع</th><th>پایان</th><th>فروش خالص</th><th>فاکتور</th></tr>";
- data.forEach(x=>h+="<tr><td>"+escapeHtml(x.profiles?.full_name||x.profiles?.nickname||"ویزیتور")+"</td><td>"+escapeHtml(x.period_type)+"</td><td>"+escapeHtml(x.period_start)+"</td><td>"+escapeHtml(x.period_end)+"</td><td>"+money(x.sales_total)+"</td><td>"+money(x.invoice_count)+"</td></tr>");
- box.innerHTML=h+"</table>";
-}
-async function copySalesForHoloo(){
- if(profile?.role!=="manager")return;
- const rows=[["نام کالا","تعداد خالص","قیمت واحد","مبلغ خالص","قیمت خرید تاریخی","سود","تاریخ"]];
- recentSales.forEach(x=>{
-  const q=Math.max(0,safeNumber(x.quantity)-safeNumber(x.returned_quantity));
-  rows.push([x.products?.name||"محصول",q,safeNumber(x.unit_price),q*safeNumber(x.unit_price),x.buy_price_at_sale??"نامشخص",x.buy_price_at_sale==null?"نامشخص":q*(safeNumber(x.unit_price)-safeNumber(x.buy_price_at_sale)),new Date(x.created_at).toLocaleDateString("fa-IR")]);
+
+ invoiceRows=data||[];
+
+ let h="<table><tr><th>شماره</th><th>مشتری</th><th>مبلغ</th><th>پرداخت اولیه</th><th>تاریخ</th><th>عملیات</th></tr>";
+
+ invoiceRows.forEach(x=>{
+  h+="<tr>";
+  h+="<td>"+escapeHtml(x.invoice_code||x.id)+"</td>";
+  h+="<td>"+escapeHtml(x.customers?.name||"بدون مشتری")+"</td>";
+  h+="<td>"+money(x.total)+"</td>";
+  h+="<td>"+money(x.paid)+"</td>";
+  h+="<td>"+escapeHtml(fmtDate(x.created_at))+"</td>";
+
+  h+="<td><div class='inline-actions'>";
+  h+="<button onclick='printInvoice("+Number(x.id)+")'>چاپ</button>";
+  h+="<button class='secondary' onclick='openEditInvoice("+Number(x.id)+")'>ویرایش</button>";
+  h+="<button class='danger' onclick='openReturnModal("+Number(x.id)+")'>مرجوعی</button>";
+  h+="</div></td>";
+
+  h+="</tr>";
  });
- try{await navigator.clipboard.writeText(rows.map(r=>r.join("\t")).join("\n"));notice("خروجی کپی شد.")}
- catch(e){notice("مرورگر اجازه کپی نداد.","error")}
+
+ const html=invoiceRows.length?h+"</table>":"فاکتوری ثبت نشده است.";
+
+ $("myInvoices").innerHTML=html;
+
+ if(profile?.role==="manager"){
+  $("invoiceReport").innerHTML=html;
+ }
 }
-
-async function refreshAll(){
- await Promise.all([loadProducts(),loadSales(),loadInvoices(),loadCustomers()]);
- if(profile?.role==="manager")await Promise.all([loadPurchases(),loadArchivedReports()]);
-}
-
-async function logout(){
- await stopTrackingOnLogout();
- if(locationRefreshTimer){clearInterval(locationRefreshTimer);locationRefreshTimer=null}
- await db.auth.signOut();
- currentUser=null;profile=null;productList=[];invoiceItems=[];customers=[];visitors=[];
- $("dashboard").classList.add("hidden");$("locationPage").classList.add("hidden");
- $("managerPanel").classList.remove("hidden");$("loginBox").classList.remove("hidden");
- $("username").value="";$("password").value="";$("authMessage").classList.add("hidden");
- $("productPage").classList.add("hidden");
-$("invoicePickerModal").classList.add("hidden");
-}
-
-startConnection();
-</script>
-
-<script>
-if("serviceWorker" in navigator&&location.protocol!=="file:"){
- window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(console.error));
-}
-</script>
-
-<script>
-  /* =========================================
-     تکمیل و اصلاح FOOD DISTRIBUTION PRO
-     قیمت خرید / فروش / مصرف‌کننده
-  ========================================= */
-  
-  /* دریافت محصولات */
-  async function loadProducts(){
-  if(!db || !profile)return;
-
-  const manager=profile.role==="manager";
-
-  const fields=manager
-    ?"id,name,category,unit,sell_price,consumer_price,buy_price,barcode,description,image_url,is_archived"
-    :"id,name,category,unit,sell_price,consumer_price,barcode,description,image_url,is_archived";
-
-  const {data,error}=await db
-    .from("products")
-    .select(fields)
-    .eq("is_archived",false)
-    .order("name");
-
-  if(error){
-    notice("خطای دریافت محصولات: "+error.message,"error");
-    return;
-  }
-
-  productList=data||[];
-
-  if($("productCount")){
-    $("productCount").textContent=money(productList.length);
-  }
-
-  // موجودی و ارزش موجودی در صفحه نمایش داده نمی‌شود.
-  if($("lowStockCount")){
-    $("lowStockCount").textContent="—";
-  }
-
-  if($("stockValue")){
-    $("stockValue").textContent="—";
-  }
-
-  if(manager){
-    renderPurchaseProductOptions();
-  }
-
-  renderProducts();
-  renderSaleProductOptions();
-}
-  
-  /* محاسبه دو قیمت در پیش‌نمایش فاکتور */
-  function renderInvoiceItems(){
-   const box=$("invoiceItems");
-  
-   if(!invoiceItems.length){
-    box.textContent="هنوز محصولی اضافه نشده است.";
-    $("invoiceTotal").textContent="";
-    return;
-   }
-  
-   let sellTotal=0;
-   let consumerTotal=0;
-   let consumerKnown=true;
-  
-   let h="<table><tr>"+
-    "<th>محصول</th>"+
-    "<th>تعداد</th>"+
-    "<th>قیمت فروش</th>"+
-    "<th>جمع فروش</th>"+
-    "<th>قیمت مصرف‌کننده</th>"+
-    "<th>جمع مصرف‌کننده</th>"+
-    "<th></th></tr>";
-  
-   invoiceItems.forEach((x,i)=>{
-    const p=x.product;
-    const qty=safeNumber(x.quantity);
-  
-    const sell=safeNumber(p.sell_price);
-    const sellAmount=qty*sell;
-  
-    sellTotal+=sellAmount;
-  
-    let consumerCell="نامشخص";
-    let consumerAmountCell="نامشخص";
-  
-    if(p.consumer_price!==null && p.consumer_price!==undefined){
-     const consumer=safeNumber(p.consumer_price);
-     const amount=qty*consumer;
-  
-     consumerTotal+=amount;
-     consumerCell=money(consumer);
-     consumerAmountCell=money(amount);
-    }else{
-     consumerKnown=false;
-    }
-  
-    h+="<tr>"+
-     "<td>"+escapeHtml(p.name)+"</td>"+
-     "<td>"+money(qty)+"</td>"+
-     "<td>"+money(sell)+"</td>"+
-     "<td>"+money(sellAmount)+"</td>"+
-     "<td>"+consumerCell+"</td>"+
-     "<td>"+consumerAmountCell+"</td>"+
-     "<td><button class='danger' onclick='removeInvoiceItem("+i+")'>حذف</button></td>"+
-     "</tr>";
-   });
-  
-   box.innerHTML=h+"</table>";
-  
-   const difference=consumerKnown
-    ?consumerTotal-sellTotal
-    :null;
-  
-   $("invoiceTotal").innerHTML=
-    "<div>مبلغ قابل پرداخت بر اساس قیمت فروش: <b>"+
-    money(sellTotal)+"</b></div>"+
-    "<div>جمع قیمت مصرف‌کننده: <b>"+
-    (consumerKnown?money(consumerTotal):"نامشخص")+"</b></div>"+
-    "<div>اختلاف دو مبلغ: <b>"+
-    (difference===null?"نامشخص":money(difference))+"</b></div>";
-  }
-  
-  /* ویرایش فاکتور با حفظ قیمت‌های تاریخی */
-  async function openEditInvoice(id){
-   const inv=invoiceRows.find(x=>String(x.id)===String(id));
-   if(!inv)return;
-  
-   if(profile?.role!=="manager" &&
-      String(inv.visitor_id)!==String(currentUser.id)){
-    return notice("اجازه ویرایش این فاکتور را نداری.","error");
-   }
-  
-   const {data,error}=await db
-    .from("sales")
-    .select(
-     "id,product_id,quantity,returned_quantity,unit_price,consumer_price_at_sale,products(name,unit,stock,min_stock,category,barcode,image_url)"
-    )
-    .eq("invoice_id",id);
-  
-   if(error)return notice(error.message,"error");
-  
-   editingInvoiceId=id;
-  
-   invoiceItems=(data||[]).map(x=>{
-    const p=x.products||{};
-  
-    return {
-     product:{
-      id:x.product_id,
-      name:p.name||"محصول",
-      unit:p.unit||"عدد",
-      stock:p.stock,
-      min_stock:p.min_stock,
-      category:p.category,
-      barcode:p.barcode,
-      image_url:p.image_url,
-  
-      /* قیمت تاریخی همان فاکتور */
-      sell_price:x.unit_price,
-      consumer_price:x.consumer_price_at_sale
-     },
-  
-     /* تعداد خالص؛ تعداد مرجوع‌شده دوباره اضافه نمی‌شود */
-     quantity:Math.max(
-      0,
-      safeNumber(x.quantity)-safeNumber(x.returned_quantity)
-     )
-    };
-   });
-  
-   renderInvoiceItems();
-   renderSaleProductOptions();
-   renderCustomerOptions();
-  
-   $("invoiceModalTitle").textContent="ویرایش فاکتور";
-   $("saleCustomer").value=inv.customer_id||"";
-   $("salePaid").value=inv.paid||0;
-   $("saleNote").value=inv.note||"";
-   $("recordSaleButton").textContent="ذخیره تغییرات";
-   $("saleMessage").textContent="";
-   $("invoiceModal").classList.remove("hidden");
-  }
-  
-  /* گزارش فاکتورها */
-  async function loadInvoices(){
-   if(!db)return;
-  
-   const {data,error}=await db
-    .from("invoices")
-    .select("*,customers(name)")
-    .order("created_at",{ascending:false})
-    .limit(100);
-  
-   if(error){
-    $("myInvoices").textContent=error.message;
-    if(profile?.role==="manager"){
-     $("invoiceReport").textContent=error.message;
-    }
-    return;
-   }
-  
-   invoiceRows=data||[];
-  
-   let h="<table><tr>"+
-    "<th>شماره فاکتور</th>"+
-    "<th>مشتری</th>"+
-    "<th>مبلغ فروش</th>"+
-    "<th>مبلغ مصرف‌کننده</th>"+
-    "<th>اختلاف</th>"+
-    "<th>دریافتی</th>"+
-    "<th>مانده</th>"+
-    "<th>تاریخ</th>"+
-    "<th>عملیات</th>"+
-    "</tr>";
-  
-   invoiceRows.forEach(x=>{
-    const sell=safeNumber(x.total);
-    const paid=safeNumber(x.paid);
-  
-    const consumer=x.consumer_total==null
-     ?null:safeNumber(x.consumer_total);
-  
-    const difference=consumer===null
-     ?null:consumer-sell;
-  
-    const balance=sell-paid;
-  
-    h+="<tr>"+
-     "<td>"+escapeHtml(x.invoice_code||x.id)+"</td>"+
-     "<td>"+escapeHtml(x.customers?.name||"بدون مشتری")+"</td>"+
-     "<td>"+money(sell)+"</td>"+
-     "<td>"+(consumer===null?"نامشخص":money(consumer))+"</td>"+
-     "<td>"+(difference===null?"نامشخص":money(difference))+"</td>"+
-     "<td>"+money(paid)+"</td>"+
-     "<td>"+money(balance)+"</td>"+
-     "<td>"+escapeHtml(fmtDate(x.created_at))+"</td>"+
-     "<td><div class='inline-actions'>"+
-     "<button onclick='printInvoice("+Number(x.id)+")'>چاپ</button>"+
-     "<button class='secondary' onclick='openEditInvoice("+Number(x.id)+")'>ویرایش</button>"+
-     "<button class='danger' onclick='openReturnModal("+Number(x.id)+")'>مرجوعی</button>"+
-     "</div></td>"+
-     "</tr>";
-   });
-  
-   const html=invoiceRows.length?h+"</table>":"فاکتوری ثبت نشده است.";
-  
-   $("myInvoices").innerHTML=html;
-  
-   if(profile?.role==="manager"){
-    $("invoiceReport").innerHTML=html;
-   }
-  }
-  
-  /* گزارش فروش و سود مدیر */
-  async function loadSales(){
-   if(!currentUser)return;
-  
-   const manager=profile?.role==="manager";
-  
-   const fields=manager
-    ?"id,quantity,returned_quantity,unit_price,total_price,consumer_price_at_sale,created_at,visitor_id,invoice_id,buy_price_at_sale,products(name)"
-    :"id,quantity,returned_quantity,unit_price,total_price,consumer_price_at_sale,created_at,visitor_id,invoice_id,products(name)";
-  
-   const {data,error}=await db
-    .from("sales")
-    .select(fields)
-    .order("created_at",{ascending:false})
-    .limit(1000);
-  
-   if(error){
-    if(manager)$("managerSales").textContent=error.message;
-    return;
-   }
-  
-   recentSales=data||[];
-  
-   const qty=x=>Math.max(
-    0,
-    safeNumber(x.quantity)-safeNumber(x.returned_quantity)
-   );
-  
-   const sellAmount=x=>qty(x)*safeNumber(x.unit_price);
-  
-   let totalSell=0;
-   let totalConsumer=0;
-   let consumerKnown=true;
-   let profit=0;
-   let unknownProfit=0;
-  
-   recentSales.forEach(x=>{
-    totalSell+=sellAmount(x);
-  
-    if(x.consumer_price_at_sale==null){
-     consumerKnown=false;
-    }else{
-     totalConsumer+=qty(x)*safeNumber(x.consumer_price_at_sale);
-    }
-  
-    if(manager){
-     if(x.buy_price_at_sale==null){
-      unknownProfit++;
-     }else{
-      profit+=qty(x)*(
-       safeNumber(x.unit_price)-safeNumber(x.buy_price_at_sale)
-      );
-     }
-    }
-   });
-  
-   $("salesCount").textContent=money(recentSales.length);
-   $("salesTotal").textContent=money(totalSell);
-  
-   if(manager){
-    $("profitTotal").textContent=money(profit);
-    $("unknownProfitCount").textContent=money(unknownProfit);
-  
-    let h="<table><tr>"+
-     "<th>محصول</th>"+
-     "<th>تعداد خالص</th>"+
-     "<th>قیمت فروش واحد</th>"+
-     "<th>مبلغ فروش</th>"+
-     "<th>قیمت مصرف‌کننده واحد</th>"+
-     "<th>مبلغ مصرف‌کننده</th>"+
-     "<th>اختلاف</th>"+
-     "<th>قیمت خرید تاریخی</th>"+
-     "<th>سود</th>"+
-     "<th>تاریخ</th>"+
-     "</tr>";
-  
-    recentSales.slice(0,150).forEach(x=>{
-     const q=qty(x);
-     const sell=safeNumber(x.unit_price);
-     const sellTotal=q*sell;
-  
-     const consumer=x.consumer_price_at_sale==null
-      ?null:safeNumber(x.consumer_price_at_sale);
-  
-     const consumerTotal=consumer===null
-      ?null:q*consumer;
-  
-     const difference=consumerTotal===null
-      ?null:consumerTotal-sellTotal;
-  
-     const buy=x.buy_price_at_sale==null
-      ?null:safeNumber(x.buy_price_at_sale);
-  
-     const rowProfit=buy===null
-      ?null:q*(sell-buy);
-  
-     h+="<tr>"+
-      "<td>"+escapeHtml(x.products?.name||"محصول")+"</td>"+
-      "<td>"+money(q)+"</td>"+
-      "<td>"+money(sell)+"</td>"+
-      "<td>"+money(sellTotal)+"</td>"+
-      "<td>"+(consumer===null?"نامشخص":money(consumer))+"</td>"+
-      "<td>"+(consumerTotal===null?"نامشخص":money(consumerTotal))+"</td>"+
-      "<td>"+(difference===null?"نامشخص":money(difference))+"</td>"+
-      "<td>"+(buy===null?"نامشخص":money(buy))+"</td>"+
-      "<td>"+(rowProfit===null?"نامشخص":money(rowProfit))+"</td>"+
-      "<td>"+escapeHtml(fmtDate(x.created_at))+"</td>"+
-      "</tr>";
-    });
-  
-    $("managerSales").innerHTML=h+"</table>";
-  
-    renderSalesChart();
-    renderVisitorPerformance();
-  
-   }else{
-    await loadVisitorStats();
-   }
-  }
-  
-  /* چاپ فاکتور با هر دو قیمت */
-  async function printInvoice(id){
-   const inv=invoiceRows.find(x=>String(x.id)===String(id));
-   if(!inv)return;
-  
-   const w=window.open("","_blank");
-  
-   if(!w){
-    return alert("اجازه باز شدن پنجره چاپ را فعال کن.");
-   }
-  
-   const manager=profile?.role==="manager";
-  
-   const fields=manager
-    ?"quantity,returned_quantity,unit_price,consumer_price_at_sale,buy_price_at_sale,products(name,unit)"
-    :"quantity,returned_quantity,unit_price,consumer_price_at_sale,products(name,unit)";
-  
-   const {data,error}=await db
-    .from("sales")
-    .select(fields)
-    .eq("invoice_id",id);
-  
-   if(error){
-    w.close();
-    return alert(error.message);
-   }
-  
-   let rows="";
-   let consumerTotal=0;
-   let consumerKnown=true;
-  
-   (data||[]).forEach(x=>{
-    const qty=Math.max(
-     0,
-     safeNumber(x.quantity)-safeNumber(x.returned_quantity)
-    );
-  
-    const sell=safeNumber(x.unit_price);
-    const sellAmount=qty*sell;
-  
-    let consumerCell="نامشخص";
-    let consumerAmountCell="نامشخص";
-  
-    if(x.consumer_price_at_sale==null){
-     consumerKnown=false;
-    }else{
-     const cp=safeNumber(x.consumer_price_at_sale);
-     const amount=qty*cp;
-  
-     consumerTotal+=amount;
-     consumerCell=money(cp);
-     consumerAmountCell=money(amount);
-    }
-  
-    rows+="<tr>"+
-     "<td>"+escapeHtml(x.products?.name||"محصول")+"</td>"+
-     "<td>"+money(qty)+" "+escapeHtml(x.products?.unit||"")+"</td>"+
-     "<td>"+money(sell)+"</td>"+
-     "<td>"+money(sellAmount)+"</td>"+
-     "<td>"+consumerCell+"</td>"+
-     "<td>"+consumerAmountCell+"</td>"+
-     "</tr>";
-   });
-  
-   const sellTotal=safeNumber(inv.total);
-  
-   const finalConsumer=inv.consumer_total==null
-    ?(consumerKnown?consumerTotal:null)
-    :safeNumber(inv.consumer_total);
-  
-   const difference=finalConsumer===null
-    ?null:finalConsumer-sellTotal;
-  
-   const html=
-   "<html lang='fa' dir='rtl'>"+
-   "<meta charset='UTF-8'>"+
-   "<title>فاکتور فروش</title>"+
-   "<style>"+
-   "body{font-family:Tahoma;padding:25px;color:#222}"+
-   "table{width:100%;border-collapse:collapse;margin-top:20px}"+
-   "td,th{border:1px solid #aaa;padding:9px;text-align:right}"+
-   "th{background:#eee}"+
-   ".summary{margin-top:25px;line-height:2.5}"+
-   "</style>"+
-   "<h2>FOOD DISTRIBUTION PRO ADRIAN NOVIN</h2>"+
-   "<h3>فاکتور: "+escapeHtml(inv.invoice_code||inv.id)+"</h3>"+
-   "<p>مشتری: "+escapeHtml(inv.customers?.name||"-")+"</p>"+
-   "<p>تاریخ: "+escapeHtml(fmtDate(inv.created_at))+"</p>"+
-   "<table><tr>"+
-   "<th>محصول</th><th>تعداد خالص</th>"+
-   "<th>قیمت فروش</th><th>جمع فروش</th>"+
-   "<th>قیمت مصرف‌کننده</th><th>جمع مصرف‌کننده</th>"+
-   "</tr>"+rows+"</table>"+
-   "<div class='summary'>"+
-   "<b>مبلغ قابل پرداخت بر اساس قیمت فروش: "+money(sellTotal)+"</b><br>"+
-   "مبلغ مصرف‌کننده: "+(finalConsumer===null?"نامشخص":money(finalConsumer))+"<br>"+
-   "اختلاف دو مبلغ: "+(difference===null?"نامشخص":money(difference))+"<br>"+
-   "پرداخت اولیه: "+money(inv.paid)+"<br>"+
-   "مانده: "+money(sellTotal-safeNumber(inv.paid))+
-   "</div>"+
-   "<p>"+escapeHtml(inv.note||"")+"</p>"+
-   "<script>window.onload=()=>window.print()<\/script>"+
-   "</html>";
-  
-   w.document.open();
-   w.document.write(html);
-   w.document.close();
-  }
-  
-  /* خروجی هلو با اطلاعات دو قیمت */
-  async function copySalesForHoloo(){
-   if(profile?.role!=="manager")return;
-  
-   const rows=[[
-    "نام کالا",
-    "تعداد خالص",
-    "قیمت فروش واحد",
-    "مبلغ فروش",
-    "قیمت مصرف‌کننده واحد",
-    "مبلغ مصرف‌کننده",
-    "اختلاف",
-    "قیمت خرید تاریخی",
-    "سود",
-    "تاریخ"
-   ]];
-  
-   recentSales.forEach(x=>{
-    const q=Math.max(
-     0,
-     safeNumber(x.quantity)-safeNumber(x.returned_quantity)
-    );
-  
-    const sell=safeNumber(x.unit_price);
-    const sellTotal=q*sell;
-  
-    const consumer=x.consumer_price_at_sale==null
-     ?null:safeNumber(x.consumer_price_at_sale);
-  
-    const consumerTotal=consumer===null
-     ?null:q*consumer;
-  
-    const difference=consumerTotal===null
-     ?null:consumerTotal-sellTotal;
-  
-    const buy=x.buy_price_at_sale==null
-     ?null:safeNumber(x.buy_price_at_sale);
-  
-    const profit=buy===null
-     ?null:q*(sell-buy);
-  
-    rows.push([
-     x.products?.name||"محصول",
-     q,
-     sell,
-     sellTotal,
-     consumer===null?"نامشخص":consumer,
-     consumerTotal===null?"نامشخص":consumerTotal,
-     difference===null?"نامشخص":difference,
-     buy===null?"نامشخص":buy,
-     profit===null?"نامشخص":profit,
-     new Date(x.created_at).toLocaleDateString("fa-IR")
-    ]);
-   });
-  
-   try{
-    await navigator.clipboard.writeText(
-     rows.map(r=>r.join("\t")).join("\n")
-    );
-    notice("خروجی کامل فروش و قیمت‌ها کپی شد.");
-   }catch(e){
-    notice("مرورگر اجازه کپی نداد.","error");
-   }
-  }
-  
   /* نمایش قیمت مصرف‌کننده در اقلام مرجوعی */
-  async function openReturnModal(id){
-   const inv=invoiceRows.find(x=>String(x.id)===String(id));
-   if(!inv)return;
-  
-   selectedReturnInvoice=inv;
-   returnLines=[];
-  
-   $("returnInvoiceInfo").textContent=
-    "فاکتور "+(inv.invoice_code||inv.id)+
-    " | مشتری: "+(inv.customers?.name||"بدون مشتری");
-  
-   $("returnReason").value="";
-   $("returnMessage").textContent="در حال دریافت اقلام...";
-   $("returnModal").classList.remove("hidden");
-  
-   const {data,error}=await db
+  async function openReturnModal(id) {
+  const inv = invoiceRows.find(x => String(x.id) === String(id));
+  if (!inv) return;
+
+  selectedReturnInvoice = inv;
+  returnLines = [];
+
+  $("returnInvoiceInfo").textContent =
+    "فاکتور " + (inv.invoice_code || inv.id) +
+    " | مشتری: " + (inv.customers?.name || "بدون مشتری");
+
+  $("returnReason").value = "";
+  $("returnMessage").textContent = "در حال دریافت اقلام...";
+  $("returnModal").classList.remove("hidden");
+
+  const { data, error } = await db
     .from("sales")
     .select(
-     "id,product_id,quantity,returned_quantity,unit_price,consumer_price_at_sale,products(name,unit)"
+      "id,product_id,quantity,returned_quantity,unit_price,consumer_price_at_sale,products(name,unit)"
     )
-    .eq("invoice_id",id);
-  
-   if(error){
-    $("returnMessage").textContent=error.message;
+    .eq("invoice_id", id);
+
+  if (error) {
+    $("returnMessage").textContent = error.message;
     return;
-   }
-  
-   returnLines=(data||[]).map(x=>({...x,returnQty:0}));
-   renderReturnLines();
   }
-  
-  function renderReturnLines(){
-   if(!returnLines.length){
-    $("returnLines").textContent="اقلامی برای مرجوعی وجود ندارد.";
+
+  returnLines = (data || []).map(x => ({
+    ...x,
+    returnQty: 0
+  }));
+
+  renderReturnLines();
+}
+
+function renderReturnLines() {
+  if (!returnLines.length) {
+    $("returnLines").textContent = "اقلامی برای مرجوعی وجود ندارد.";
     return;
-   }
-  
-   let h="<table><tr>"+
-    "<th>کالا</th>"+
-    "<th>تعداد قابل مرجوع</th>"+
-    "<th>قیمت فروش</th>"+
-    "<th>قیمت مصرف‌کننده</th>"+
-    "<th>تعداد مرجوعی</th>"+
-    "</tr>";
-  
-   returnLines.forEach((x,i)=>{
-    const remaining=Math.max(
-     0,
-     safeNumber(x.quantity)-safeNumber(x.returned_quantity)
+  }
+
+  let h = `
+    <table>
+      <tr>
+        <th>کالا</th>
+        <th>تعداد قابل مرجوع</th>
+        <th>قیمت فروش</th>
+        <th>قیمت مصرف‌کننده</th>
+        <th>تعداد مرجوعی</th>
+      </tr>
+  `;
+
+  returnLines.forEach((x, i) => {
+    const remaining = Math.max(
+      0,
+      safeNumber(x.quantity) - safeNumber(x.returned_quantity)
     );
-  
-    h+="<tr>"+
-     "<td>"+escapeHtml(x.products?.name||"کالا")+"</td>"+
-     "<td>"+money(remaining)+"</td>"+
-     "<td>"+money(x.unit_price)+"</td>"+
-     "<td>"+(
-      x.consumer_price_at_sale==null
-       ?"نامشخص"
-       :money(x.consumer_price_at_sale)
-     )+"</td>"+
-     "<td><input type='number' min='0' max='"+remaining+
-     "' value='0' oninput='setReturnQty("+i+",this.value)' "+
-     (!remaining?"disabled":"")+"></td>"+
-     "</tr>";
-   });
-  
-   $("returnLines").innerHTML=h+"</table>";
-  
-   $("returnMessage").textContent=
+
+    h += `
+      <tr>
+        <td>${escapeHtml(x.products?.name || "کالا")}</td>
+        <td>${money(remaining)}</td>
+        <td>${money(x.unit_price)}</td>
+        <td>
+          ${
+            x.consumer_price_at_sale == null
+              ? "نامشخص"
+              : money(x.consumer_price_at_sale)
+          }
+        </td>
+        <td>
+          <input
+            type="number"
+            min="0"
+            max="${remaining}"
+            value="0"
+            oninput="setReturnQty(${i},this.value)"
+            ${!remaining ? "disabled" : ""}
+          >
+        </td>
+      </tr>
+    `;
+  });
+
+  $("returnLines").innerHTML = h + "</table>";
+
+  $("returnMessage").textContent =
     "محاسبه مرجوعی بر اساس قیمت‌های تاریخی همان فاکتور انجام می‌شود.";
-  }
-  /* ==========================================
+}
+
+/* ==========================================
    اصلاح نهایی محصولات و فاکتورها
    بدون نمایش موجودی به مدیر و ویزیتور
 ========================================== */
@@ -2184,7 +1983,6 @@ function openProductPage() {
     add.textContent = "افزودن محصول";
     add.onclick = openProductModal;
     actions.append(add);
-
   }
 
   renderProducts();
@@ -2200,7 +1998,7 @@ function closeProductPage() {
   }
 }
 
-/* دریافت محصولات بدون دریافت اطلاعات موجودی */
+/* دریافت محصولات بدون دریافت ستون‌های موجودی */
 async function loadProducts() {
   if (!db || !profile) return;
 
@@ -2222,11 +2020,12 @@ async function loadProducts() {
 
   productList = data || [];
 
-  $("productCount").textContent = money(productList.length);
+  if ($("productCount")) {
+    $("productCount").textContent = money(productList.length);
+  }
 
   renderProducts();
   renderPurchaseProductOptions();
-  renderSaleProductOptions();
 }
 
 /* نمایش فهرست محصولات */
@@ -2234,12 +2033,14 @@ function renderProducts() {
   const target = $("products");
   if (!target) return;
 
-  const search = ($("catalogSearch")?.value || "").trim().toLowerCase();
+  const search = ($("catalogSearch")?.value || "")
+    .trim()
+    .toLowerCase();
 
   target.innerHTML = "";
 
   const filtered = (productList || []).filter(p => {
-    if (p.archived) return false;
+    if (p.is_archived) return false;
 
     const text = [
       p.name,
@@ -2275,32 +2076,44 @@ function renderProducts() {
 
       <p>
         قیمت فروش:
-        ${money(p.sale_price || 0)}
+        ${money(p.sell_price || 0)}
       </p>
 
       <p>
         قیمت مصرف‌کننده:
-        ${money(p.consumer_price || 0)}
+        ${
+          p.consumer_price == null
+            ? "نامشخص"
+            : money(p.consumer_price)
+        }
       </p>
 
       ${
         isManager
-          ? `<p>قیمت خرید: ${money(p.purchase_price || 0)}</p>`
-          : ""
-      }
-
-      ${
-        isManager
           ? `
-            <button class="secondary"
-              onclick="editProduct('${p.id}')">
-              ویرایش
-            </button>
+            <p>قیمت خرید: ${money(p.buy_price || 0)}</p>
 
-            <button class="danger"
-              onclick="archiveProduct('${p.id}')">
-              آرشیو
-            </button>
+            <div class="product-actions">
+              <button class="secondary"
+                onclick="openEditProduct('${p.id}')">
+                ویرایش
+              </button>
+
+              <button class="danger"
+                onclick="archiveProduct('${p.id}')">
+                آرشیو
+              </button>
+
+              <button class="secondary"
+                onclick="moveProduct('${p.id}',-1)">
+                ↑ جابه‌جایی به بالا
+              </button>
+
+              <button class="secondary"
+                onclick="moveProduct('${p.id}',1)">
+                ↓ جابه‌جایی به پایین
+              </button>
+            </div>
           `
           : ""
       }
@@ -2308,16 +2121,27 @@ function renderProducts() {
 
     target.appendChild(card);
   });
-}A
+}
+
 /* مرتب‌سازی دستی محصولات */
 async function moveProduct(id, direction) {
   if (profile?.role !== "manager") return;
 
   const list = [...productList];
-  const index = list.findIndex(p => String(p.id) === String(id));
+
+  const index = list.findIndex(
+    p => String(p.id) === String(id)
+  );
+
   const targetIndex = index + direction;
 
-  if (index < 0 || targetIndex < 0 || targetIndex >= list.length) return;
+  if (
+    index < 0 ||
+    targetIndex < 0 ||
+    targetIndex >= list.length
+  ) {
+    return;
+  }
 
   const temp = list[index];
   list[index] = list[targetIndex];
@@ -2334,9 +2158,40 @@ async function moveProduct(id, direction) {
     }
 
     await loadProducts();
+
     notice("ترتیب محصولات ذخیره شد.");
   } catch (error) {
     notice("خطا در مرتب‌سازی: " + error.message, "error");
+  }
+}
+
+/* آرشیو محصول */
+async function archiveProduct(id) {
+  if (profile?.role !== "manager") return;
+
+  const product = productList.find(
+    p => String(p.id) === String(id)
+  );
+
+  if (!product) return;
+
+  if (!confirm("آیا از آرشیو کردن این محصول مطمئن هستی؟")) {
+    return;
+  }
+
+  try {
+    const { error } = await db
+      .from("products")
+      .update({ is_archived: true })
+      .eq("id", id);
+
+    if (error) throw error;
+
+    notice("محصول آرشیو شد.");
+
+    await loadProducts();
+  } catch (error) {
+    notice("خطا در آرشیو محصول: " + error.message, "error");
   }
 }
 
@@ -2354,6 +2209,7 @@ function openProductModal() {
   $("barcode").value = "";
   $("description").value = "";
   $("productImage").value = "";
+  $("categorySelect").value = "";
 
   $("productModal").querySelector(".modalhead h2").textContent =
     "افزودن محصول";
@@ -2367,7 +2223,10 @@ function openProductModal() {
 function openEditProduct(id) {
   if (profile?.role !== "manager") return;
 
-  const p = productList.find(x => String(x.id) === String(id));
+  const p = productList.find(
+    x => String(x.id) === String(id)
+  );
+
   if (!p) return;
 
   editingProductId = p.id;
@@ -2380,7 +2239,6 @@ function openEditProduct(id) {
   $("barcode").value = p.barcode || "";
   $("description").value = p.description || "";
   $("productImage").value = "";
-
   $("categorySelect").value = p.category || "";
 
   $("productModal").querySelector(".modalhead h2").textContent =
@@ -2406,7 +2264,10 @@ async function addProduct() {
     $("sellPrice").value === "" ||
     $("consumerPrice").value === ""
   ) {
-    return notice("نام و هر سه قیمت محصول را وارد کن.", "error");
+    return notice(
+      "نام و هر سه قیمت محصول را وارد کن.",
+      "error"
+    );
   }
 
   if (
@@ -2444,11 +2305,9 @@ async function addProduct() {
         p => String(p.id) === String(editingProductId)
       );
 
-      if (uploadedPath) {
-        productData.image_url = uploadedPath;
-      } else {
-        productData.image_url = old?.image_url || null;
-      }
+      productData.image_url = uploadedPath
+        ? uploadedPath
+        : old?.image_url || null;
 
       const { error } = await db
         .from("products")
@@ -2465,8 +2324,6 @@ async function addProduct() {
         0
       );
 
-      productData.stock = 0;
-      productData.min_stock = 0;
       productData.sort_order = maxOrder + 1;
       productData.image_url = uploadedPath;
 
@@ -2480,16 +2337,22 @@ async function addProduct() {
     }
 
     editingProductId = null;
+
     closeProductModal();
 
     await loadProducts();
 
   } catch (error) {
     if (uploadedPath) {
-      await db.storage.from("product-images").remove([uploadedPath]);
+      await db.storage
+        .from("product-images")
+        .remove([uploadedPath]);
     }
 
-    notice("عملیات محصول ناموفق بود: " + error.message, "error");
+    notice(
+      "عملیات محصول ناموفق بود: " + error.message,
+      "error"
+    );
 
   } finally {
     setBusy("addProductButton", false);
@@ -2507,7 +2370,9 @@ function openInvoicePicker() {
   if (!profile) return;
 
   $("invoicePickerSearch").value = "";
+
   renderInvoicePicker();
+
   $("invoicePickerModal").classList.remove("hidden");
 }
 
@@ -2524,11 +2389,15 @@ function renderInvoicePicker() {
     .trim()
     .toLocaleLowerCase("fa");
 
-  const list = productList.filter(p =>
-    (p.name + " " + (p.category || "") + " " + (p.barcode || ""))
-      .toLocaleLowerCase("fa")
-      .includes(search)
-  );
+  const list = productList.filter(p => {
+    const text = (
+      (p.name || "") + " " +
+      (p.category || "") + " " +
+      (p.barcode || "")
+    ).toLocaleLowerCase("fa");
+
+    return !p.is_archived && text.includes(search);
+  });
 
   if (!list.length) {
     box.textContent = "محصولی پیدا نشد.";
@@ -2564,14 +2433,19 @@ function renderInvoicePicker() {
 
         <td>${money(p.sell_price)}</td>
 
-        <td>${p.consumer_price == null
-          ? "نامشخص"
-          : money(p.consumer_price)}</td>
+        <td>
+          ${
+            p.consumer_price == null
+              ? "نامشخص"
+              : money(p.consumer_price)
+          }
+        </td>
 
         <td>
           <input
             type="number"
             min="1"
+            step="1"
             value="1"
             class="invoice-pick-quantity"
             data-id="${id}"
@@ -2586,33 +2460,47 @@ function renderInvoicePicker() {
 
 /* افزودن تمام محصولات انتخاب‌شده */
 function addSelectedInvoiceProducts() {
-  const checks = document.querySelectorAll(
-    ".invoice-pick-check:checked"
-  );
+  const checks = [
+    ...document.querySelectorAll(".invoice-pick-check:checked")
+  ];
 
   if (!checks.length) {
     return notice("حداقل یک محصول انتخاب کن.", "error");
   }
 
+  const selected = [];
+
   for (const check of checks) {
     const id = check.dataset.id;
 
-    const quantityInput = [...document.querySelectorAll(
-      ".invoice-pick-quantity"
-    )].find(x => x.dataset.id === id);
+    const quantityInput = [
+      ...document.querySelectorAll(".invoice-pick-quantity")
+    ].find(x => x.dataset.id === id);
 
     const quantity = Number(quantityInput?.value);
 
     if (!Number.isInteger(quantity) || quantity < 1) {
-      return notice("تعداد یکی از محصولات معتبر نیست.", "error");
+      return notice(
+        "تعداد یکی از محصولات معتبر نیست.",
+        "error"
+      );
     }
 
     const product = productList.find(
       p => String(p.id) === String(id)
     );
 
-    if (!product) continue;
+    if (!product) {
+      return notice(
+        "یکی از محصولات انتخاب‌شده پیدا نشد.",
+        "error"
+      );
+    }
 
+    selected.push({ product, quantity });
+  }
+
+  selected.forEach(({ product, quantity }) => {
     const old = invoiceItems.find(
       x => String(x.product.id) === String(product.id)
     );
@@ -2625,9 +2513,10 @@ function addSelectedInvoiceProducts() {
         quantity
       });
     }
-  }
+  });
 
   renderInvoiceItems();
+
   closeInvoicePicker();
 
   notice("محصولات انتخاب‌شده به فاکتور اضافه شدند.");
@@ -2653,6 +2542,8 @@ function openInvoiceModal() {
 /* نمایش دو قیمت در اقلام فاکتور */
 function renderInvoiceItems() {
   const box = $("invoiceItems");
+
+  if (!box) return;
 
   if (!invoiceItems.length) {
     box.textContent = "هنوز محصولی اضافه نشده است.";
@@ -2690,8 +2581,10 @@ function renderInvoiceItems() {
 
     if (p.consumer_price != null) {
       const cp = safeNumber(p.consumer_price);
+
       consumer = money(cp);
       consumerAmount = money(cp * quantity);
+
       consumerTotal += cp * quantity;
     } else {
       consumerKnown = false;
@@ -2706,7 +2599,9 @@ function renderInvoiceItems() {
         <td>${consumer}</td>
         <td>${consumerAmount}</td>
         <td>
-          <button class="danger" onclick="removeInvoiceItem(${i})">
+          <button
+            class="danger"
+            onclick="removeInvoiceItem(${i})">
             حذف
           </button>
         </td>
@@ -2718,12 +2613,24 @@ function renderInvoiceItems() {
 
   $("invoiceTotal").innerHTML = `
     <div>جمع فروش: <b>${money(sellTotal)}</b></div>
-    <div>جمع قیمت مصرف‌کننده: <b>${
-      consumerKnown ? money(consumerTotal) : "نامشخص"
-    }</b></div>
-    <div>اختلاف: <b>${
-      consumerKnown ? money(consumerTotal - sellTotal) : "نامشخص"
-    }</b></div>
+
+    <div>
+      جمع قیمت مصرف‌کننده:
+      <b>
+        ${consumerKnown ? money(consumerTotal) : "نامشخص"}
+      </b>
+    </div>
+
+    <div>
+      اختلاف:
+      <b>
+        ${
+          consumerKnown
+            ? money(consumerTotal - sellTotal)
+            : "نامشخص"
+        }
+      </b>
+    </div>
   `;
 }
 
@@ -2742,9 +2649,12 @@ async function openEditInvoice(id) {
 
   if (
     profile?.role !== "manager" &&
-    String(inv.visitor_id) !== String(currentUser.id)
+    String(inv.visitor_id) !== String(currentUser?.id)
   ) {
-    return notice("اجازه ویرایش این فاکتور را نداری.", "error");
+    return notice(
+      "اجازه ویرایش این فاکتور را نداری.",
+      "error"
+    );
   }
 
   const { data, error } = await db
@@ -2754,7 +2664,9 @@ async function openEditInvoice(id) {
     )
     .eq("invoice_id", id);
 
-  if (error) return notice(error.message, "error");
+  if (error) {
+    return notice(error.message, "error");
+  }
 
   editingInvoiceId = id;
 
@@ -2774,7 +2686,8 @@ async function openEditInvoice(id) {
 
     quantity: Math.max(
       0,
-      safeNumber(x.quantity) - safeNumber(x.returned_quantity)
+      safeNumber(x.quantity) -
+      safeNumber(x.returned_quantity)
     )
   })).filter(x => x.quantity > 0);
 
@@ -2796,31 +2709,15 @@ function renderPurchaseProductOptions() {
   const select = $("purchaseProduct");
   if (!select) return;
 
-  select.innerHTML = '<option value="">انتخاب محصول</option>';
+  select.innerHTML =
+    '<option value="">انتخاب محصول</option>';
 
   productList.forEach(p => {
     const option = document.createElement("option");
+
     option.value = p.id;
     option.textContent = p.name;
+
     select.append(option);
   });
 }
-
-/* جلوگیری از اجرای تابع قدیمی هشدار موجودی */
-function renderLowStock() {
-  if ($("lowStockList")) {
-    $("lowStockList").innerHTML = "";
-  }
-
-  if ($("lowStockCount")) {
-    $("lowStockCount").textContent = "۰";
-  }
-
-  if ($("stockValue")) {
-    $("stockValue").textContent = "۰";
-  }
-}
-  </script>
-  
-  </body>
-  </html>
