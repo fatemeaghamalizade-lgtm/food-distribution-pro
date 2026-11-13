@@ -387,6 +387,8 @@ header h1{font-size:19px}
 <option value="">بدون دسته‌بندی</option>
 </select>
 <input id="unit" placeholder="واحد">
+<input id="stock" type="number" min="0" step="1" placeholder="تعداد اولیه موجودی">
+<input id="minStock" type="number" min="0" step="1" placeholder="حداقل موجودی">
 <input id="buyPrice" type="number" min="0" placeholder="قیمت خرید">
 <input id="sellPrice" type="number" min="0" placeholder="قیمت فروش">
 <input id="consumerPrice" type="number" min="0" placeholder="قیمت مصرف‌کننده">
@@ -1064,6 +1066,8 @@ async function addProduct(){
  const buy=Number($("buyPrice").value);
  const sell=Number($("sellPrice").value);
  const consumer=Number($("consumerPrice").value);
+ const stock=Number($("stock").value);
+const minStock=Number($("minStock").value);
 
  if(
   !name||
@@ -1075,11 +1079,14 @@ async function addProduct(){
  }
 
  if(
-  ![buy,sell,consumer].every(Number.isFinite)||
-  [buy,sell,consumer].some(x=>x<0)
- ){
+  ![buy,sell,consumer,stock,minStock].every(Number.isFinite)||
+  [buy,sell,consumer,stock,minStock].some(x=>x<0)||
+  !Number.isInteger(stock)||
+  !Number.isInteger(minStock)
+){
   return notice("مقادیر معتبر نیستند.","error");
- }
+}
+ 
 
  setBusy("addProductButton",true);
 
@@ -1096,6 +1103,8 @@ async function addProduct(){
    buy_price:buy,
    sell_price:sell,
    consumer_price:consumer,
+   stock:stock,
+min_stock:minStock,
    barcode:$("barcode").value.trim()||null,
    description:$("description").value.trim(),
    image_url:path,
@@ -1113,6 +1122,8 @@ async function addProduct(){
   [
    "productName",
    "unit",
+   "stock",
+"minStock",
    "buyPrice",
    "sellPrice",
    "consumerPrice",
@@ -1288,24 +1299,24 @@ async function getInvoicePhotoUrl(path) {
 }
 
 async function recordSale(){
- if(editingInvoiceId)return saveInvoiceEdit();
 
- if(!invoiceItems.length){
-  return message("saleMessage","ابتدا محصول اضافه کن.","error");
-  const photoFile = $("invoicePhoto")?.files?.[0] || null;
+const photoFile = $("invoicePhoto")?.files?.[0] || null;
+
+if(!invoiceItems.length){
+ return message("saleMessage","ابتدا محصول اضافه کن.","error");
+}
 
 if (photoFile) {
-  if (!["image/jpeg", "image/png", "image/webp"].includes(photoFile.type)) {
-    return message("saleMessage", "فرمت عکس باید JPG، PNG یا WEBP باشد.", "error");
-  }
-
-  if (photoFile.size > 5 * 1024 * 1024) {
-    return message("saleMessage", "حجم عکس نباید بیشتر از ۵ مگابایت باشد.", "error");
-  }
-}
+ if (!["image/jpeg", "image/png", "image/webp"].includes(photoFile.type)) {
+  return message("saleMessage", "فرمت عکس باید JPG، PNG یا WEBP باشد.", "error");
  }
 
- setBusy("recordSaleButton",true);
+ if (photoFile.size > 5 * 1024 * 1024) {
+  return message("saleMessage", "حجم عکس نباید بیشتر از ۵ مگابایت باشد.", "error");
+ }
+}
+
+setBusy("recordSaleButton",true);
 
  try{
   const total=invoiceItems.reduce(
@@ -2715,6 +2726,8 @@ function openProductModal() {
 
   $("productName").value = "";
   $("unit").value = "";
+  $("stock").value = "";
+$("minStock").value = "";
   $("buyPrice").value = "";
   $("sellPrice").value = "";
   $("consumerPrice").value = "";
