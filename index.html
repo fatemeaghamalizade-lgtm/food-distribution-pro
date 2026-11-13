@@ -1155,7 +1155,7 @@ function closeInvoiceModal(){
  editingInvoiceId=null;
 }
 
-function renderInvoiceItems(){
+async function renderInvoiceItems(){
  const box=$("invoiceItems");
 
  if(!invoiceItems.length){
@@ -1167,16 +1167,23 @@ function renderInvoiceItems(){
  let total=0;
  let h="<table><tr><th>محصول</th><th>تعداد</th><th>قیمت واحد</th><th>جمع</th><th></th></tr>";
 
- invoiceItems.forEach((x,i)=>{
+  for (const [i, x] of invoiceItems.entries()) {
   const amount=x.quantity*safeNumber(x.product.sell_price);
+  const imageUrl = await getProductImage(x.product.image_url);
   total+=amount;
 
-  h+="<tr><td>"+escapeHtml(x.product.name)+"</td>";
+  h += "<tr><td>" +
+  (imageUrl
+    ? "<img src='" + escapeHtml(imageUrl) +
+      "' style='width:55px;height:55px;object-fit:contain;border-radius:8px'><br>"
+    : "بدون عکس<br>") +
+  escapeHtml(x.product.name) +
+  "</td>";
   h+="<td>"+money(x.quantity)+"</td>";
   h+="<td>"+money(x.product.sell_price)+"</td>";
   h+="<td>"+money(amount)+"</td>";
   h+="<td><button class='danger' onclick='removeInvoiceItem("+i+")'>حذف</button></td></tr>";
- });
+  }
 
  box.innerHTML=h+"</table>";
  $("invoiceTotal").textContent="جمع فاکتور: "+money(total);
@@ -2388,7 +2395,7 @@ async function loadProducts() {
 let draggedProductId = null;
 let savingProductOrder = false;
 
-function renderProducts() {
+async function renderProducts() {
   const target = $("products");
   if (!target) return;
 
@@ -2428,7 +2435,7 @@ function renderProducts() {
     target.appendChild(hint);
   }
 
-  filtered.forEach(p => {
+  for (const p of filtered) {
     const card = document.createElement("div");
     card.className = "product";
 
@@ -2485,8 +2492,15 @@ function renderProducts() {
         await reorderProducts(fromId, toId);
       });
     }
-
+    const imageUrl = await getProductImage(p.image_url);
     card.innerHTML = `
+    ${
+  imageUrl
+    ? `<img src="${escapeHtml(imageUrl)}"
+        alt="${escapeHtml(p.name)}"
+        style="width:100%;height:150px;object-fit:contain;border-radius:12px;margin-bottom:10px">`
+    : `<div style="height:80px;text-align:center;padding:20px">بدون عکس</div>`
+}
       <h3>${escapeHtml(p.name || "بدون نام")}</h3>
 
       <p>
@@ -2530,7 +2544,7 @@ function renderProducts() {
     `;
 
     target.appendChild(card);
-  });
+  }
 
   /* پشتیبانی از کشیدن با انگشت */
   if (isManager && !search) {
@@ -2879,7 +2893,7 @@ function closeInvoicePicker() {
 }
 
 /* ساخت فهرست انتخاب چندمحصولی */
-function renderInvoicePicker() {
+async function renderInvoicePicker() {
   const box = $("invoicePickerList");
   if (!box) return;
 
@@ -2913,7 +2927,8 @@ function renderInvoicePicker() {
       </tr>
   `;
 
-  list.forEach(p => {
+  for (const p of list) {
+    const imageUrl = await getProductImage(p.image_url);
     const id = escapeHtml(p.id);
 
     html += `
@@ -2927,7 +2942,16 @@ function renderInvoicePicker() {
           >
         </td>
 
-        <td>${escapeHtml(p.name)}</td>
+        <td>
+  ${
+    imageUrl
+      ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(p.name)}"
+          style="width:65px;height:65px;object-fit:contain;border-radius:8px">`
+      : "بدون عکس"
+  }
+  <br>
+  ${escapeHtml(p.name)}
+</td>
 
         <td>${money(p.sell_price)}</td>
 
@@ -2951,7 +2975,7 @@ function renderInvoicePicker() {
         </td>
       </tr>
     `;
-  });
+  }
 
   box.innerHTML = html + "</table>";
 }
