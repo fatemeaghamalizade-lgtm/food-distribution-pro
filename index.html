@@ -227,12 +227,7 @@ th{background:#eef1fa;color:var(--main)}
 <div id="categoryList" class="small"></div>
 </div>
 
-<div class="card">
-<h3 class="section-title">مدیریت محصولات</h3>
-<button onclick="openProductModal()">افزودن محصول</button>
-<input id="productSearch" placeholder="جست‌وجوی محصول..." oninput="renderProducts()">
-<div id="products" class="grid"></div>
-</div>
+
 
 <div class="card">
 <h3 class="section-title">مدیریت مشتریان</h3>
@@ -2408,129 +2403,85 @@ async function loadProducts() {
 }
 
 /* نمایش فهرست محصولات */
-async function renderProducts() {
-  const token = ++productRenderToken;
+function renderProducts() {
   const target = $("products");
-
   if (!target) return;
 
-  const search = ($("catalogSearch")?.value || "")
-    .trim()
-    .toLocaleLowerCase("fa");
+  const search = ($("catalogSearch")?.value || "").trim().toLowerCase();
 
   target.innerHTML = "";
 
-  const list = productList.filter(p =>
-    (p.name + " " + (p.category || "") + " " + (p.barcode || ""))
-      .toLocaleLowerCase("fa")
-      .includes(search)
-  );
+  const filtered = (productList || []).filter(p => {
+    if (p.archived) return false;
 
-  if (!list.length) {
-    target.textContent = "محصولی پیدا نشد.";
+    const text = [
+      p.name,
+      p.category,
+      p.barcode
+    ].filter(Boolean).join(" ").toLowerCase();
+
+    return text.includes(search);
+  });
+
+  if (!filtered.length) {
+    target.innerHTML = `
+      <div class="empty-state">
+        محصولی برای نمایش پیدا نشد.
+      </div>
+    `;
     return;
   }
 
-  for (let i = 0; i < list.length; i++) {
-    const p = list[i];
-    const d = document.createElement("div");
-    d.className = "product";
+  filtered.forEach(p => {
+    const card = document.createElement("div");
+    card.className = "product";
 
-    if (p.image_url) {
-      const url = await getProductImage(p.image_url);
+    const isManager = profile?.role === "manager";
 
-      if (token !== productRenderToken) return;
+    card.innerHTML = `
+      <h3>${escapeHtml(p.name || "بدون نام")}</h3>
 
-      if (url) {
-        const img = document.createElement("img");
-        img.src = url;
-        img.alt = p.name;
-        d.append(img);
+      <p>
+        دسته‌بندی:
+        ${escapeHtml(p.category || "بدون دسته‌بندی")}
+      </p>
+
+      <p>
+        قیمت فروش:
+        ${money(p.sale_price || 0)}
+      </p>
+
+      <p>
+        قیمت مصرف‌کننده:
+        ${money(p.consumer_price || 0)}
+      </p>
+
+      ${
+        isManager
+          ? `<p>قیمت خرید: ${money(p.purchase_price || 0)}</p>`
+          : ""
       }
-    }
 
-    const h = document.createElement("h3");
-    h.textContent = p.name;
-    d.append(h);
+      ${
+        isManager
+          ? `
+            <button class="secondary"
+              onclick="editProduct('${p.id}')">
+              ویرایش
+            </button>
 
-    const cat = document.createElement("p");
-    cat.textContent = "دسته: " + (p.category || "بدون دسته");
-    d.append(cat);
+            <button class="danger"
+              onclick="archiveProduct('${p.id}')">
+              آرشیو
+            </button>
+          `
+          : ""
+      }
+    `;
 
-    const unit = document.createElement("p");
-    unit.textContent = "واحد: " + (p.unit || "عدد");
-    d.append(unit);
-
-    const barcode = document.createElement("p");
-    barcode.textContent = "بارکد: " + (p.barcode || "-");
-    d.append(barcode);
-
-    const sell = document.createElement("p");
-    sell.className = "price";
-    sell.textContent = "قیمت فروش: " + money(p.sell_price);
-    d.append(sell);
-
-    const consumer = document.createElement("p");
-    consumer.className = "price";
-    consumer.textContent = "قیمت مصرف‌کننده: " +
-      (p.consumer_price == null ? "نامشخص" : money(p.consumer_price));
-    d.append(consumer);
-
-    if (profile.role === "manager") {
-      const buy = document.createElement("p");
-      buy.className = "price";
-      buy.textContent = "قیمت خرید: " + money(p.buy_price);
-      d.append(buy);
-
-      const edit = document.createElement("button");
-      edit.textContent = "ویرایش محصول";
-      edit.className = "secondary";
-      edit.onclick = () => openEditProduct(p.id);
-      d.append(edit);
-
-      const order = document.createElement("div");
-      order.className = "inline-actions";
-
-      const up = document.createElement("button");
-      up.textContent = "بالا ↑";
-      up.className = "secondary";
-      up.disabled = i === 0;
-      up.onclick = () => moveProduct(p.id, -1);
-
-      const down = document.createElement("button");
-      down.textContent = "پایین ↓";
-      down.className = "secondary";
-      down.disabled = i === list.length - 1;
-      down.onclick = () => moveProduct(p.id, 1);
-
-      order.append(up, down);
-      d.append(order);
-
-      const archive = document.createElement("button");
-      archive.textContent = "آرشیو محصول";
-      archive.className = "danger";
-
-      archive.onclick = async () => {
-        if (!confirm("این محصول آرشیو شود؟ سوابق قبلی حفظ می‌شوند.")) return;
-
-        const { error } = await db
-          .from("products")
-          .update({ is_archived: true })
-          .eq("id", p.id);
-
-        if (error) return notice(error.message, "error");
-
-        await loadProducts();
-        notice("محصول آرشیو شد.");
-      };
-
-      d.append(archive);
-    }
-
-    target.append(d);
-  }
-}
-
+    target.appendChild(card);
+  });
+}A
 /* مرتب‌سازی دستی محصولات */
 async function moveProduct(id, direction) {
   if (profile?.role !== "manager") return;
