@@ -97,6 +97,21 @@ header h1{font-size:19px}
   width:20px;
   height:20px;
 }
+.product.dragging {
+  opacity: 0.4;
+}
+
+.product.drag-over {
+  border: 2px dashed #2196f3;
+  transform: scale(1.02);
+}
+
+.drag-hint {
+  padding: 10px;
+  text-align: center;
+  color: #2196f3;
+  font-size: 13px;
+}
 </style>
 </head>
 
@@ -2029,6 +2044,9 @@ async function loadProducts() {
 }
 
 /* نمایش فهرست محصولات */
+let draggedProductId = null;
+let savingProductOrder = false;
+
 function renderProducts() {
   const target = $("products");
   if (!target) return;
@@ -2060,11 +2078,72 @@ function renderProducts() {
     return;
   }
 
+  const isManager = profile?.role === "manager";
+
+  if (isManager && !search) {
+    const hint = document.createElement("p");
+    hint.className = "drag-hint";
+    hint.textContent = "برای تغییر ترتیب، محصولات را با ماوس یا انگشت بکشید.";
+    target.appendChild(hint);
+  }
+
   filtered.forEach(p => {
     const card = document.createElement("div");
     card.className = "product";
 
-    const isManager = profile?.role === "manager";
+    card.dataset.productId = p.id;
+
+    if (isManager && !search) {
+      card.draggable = true;
+      card.style.cursor = "grab";
+      card.style.touchAction = "pan-y";
+
+      card.addEventListener("dragstart", event => {
+        draggedProductId = String(p.id);
+        card.classList.add("dragging");
+
+        event.dataTransfer.effectAllowed = "move";
+        event.dataTransfer.setData("text/plain", String(p.id));
+      });
+
+      card.addEventListener("dragend", () => {
+        draggedProductId = null;
+        card.classList.remove("dragging");
+
+        target.querySelectorAll(".drag-over").forEach(el => {
+          el.classList.remove("drag-over");
+        });
+      });
+
+      card.addEventListener("dragover", event => {
+        event.preventDefault();
+
+        if (
+          draggedProductId &&
+          draggedProductId !== String(p.id)
+        ) {
+          event.dataTransfer.dropEffect = "move";
+          card.classList.add("drag-over");
+        }
+      });
+
+      card.addEventListener("dragleave", () => {
+        card.classList.remove("drag-over");
+      });
+
+      card.addEventListener("drop", async event => {
+        event.preventDefault();
+
+        card.classList.remove("drag-over");
+
+        const fromId = draggedProductId;
+        const toId = String(p.id);
+
+        if (!fromId || fromId === toId) return;
+
+        await reorderProducts(fromId, toId);
+      });
+    }
 
     card.innerHTML = `
       <h3>${escapeHtml(p.name || "بدون نام")}</h3>
@@ -2103,16 +2182,6 @@ function renderProducts() {
                 onclick="archiveProduct('${p.id}')">
                 آرشیو
               </button>
-
-              <button class="secondary"
-                onclick="moveProduct('${p.id}',-1)">
-                ↑ جابه‌جایی به بالا
-              </button>
-
-              <button class="secondary"
-                onclick="moveProduct('${p.id}',1)">
-                ↓ جابه‌جایی به پایین
-              </button>
             </div>
           `
           : ""
@@ -2121,31 +2190,40 @@ function renderProducts() {
 
     target.appendChild(card);
   });
+
+  /* پشتیبانی از کشیدن با انگشت */
+  if (isManager && !search) {
+    enableTouchProductDrag(target);
+  }
 }
 
 /* مرتب‌سازی دستی محصولات */
-async function moveProduct(id, direction) {
-  if (profile?.role !== "manager") return;
+async function reorderProducts(fromId, toId) {
+  if (profile?.role !== "manager" || savingProductOrder) return;
 
   const list = [...productList];
 
-  const index = list.findIndex(
-    p => String(p.id) === String(id)
+  const fromIndex = list.findIndex(
+    p => String(p.id) === String(fromId)
   );
 
-  const targetIndex = index + direction;
+  const toIndex = list.findIndex(
+    p => String(p.id) === String(toId)
+  );
 
-  if (
-    index < 0 ||
-    targetIndex < 0 ||
-    targetIndex >= list.length
-  ) {
+  if (fromIndex < 0 || toIndex < 0 || fromIndex === toIndex) {
     return;
   }
 
-  const temp = list[index];
-  list[index] = list[targetIndex];
-  list[targetIndex] = temp;
+  const oldList = [...productList];
+
+  const [moved] = list.splice(fromIndex, 1);
+  list.splice(toIndex, 0, moved);
+
+  savingProductOrder = true;
+  productList = list;
+
+  renderProducts();
 
   try {
     for (let i = 0; i < list.length; i++) {
@@ -2157,14 +2235,93 @@ async function moveProduct(id, direction) {
       if (error) throw error;
     }
 
-    await loadProducts();
-
     notice("ترتیب محصولات ذخیره شد.");
   } catch (error) {
-    notice("خطا در مرتب‌سازی: " + error.message, "error");
+    productList = oldList;
+    renderProducts();
+
+    notice("خطا در ذخیره ترتیب: " + error.message, "error");
+  } finally {
+    savingProductOrder = false;
   }
 }
+function enableTouchProductDrag(target) {
+  let touchCard = null;
+  let startY = 0;
+  let dragging = false;
 
+  target.querySelectorAll(".product").forEach(card => {
+    card.addEventListener("touchstart", event => {
+      if (event.touches.length !== 1) return;
+
+      touchCard = card;
+      startY = event.touches[0].clientY;
+      dragging = false;
+    }, { passive: true });
+
+    card.addEventListener("touchmove", event => {
+      if (!touchCard || event.touches.length !== 1) return;
+
+      const currentY = event.touches[0].clientY;
+
+      if (Math.abs(currentY - startY) > 12) {
+        dragging = true;
+      }
+
+      if (!dragging) return;
+
+      const currentCard = document.elementFromPoint(
+        event.touches[0].clientX,
+        currentY
+      )?.closest(".product");
+
+      target.querySelectorAll(".drag-over").forEach(el => {
+        el.classList.remove("drag-over");
+      });
+
+      if (currentCard && currentCard !== touchCard) {
+        currentCard.classList.add("drag-over");
+      }
+    }, { passive: true });
+
+    card.addEventListener("touchend", async event => {
+      if (!touchCard || !dragging) {
+        touchCard = null;
+        return;
+      }
+
+      const touch = event.changedTouches[0];
+
+      const destination = document.elementFromPoint(
+        touch.clientX,
+        touch.clientY
+      )?.closest(".product");
+
+      const fromId = touchCard.dataset.productId;
+      const toId = destination?.dataset.productId;
+
+      target.querySelectorAll(".drag-over").forEach(el => {
+        el.classList.remove("drag-over");
+      });
+
+      touchCard = null;
+      dragging = false;
+
+      if (fromId && toId && fromId !== toId) {
+        await reorderProducts(fromId, toId);
+      }
+    });
+
+    card.addEventListener("touchcancel", () => {
+      touchCard = null;
+      dragging = false;
+
+      target.querySelectorAll(".drag-over").forEach(el => {
+        el.classList.remove("drag-over");
+      });
+    });
+  });
+}
 /* آرشیو محصول */
 async function archiveProduct(id) {
   if (profile?.role !== "manager") return;
