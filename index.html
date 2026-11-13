@@ -465,6 +465,14 @@ header h1{font-size:19px}
 <select id="saleCustomer"></select>
 <input id="salePaid" type="number" min="0" placeholder="مبلغ دریافتی">
 <textarea id="saleNote" placeholder="توضیحات"></textarea>
+
+<label for="invoicePhoto">عکس فاکتور (اختیاری)</label>
+<input
+  id="invoicePhoto"
+  type="file"
+  accept="image/jpeg,image/png,image/webp"
+>
+
 <button id="recordSaleButton" onclick="recordSale()">ثبت فاکتور</button>
 <p id="saleMessage" class="small"></p>
 </div>
@@ -1210,6 +1218,67 @@ function getCurrentPosition(){
    }
   );
  });
+}
+
+// ذخیره عکس فاکتور در فضای خصوصی Supabase
+async function uploadInvoicePhoto(file, invoiceId) {
+  if (!file) return null;
+
+  if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+    throw new Error("فرمت عکس باید JPG، PNG یا WEBP باشد.");
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    throw new Error("حجم عکس نباید بیشتر از ۵ مگابایت باشد.");
+  }
+
+  const ext = file.type === "image/png"
+    ? "png"
+    : file.type === "image/webp"
+      ? "webp"
+      : "jpg";
+
+  const path =
+    currentUser.id + "/" +
+    invoiceId + "-" +
+    Date.now() + "." + ext;
+
+  const { error: uploadError } = await db.storage
+    .from("invoice-photos")
+    .upload(path, file, {
+      contentType: file.type,
+      upsert: false
+    });
+
+  if (uploadError) throw uploadError;
+
+  const { error: updateError } = await db
+    .from("invoices")
+    .update({ invoice_image_url: path })
+    .eq("id", invoiceId);
+
+  if (updateError) {
+    await db.storage.from("invoice-photos").remove([path]);
+    throw updateError;
+  }
+
+  return path;
+}
+
+// دریافت لینک موقت عکس خصوصی
+async function getInvoicePhotoUrl(path) {
+  if (!path) return null;
+
+  const { data, error } = await db.storage
+    .from("invoice-photos")
+    .createSignedUrl(path, 3600);
+
+  if (error) {
+    console.error("Invoice photo error:", error);
+    return null;
+  }
+
+  return data?.signedUrl || null;
 }
 
 async function recordSale(){
