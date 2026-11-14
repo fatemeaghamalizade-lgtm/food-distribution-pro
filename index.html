@@ -2936,6 +2936,7 @@ async function renderInvoicePicker() {
         <th>نام محصول</th>
         <th>قیمت فروش</th>
         <th>قیمت مصرف‌کننده</th>
+        <th>موجودی</th>
         <th>تعداد</th>
       </tr>
   `;
@@ -2943,6 +2944,14 @@ async function renderInvoicePicker() {
   for (const p of list) {
     const imageUrl = await getProductImage(p.image_url);
     const id = escapeHtml(p.id);
+    const stock = Math.max(0, Number(p.stock) || 0);
+    const alreadyAdded = invoiceItems.find(
+      x => String(x.product.id) === String(p.id)
+    );
+    const remaining = Math.max(
+      0,
+      stock - (alreadyAdded?.quantity || 0)
+    );
 
     html += `
       <tr>
@@ -2952,19 +2961,20 @@ async function renderInvoicePicker() {
             class="invoice-pick-check"
             data-id="${id}"
             style="width:auto"
+            ${remaining < 1 ? "disabled" : ""}
           >
         </td>
 
         <td>
-  ${
-    imageUrl
-      ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(p.name)}"
-          style="width:65px;height:65px;object-fit:contain;border-radius:8px">`
-      : "بدون عکس"
-  }
-  <br>
-  ${escapeHtml(p.name)}
-</td>
+          ${
+            imageUrl
+              ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(p.name)}"
+                  style="width:65px;height:65px;object-fit:contain;border-radius:8px">`
+              : "بدون عکس"
+          }
+          <br>
+          ${escapeHtml(p.name)}
+        </td>
 
         <td>${money(p.sell_price)}</td>
 
@@ -2976,14 +2986,18 @@ async function renderInvoicePicker() {
           }
         </td>
 
+        <td>${stock}</td>
+
         <td>
           <input
             type="number"
             min="1"
+            max="${remaining}"
             step="1"
-            value="1"
+            value="${remaining > 0 ? 1 : 0}"
             class="invoice-pick-quantity"
             data-id="${id}"
+            ${remaining < 1 ? "disabled" : ""}
           >
         </td>
       </tr>
@@ -3015,10 +3029,7 @@ function addSelectedInvoiceProducts() {
     const quantity = Number(quantityInput?.value);
 
     if (!Number.isInteger(quantity) || quantity < 1) {
-      return notice(
-        "تعداد یکی از محصولات معتبر نیست.",
-        "error"
-      );
+      return notice("تعداد یکی از محصولات معتبر نیست.", "error");
     }
 
     const product = productList.find(
@@ -3026,8 +3037,34 @@ function addSelectedInvoiceProducts() {
     );
 
     if (!product) {
+      return notice("یکی از محصولات انتخاب‌شده پیدا نشد.", "error");
+    }
+
+    const stock = Number(product.stock);
+
+    if (!Number.isInteger(stock) || stock < 0) {
       return notice(
-        "یکی از محصولات انتخاب‌شده پیدا نشد.",
+        "موجودی محصول «" + product.name + "» معتبر نیست.",
+        "error"
+      );
+    }
+
+    const old = invoiceItems.find(
+      x => String(x.product.id) === String(product.id)
+    );
+
+    const oldQuantity = old ? Number(old.quantity) : 0;
+
+    if (
+      !Number.isInteger(oldQuantity) ||
+      oldQuantity < 0 ||
+      oldQuantity + quantity > stock
+    ) {
+      return notice(
+        "موجودی محصول «" + product.name +
+        "» کافی نیست. موجودی: " + stock +
+        "، تعداد قبلی فاکتور: " + oldQuantity +
+        "، تعداد درخواستی: " + quantity,
         "error"
       );
     }
@@ -3049,24 +3086,24 @@ function addSelectedInvoiceProducts() {
       });
     }
   });
+
   invoiceItems.sort((a, b) => {
-  const indexA = productList.findIndex(
-    p => String(p.id) === String(a.product.id)
-  );
+    const indexA = productList.findIndex(
+      p => String(p.id) === String(a.product.id)
+    );
 
-  const indexB = productList.findIndex(
-    p => String(p.id) === String(b.product.id)
-  );
+    const indexB = productList.findIndex(
+      p => String(p.id) === String(b.product.id)
+    );
 
-  return indexA - indexB;
-});
+    return indexA - indexB;
+  });
+
   renderInvoiceItems();
-
   closeInvoicePicker();
 
   notice("محصولات انتخاب‌شده به فاکتور اضافه شدند.");
 }
-
 /* فاکتور جدید */
 function openInvoiceModal() {
   editingInvoiceId = null;
