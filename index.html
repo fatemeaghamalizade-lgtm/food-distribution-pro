@@ -2775,6 +2775,7 @@ function openEditProduct(id) {
 }
 
 /* ثبت محصول جدید یا ذخیره ویرایش */
+
 async function addProduct() {
   if (profile?.role !== "manager") return;
 
@@ -2782,24 +2783,27 @@ async function addProduct() {
   const buy = Number($("buyPrice").value);
   const sell = Number($("sellPrice").value);
   const consumer = Number($("consumerPrice").value);
+  const stock = Number($("stock").value);
+  const minStock = Number($("minStock").value);
 
   if (
     !name ||
     $("buyPrice").value === "" ||
     $("sellPrice").value === "" ||
-    $("consumerPrice").value === ""
+    $("consumerPrice").value === "" ||
+    $("stock").value === "" ||
+    $("minStock").value === ""
   ) {
-    return notice(
-      "نام و هر سه قیمت محصول را وارد کن.",
-      "error"
-    );
+    return notice("اطلاعات محصول را کامل کن.", "error");
   }
 
   if (
-    ![buy, sell, consumer].every(Number.isFinite) ||
-    [buy, sell, consumer].some(x => x < 0)
+    ![buy, sell, consumer, stock, minStock].every(Number.isFinite) ||
+    [buy, sell, consumer, stock, minStock].some(x => x < 0) ||
+    !Number.isInteger(stock) ||
+    !Number.isInteger(minStock)
   ) {
-    return notice("قیمت‌ها معتبر نیستند.", "error");
+    return notice("مقادیر معتبر نیستند.", "error");
   }
 
   setBusy("addProductButton", true);
@@ -2820,6 +2824,8 @@ async function addProduct() {
       buy_price: buy,
       sell_price: sell,
       consumer_price: consumer,
+      stock: stock,
+      min_stock: minStock,
       barcode: $("barcode").value.trim() || null,
       description: $("description").value.trim(),
       is_archived: false
